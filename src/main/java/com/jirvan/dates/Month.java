@@ -79,6 +79,10 @@ public class Month {
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
     }
 
+    public static Month current() {
+        return new Month();
+    }
+
     public int getYear() {
         return year;
     }

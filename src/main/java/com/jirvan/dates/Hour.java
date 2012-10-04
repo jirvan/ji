@@ -89,6 +89,10 @@ public class Hour {
         this.hourInDay = calendar.get(GregorianCalendar.HOUR_OF_DAY);
     }
 
+    public static Hour current() {
+        return new Hour();
+    }
+
     public int getYear() {
         return year;
     }

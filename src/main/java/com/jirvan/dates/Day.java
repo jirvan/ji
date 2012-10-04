@@ -84,6 +84,10 @@ public class Day {
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
     }
 
+    public static Day today() {
+        return new Day();
+    }
+
     public int getYear() {
         return year;
     }

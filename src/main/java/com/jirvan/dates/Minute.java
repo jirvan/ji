@@ -94,6 +94,10 @@ public class Minute {
         this.minuteInHour = calendar.get(GregorianCalendar.MINUTE);
     }
 
+    public static Minute now() {
+        return new Minute();
+    }
+
     public int getYear() {
         return year;
     }

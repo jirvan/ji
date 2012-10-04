@@ -44,4 +44,16 @@ public class Dates {
         return String.format("%02d:%02d", hours, minuteInHour);
     }
 
+    public static Integer hourPart(Integer totalMinutes) {
+        return totalMinutes == null
+               ? null
+               : totalMinutes / 60;
+    }
+
+    public static Integer minutePart(Integer totalMinutes) {
+        return totalMinutes == null
+               ? null
+               : totalMinutes - ((totalMinutes / 60) * 60);
+    }
+
 }
