@@ -7,9 +7,5 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
     <artifactId>ji</artifactId>
-    <version>1.0.1</version>
-
-  <scm>
-    <tag>v1.0.1</tag>
-  </scm>
+    <version>1.0.2-SNAPSHOT</version>
 </project>
