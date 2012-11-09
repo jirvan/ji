@@ -134,6 +134,10 @@ public class Minute {
         return minuteInHour;
     }
 
+    public int getMinuteInDay() {
+        return (hourInDay * 60) + minuteInHour;
+    }
+
     public void setMinuteInHour(int minuteInHour) {
         this.minuteInHour = minuteInHour;
     }

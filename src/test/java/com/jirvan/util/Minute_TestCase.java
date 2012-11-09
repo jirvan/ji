@@ -48,4 +48,14 @@ public class Minute_TestCase extends TestCase {
 
     }
 
+    public void test_minuteInDay() {
+
+        Assert.assertEquals("Unexpected minute in day", 1174, Minute.fromString("1992-01-26 19:34").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 15, Minute.fromString("1992-01-26 00:15").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 0, Minute.fromString("1996-01-26 00:00").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 1, Minute.fromString("1996-01-26 00:01").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 1439, Minute.fromString("1992-01-26 23:59").getMinuteInDay());
+
+    }
+
 }
