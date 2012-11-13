@@ -32,6 +32,7 @@ package com.jirvan.dates;
 
 //import com.google.gson.*;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.*;
@@ -46,7 +47,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day {
+public class Day implements Serializable {
 
     private int year;
     private int monthInYear;
