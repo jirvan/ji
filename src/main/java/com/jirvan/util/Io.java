@@ -35,6 +35,24 @@ import java.util.*;
 
 public class Io {
 
+    public static Properties getProperties(Class anchorClass, String propertiesFileRelativePath) {
+        try {
+            InputStream inputStream = anchorClass.getResourceAsStream(propertiesFileRelativePath);
+            if (inputStream == null) {
+                throw new RuntimeException("Couldn't find resource \"" + propertiesFileRelativePath + "\" associated with class \"" + anchorClass.getName() + "\"");
+            }
+            try {
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                return properties;
+            } finally {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static byte[] getFileBytes(File file) {
         try {
             InputStream inputStream = new FileInputStream(file);
