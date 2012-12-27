@@ -32,7 +32,10 @@ package com.jirvan.dates;
 
 //import com.google.gson.*;
 
-import java.lang.reflect.*;
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
+
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -46,7 +49,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Minute {
+public class Minute implements JsonSerializable {
 
     private int year;
     private int monthInYear;
@@ -66,7 +69,7 @@ public class Minute {
         this.minuteInHour = minuteInHour;
     }
 
-    public Minute(GregorianCalendar calendar) {
+    private Minute(GregorianCalendar calendar) {
         this.year = calendar.get(GregorianCalendar.YEAR);
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
@@ -74,7 +77,7 @@ public class Minute {
         this.minuteInHour = calendar.get(GregorianCalendar.MINUTE);
     }
 
-    public Minute(Date date) {
+    private Minute(Date date) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         this.year = calendar.get(GregorianCalendar.YEAR);
@@ -200,7 +203,7 @@ public class Minute {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
-    public static Minute fromString(String dateString) {
+    public static Minute from(String dateString) {
         if (dateString == null) {
             return null;
         } else {
@@ -217,14 +220,40 @@ public class Minute {
         }
     }
 
-/*
-    public static class Serializer implements JsonSerializer<Minute> {
-        public JsonElement serialize(Minute minute, Type type, JsonSerializationContext jsonSerializationContext) {
-            return minute == null
-                   ? new JsonNull()
-                   : new JsonPrimitive(minute.toString());
+    public static Minute from(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+            return new Minute(date);
         }
     }
-*/
+
+    public static Date toDate(Minute minute) {
+        if (minute == null) {
+            return null;
+        } else {
+            return minute.getDate();
+        }
+    }
+
+    public static Minute from(GregorianCalendar calendar) {
+        if (calendar == null) {
+            return null;
+        } else {
+            return new Minute(calendar);
+        }
+    }
+
+    public static Calendar toCalendar(Minute minute) {
+        if (minute == null) {
+            return null;
+        } else {
+            return minute.getCalendar();
+        }
+    }
+
+    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        jgen.writeString(this.toString());
+    }
 
 }

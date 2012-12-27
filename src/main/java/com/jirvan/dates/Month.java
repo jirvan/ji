@@ -32,6 +32,10 @@ package com.jirvan.dates;
 
 //import com.google.gson.*;
 
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
+
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.*;
@@ -46,7 +50,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Month {
+public class Month implements JsonSerializable {
 
     private int year;
     private int monthInYear;
@@ -149,14 +153,8 @@ public class Month {
         }
     }
 
-/*
-    public static class Serializer implements JsonSerializer<Month> {
-        public JsonElement serialize(Month month, Type type, JsonSerializationContext jsonSerializationContext) {
-            return month == null
-                   ? new JsonNull()
-                   : new JsonPrimitive(month.toString());
-        }
+    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        jgen.writeString(this.toString());
     }
-*/
 
 }
