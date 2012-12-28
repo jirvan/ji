@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-public enum AustralianStatesAndTerritories {
+public enum AustralianStateOrTerritory {
 
     ACT("Australian Capital Territory", "ACT"),
     JBT("Jervis Bay Territory", "JBT"),
@@ -41,11 +41,11 @@ public enum AustralianStatesAndTerritories {
     WA("Western Australia", "WA");
 
     public final String name;
-    public final String acronym;
+    public final String abbreviation;
 
-    private AustralianStatesAndTerritories(String name, String acronym) {
+    private AustralianStateOrTerritory(String name, String abbreviation) {
         this.name = name;
-        this.acronym = acronym;
+        this.abbreviation = abbreviation;
     }
 
 }
