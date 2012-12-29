@@ -30,13 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-//import com.google.gson.*;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-
-import java.io.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -50,7 +44,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Month implements JsonSerializable {
+public class Month {
 
     private int year;
     private int monthInYear;
@@ -151,10 +145,6 @@ public class Month implements JsonSerializable {
             int month = Integer.parseInt(m.group(2));
             return new Month(year, month);
         }
-    }
-
-    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeString(this.toString());
     }
 
 }

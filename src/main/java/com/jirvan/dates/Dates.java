@@ -30,6 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.module.*;
+
+import java.io.*;
+
 public class Dates {
 
     public static String formatElapsedTime(int minutes) {
@@ -54,6 +60,31 @@ public class Dates {
         return totalMinutes == null
                ? null
                : totalMinutes - ((totalMinutes / 60) * 60);
+    }
+
+    public static SimpleModule getSerializerModule() {
+        SimpleModule module = new SimpleModule("JiDatesSerializerModule", new Version(1, 0, 0, null));
+        module.addSerializer(Month.class, new JsonSerializer<Month>() {
+            public void serialize(Month value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Day.class, new JsonSerializer<Day>() {
+            public void serialize(Day value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Hour.class, new JsonSerializer<Hour>() {
+            public void serialize(Hour value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Minute.class, new JsonSerializer<Minute>() {
+            public void serialize(Minute value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        return module;
     }
 
 }
