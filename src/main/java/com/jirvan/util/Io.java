@@ -105,7 +105,16 @@ public class Io implements Assertions {
         }
     }
 
-    public static String getHomeDirectoryConfigFileProperty(String filename, String property) throws IOException {
+    public static ExtendedProperties getHomeDirectoryConfigFileProperties(String filename) {
+        return new ExtendedProperties(getHomeDirectoryFile(filename));
+    }
+
+    public static String getHomeDirectoryConfigFileProperty(String filename, String property) {
+        ExtendedProperties properties = new ExtendedProperties(getHomeDirectoryFile(filename));
+        return properties.getMandatoryProperty(property);
+    }
+
+    public static File getHomeDirectoryFile(String filename) {
         String usersHomePath = System.getProperty("user.home");
         if (usersHomePath == null) {
             throw new RuntimeException("Couldn't get user.home system property");
@@ -116,20 +125,9 @@ public class Io implements Assertions {
         }
         File configFile = new File(homedir, filename);
         if (!configFile.exists()) {
-            throw new RuntimeException("Configuration file (" + configFile.getAbsolutePath() + ") does not exist)");
+            throw new RuntimeException("File (" + configFile.getAbsolutePath() + ") does not exist)");
         }
-        Properties properties = new Properties();
-        FileReader reader = new FileReader(configFile);
-        try {
-            properties.load(reader);
-        } finally {
-            reader.close();
-        }
-        String propertyValue = properties.getProperty(property);
-        if (propertyValue == null) {
-            throw new RuntimeException(String.format("Configuration properties file (%s) does not contain \"%s\")", configFile.getAbsolutePath(), property));
-        }
-        return propertyValue;
+        return configFile;
     }
 
     public static byte[] getResourceFileBytes(Class anchorClass, String filename) {
