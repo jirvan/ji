@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -44,7 +43,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day  {
+public class Day {
 
     private int year;
     private int monthInYear;
@@ -60,13 +59,13 @@ public class Day  {
         this.dayInMonth = dayInMonth;
     }
 
-    public Day(GregorianCalendar calendar) {
+    private Day(GregorianCalendar calendar) {
         this.year = calendar.get(GregorianCalendar.YEAR);
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
     }
 
-    public Day(Date date) {
+    private Day(Date date) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         this.year = calendar.get(GregorianCalendar.YEAR);
@@ -80,6 +79,19 @@ public class Day  {
         this.year = calendar.get(GregorianCalendar.YEAR);
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
+    }
+
+
+    public static Day from(GregorianCalendar calendar) {
+        return calendar == null ? null : new Day(calendar);
+    }
+
+    public static Day from(Date date) {
+        return date == null ? null : new Day(date);
+    }
+
+    public static Day from(Date date, TimeZone timeZone) {
+        return date == null ? null : new Day(date, timeZone);
     }
 
     public static Day today() {
@@ -150,8 +162,56 @@ public class Day  {
                && ((Day) obj).getDayInMonth() == dayInMonth;
     }
 
+    public boolean after(Day anotherDay) {
+        if (anotherDay == null) {
+            throw new NullPointerException("anotherDay cannot be null");
+        } else {
+            if (year > anotherDay.getYear()) {
+                return true;
+            } else if (year < anotherDay.getYear()) {
+                return false;
+            } else {
+                if (monthInYear > anotherDay.getMonthInYear()) {
+                    return true;
+                } else if (monthInYear < anotherDay.getMonthInYear()) {
+                    return false;
+                } else {
+                    if (dayInMonth > anotherDay.getDayInMonth()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean before(Day anotherDay) {
+        if (anotherDay == null) {
+            throw new NullPointerException("anotherDay cannot be null");
+        } else {
+            if (year < anotherDay.getYear()) {
+                return true;
+            } else if (year > anotherDay.getYear()) {
+                return false;
+            } else {
+                if (monthInYear < anotherDay.getMonthInYear()) {
+                    return true;
+                } else if (monthInYear > anotherDay.getMonthInYear()) {
+                    return false;
+                } else {
+                    if (dayInMonth < anotherDay.getDayInMonth()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
     public int daysSince(Day anotherDay) {
-        return - daysUntil(anotherDay);
+        return -daysUntil(anotherDay);
     }
 
     public int daysUntil(Day anotherDay) {
