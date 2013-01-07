@@ -10,6 +10,12 @@
     <version>1.0.5-SNAPSHOT</version>
     <dependencies>
         <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <version>1.9.11</version>
