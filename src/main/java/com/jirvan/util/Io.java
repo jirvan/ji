@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012, Jirvan Pty Ltd
+Copyright (c) 2012,2013 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -115,6 +115,15 @@ public class Io implements Assertions {
     }
 
     public static File getHomeDirectoryFile(String filename) {
+        File homedir = getHomeDirectory();
+        File configFile = new File(homedir, filename);
+        if (!configFile.exists()) {
+            throw new RuntimeException("File (" + configFile.getAbsolutePath() + ") does not exist)");
+        }
+        return configFile;
+    }
+
+    public static File getHomeDirectory() {
         String usersHomePath = System.getProperty("user.home");
         if (usersHomePath == null) {
             throw new RuntimeException("Couldn't get user.home system property");
@@ -123,11 +132,7 @@ public class Io implements Assertions {
         if (!homedir.exists()) {
             throw new RuntimeException("Couldn't find home directory for user (" + homedir.getAbsolutePath() + " does not exist)");
         }
-        File configFile = new File(homedir, filename);
-        if (!configFile.exists()) {
-            throw new RuntimeException("File (" + configFile.getAbsolutePath() + ") does not exist)");
-        }
-        return configFile;
+        return homedir;
     }
 
     public static byte[] getResourceFileBytes(Class anchorClass, String filename) {
