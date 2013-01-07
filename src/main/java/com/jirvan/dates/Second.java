@@ -207,6 +207,10 @@ public class Second {
         return String.format("%04d-%02d-%02d %02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
     }
 
+    public String toFilenameSafeString() {
+        return String.format("%04d%02d%02d-%02d%02d-%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
+    }
+
     public String toISO8601String() {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
     }

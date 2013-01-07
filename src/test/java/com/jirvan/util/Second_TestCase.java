@@ -22,6 +22,13 @@ public class Second_TestCase extends TestCase {
         Assert.assertEquals("Unexpected date string", "0056-07-06 09:03:34", second.toString());
     }
 
+    public void test_toFilenameSafeString() {
+        Second second = new Second(1992, 1, 26, 10, 30, 12);
+        Assert.assertEquals("Unexpected second string", "19920126-1030-12", second.toFilenameSafeString());
+        second = new Second(56, 7, 6, 9, 3, 34);
+        Assert.assertEquals("Unexpected second string", "00560706-0903-34", second.toFilenameSafeString());
+    }
+
     public void test_fromString() {
 
         Second second = Second.from((String) null);

@@ -21,6 +21,13 @@ public class Minute_TestCase extends TestCase {
         Assert.assertEquals("Unexpected date string", "0056-07-06 09:03", minute.toString());
     }
 
+    public void test_toFilenameSafeString() {
+        Minute minute = new Minute(1992, 1, 26, 10, 35);
+        Assert.assertEquals("Unexpected minute string", "19920126-1035", minute.toFilenameSafeString());
+        minute = new Minute(56, 7, 6, 9, 3);
+        Assert.assertEquals("Unexpected minute string", "00560706-0903", minute.toFilenameSafeString());
+    }
+
     public void test_fromString() {
 
         Minute minute = Minute.from((String) null);

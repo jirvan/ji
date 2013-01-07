@@ -23,6 +23,13 @@ public class Millisecond_TestCase extends TestCase {
         Assert.assertEquals("Unexpected millisecond string", "0056-07-06 09:03:34.008", millisecond.toString());
     }
 
+    public void test_toFilenameSafeString() {
+        Millisecond millisecond = new Millisecond(1992, 1, 26, 10, 30, 12, 45);
+        Assert.assertEquals("Unexpected milisecond string", "19920126-1030-12.045", millisecond.toFilenameSafeString());
+        millisecond = new Millisecond(56, 7, 6, 9, 3, 34, 8);
+        Assert.assertEquals("Unexpected millisecond string", "00560706-0903-34.008", millisecond.toFilenameSafeString());
+    }
+
     public void test_fromString() {
 
         Millisecond millisecond = Millisecond.from((String) null);

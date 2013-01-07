@@ -133,6 +133,10 @@ public class Month {
         return String.format("%04d-%02d", year, monthInYear);
     }
 
+    public String toFilenameSafeString() {
+        return String.format("%04d%02d", year, monthInYear);
+    }
+
     public static Month fromString(String dateString) {
         if (dateString == null) {
             return null;

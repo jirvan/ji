@@ -236,6 +236,10 @@ public class Day {
         return String.format("%04d-%02d-%02d", year, monthInYear, dayInMonth);
     }
 
+    public String toFilenameSafeString() {
+        return String.format("%04d%02d%02d", year, monthInYear, dayInMonth);
+    }
+
     public static Day fromString(String dateString) {
         if (dateString == null) {
             return null;

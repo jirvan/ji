@@ -194,6 +194,10 @@ public class Minute {
         return String.format("%04d-%02d-%02d %02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
+    public String toFilenameSafeString() {
+        return String.format("%04d%02d%02d-%02d%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
+    }
+
     public String toISO8601String() {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }

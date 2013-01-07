@@ -19,6 +19,13 @@ public class Day_TestCase extends TestCase {
         Assert.assertEquals("Unexpected date string", "0056-07-06", dateToDay.toString());
     }
 
+    public void test_toFilenameSafeString() {
+        Day day = new Day(1992, 1, 26);
+        Assert.assertEquals("Unexpected day string", "19920126", day.toFilenameSafeString());
+        day = new Day(56, 7, 6);
+        Assert.assertEquals("Unexpected day string", "00560706", day.toFilenameSafeString());
+    }
+
     public void test_fromString() {
 
         Day day = Day.fromString(null);
