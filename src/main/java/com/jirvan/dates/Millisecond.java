@@ -35,15 +35,14 @@ import java.util.regex.*;
 
 /**
  * This class is primarily here to get around the standard java Date class's
- * entanglement with timezone along with providing a fixed
- * "granularity" of a second.  It is mainly for using with dates that have no
+ * entanglement with timezone.  It is mainly for using with dates that have no
  * need for association with a time zone.  The association of a time zone can
  * actually cause real problems in these situations.  For example if a persons
  * birthday is the first of May, then it is always the 1st of May regardless of
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Second {
+public class Millisecond {
 
     private int year;
     private int monthInYear;
@@ -51,30 +50,33 @@ public class Second {
     private int hourInDay;
     private int minuteInHour;
     private int secondInMinute;
+    private int millisecondInSecond;
 
-    public Second() {
+    public Millisecond() {
         this(new Date());
     }
 
-    public Second(int year, int monthInYear, int dayInMonth, int hourInDay, int minuteInHour, int secondInMinute) {
+    public Millisecond(int year, int monthInYear, int dayInMonth, int hourInDay, int minuteInHour, int secondInMinute, int millisecondInSecond) {
         this.year = year;
         this.monthInYear = monthInYear;
         this.dayInMonth = dayInMonth;
         this.hourInDay = hourInDay;
         this.minuteInHour = minuteInHour;
         this.secondInMinute = secondInMinute;
+        this.millisecondInSecond = millisecondInSecond;
     }
 
-    private Second(GregorianCalendar calendar) {
+    private Millisecond(GregorianCalendar calendar) {
         this.year = calendar.get(GregorianCalendar.YEAR);
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
         this.hourInDay = calendar.get(GregorianCalendar.HOUR_OF_DAY);
         this.minuteInHour = calendar.get(GregorianCalendar.MINUTE);
         this.secondInMinute = calendar.get(GregorianCalendar.SECOND);
+        this.millisecondInSecond = calendar.get(GregorianCalendar.MILLISECOND);
     }
 
-    private Second(Date date) {
+    private Millisecond(Date date) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         this.year = calendar.get(GregorianCalendar.YEAR);
@@ -83,9 +85,10 @@ public class Second {
         this.hourInDay = calendar.get(GregorianCalendar.HOUR_OF_DAY);
         this.minuteInHour = calendar.get(GregorianCalendar.MINUTE);
         this.secondInMinute = calendar.get(GregorianCalendar.SECOND);
+        this.millisecondInSecond = calendar.get(GregorianCalendar.MILLISECOND);
     }
 
-    public Second(Date date, TimeZone timeZone) {
+    public Millisecond(Date date, TimeZone timeZone) {
         GregorianCalendar calendar = new GregorianCalendar(timeZone);
         calendar.setTime(date);
         this.year = calendar.get(GregorianCalendar.YEAR);
@@ -94,10 +97,11 @@ public class Second {
         this.hourInDay = calendar.get(GregorianCalendar.HOUR_OF_DAY);
         this.minuteInHour = calendar.get(GregorianCalendar.MINUTE);
         this.secondInMinute = calendar.get(GregorianCalendar.SECOND);
+        this.millisecondInSecond = calendar.get(GregorianCalendar.MILLISECOND);
     }
 
-    public static Second now() {
-        return new Second();
+    public static Millisecond now() {
+        return new Millisecond();
     }
 
     public int getYear() {
@@ -148,6 +152,14 @@ public class Second {
         this.secondInMinute = secondInMinute;
     }
 
+    public int getMillisecondInSecond() {
+        return millisecondInSecond;
+    }
+
+    public void setMillisecondInSecond(int millisecondInSecond) {
+        this.millisecondInSecond = millisecondInSecond;
+    }
+
     public Date getDate() {
         return getCalendar().getTime();
     }
@@ -155,7 +167,7 @@ public class Second {
     public Calendar getCalendar() {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(year, monthInYear - 1, dayInMonth, hourInDay, minuteInHour, secondInMinute);
-        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        calendar.set(GregorianCalendar.MILLISECOND, millisecondInSecond);
         return calendar;
     }
 
@@ -175,49 +187,50 @@ public class Second {
         return new Minute(year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
-    public Second next() {
+    public Second getSecond() {
+        return new Second(year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
+    }
+
+    public Millisecond next() {
         return advanced(1);
     }
 
-    public Second previous() {
+    public Millisecond previous() {
         return advanced(-1);
     }
 
-    public Second advanced(int seconds) {
+    public Millisecond advanced(int milliseconds) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(year, monthInYear - 1, dayInMonth, hourInDay, minuteInHour, secondInMinute);
-        calendar.set(GregorianCalendar.MILLISECOND, 0);
-        calendar.add(GregorianCalendar.SECOND, seconds);
-        return new Second(calendar);
+        calendar.set(GregorianCalendar.MILLISECOND, millisecondInSecond);
+        calendar.add(GregorianCalendar.MILLISECOND, milliseconds);
+        return new Millisecond(calendar);
     }
 
     @Override
     public boolean equals(Object obj) {
         return obj != null
-               && obj instanceof Second
-               && ((Second) obj).getYear() == year
-               && ((Second) obj).getMonthInYear() == monthInYear
-               && ((Second) obj).getDayInMonth() == dayInMonth
-               && ((Second) obj).getHourInDay() == hourInDay
-               && ((Second) obj).getMinuteInHour() == minuteInHour
-               && ((Second) obj).getSecondInMinute() == secondInMinute;
+               && obj instanceof Millisecond
+               && ((Millisecond) obj).getYear() == year
+               && ((Millisecond) obj).getMonthInYear() == monthInYear
+               && ((Millisecond) obj).getDayInMonth() == dayInMonth
+               && ((Millisecond) obj).getHourInDay() == hourInDay
+               && ((Millisecond) obj).getMinuteInHour() == minuteInHour
+               && ((Millisecond) obj).getSecondInMinute() == secondInMinute
+               && ((Millisecond) obj).getMillisecondInSecond() == millisecondInSecond;
     }
 
     public String toString() {
-        return String.format("%04d-%02d-%02d %02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
+        return String.format("%04d-%02d-%02d %02d:%02d:%02d.%03d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute, millisecondInSecond);
     }
 
-    public String toISO8601String() {
-        return String.format("%04d-%02d-%02dT%02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
-    }
-
-    public static Second from(String dateString) {
+    public static Millisecond from(String dateString) {
         if (dateString == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d)$").matcher(dateString);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)$").matcher(dateString);
             if (!m.matches()) {
-                throw new RuntimeException("Second date string must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-01 09:30:15) or YYYY-MM-DDThh:mm:ss (e.g. 2012-05-01T09:30:15)");
+                throw new RuntimeException("Millisecond date string must be of form \"YYYY-MM-DD hh:mm:ss.SSS\" (e.g. 2012-05-01 09:30:15.345) or YYYY-MM-DDThh:mm:ss.SSS (e.g. 2012-05-01T09:30:15.345)");
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));
@@ -225,39 +238,40 @@ public class Second {
             int hour = Integer.parseInt(m.group(4));
             int minute = Integer.parseInt(m.group(5));
             int second = Integer.parseInt(m.group(6));
-            return new Second(year, month, day, hour, minute, second);
+            int millisecond = Integer.parseInt(m.group(7));
+            return new Millisecond(year, month, day, hour, minute, second, millisecond);
         }
     }
 
-    public static Second from(Date date) {
+    public static Millisecond from(Date date) {
         if (date == null) {
             return null;
         } else {
-            return new Second(date);
+            return new Millisecond(date);
         }
     }
 
-    public static Date toDate(Second minute) {
-        if (minute == null) {
+    public static Date toDate(Millisecond millisecond) {
+        if (millisecond == null) {
             return null;
         } else {
-            return minute.getDate();
+            return millisecond.getDate();
         }
     }
 
-    public static Second from(GregorianCalendar calendar) {
+    public static Millisecond from(GregorianCalendar calendar) {
         if (calendar == null) {
             return null;
         } else {
-            return new Second(calendar);
+            return new Millisecond(calendar);
         }
     }
 
-    public static Calendar toCalendar(Second minute) {
-        if (minute == null) {
+    public static Calendar toCalendar(Millisecond millisecond) {
+        if (millisecond == null) {
             return null;
         } else {
-            return minute.getCalendar();
+            return millisecond.getCalendar();
         }
     }
 
