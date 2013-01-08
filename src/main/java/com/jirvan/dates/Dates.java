@@ -62,4 +62,29 @@ public class Dates {
                : totalMinutes - ((totalMinutes / 60) * 60);
     }
 
+    public static SimpleModule getSerializerModule() {
+        SimpleModule module = new SimpleModule("JiDatesSerializerModule", new Version(1, 0, 0, null));
+        module.addSerializer(Month.class, new JsonSerializer<Month>() {
+            public void serialize(Month value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Day.class, new JsonSerializer<Day>() {
+            public void serialize(Day value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Hour.class, new JsonSerializer<Hour>() {
+            public void serialize(Hour value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addSerializer(Minute.class, new JsonSerializer<Minute>() {
+            public void serialize(Minute value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        return module;
+    }
+
 }
