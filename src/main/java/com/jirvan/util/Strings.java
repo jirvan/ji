@@ -32,14 +32,6 @@ package com.jirvan.util;
 
 public class Strings {
 
-    public static boolean areEqual(String string1, String string2) {
-        if (string1 == null) {
-            return string2 == null;
-        } else {
-            return string1.equals(string2);
-        }
-    }
-
     public static boolean in(String string, String[] strings) {
         for (String thisString : strings) {
             if (string == null) {
