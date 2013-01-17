@@ -232,6 +232,10 @@ public class Day {
 
     }
 
+    public static Date toDate(Day day) {
+        return day == null ? null : day.getDate();
+    }
+
     public String toString() {
         return String.format("%04d-%02d-%02d", year, monthInYear, dayInMonth);
     }

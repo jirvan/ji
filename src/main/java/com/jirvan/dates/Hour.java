@@ -168,6 +168,10 @@ public class Hour {
                && ((Hour) obj).getHourInDay() == hourInDay;
     }
 
+    public static Date toDate(Hour hour) {
+        return hour == null ? null : hour.getDate();
+    }
+
     public String toString() {
         return String.format("%04d-%02d-%02d %02d", year, monthInYear, dayInMonth, hourInDay);
     }

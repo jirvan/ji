@@ -241,11 +241,11 @@ public class Second {
         }
     }
 
-    public static Date toDate(Second minute) {
-        if (minute == null) {
+    public static Date toDate(Second second) {
+        if (second == null) {
             return null;
         } else {
-            return minute.getDate();
+            return second.getDate();
         }
     }
 

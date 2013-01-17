@@ -137,6 +137,10 @@ public class Month {
         return String.format("%04d%02d", year, monthInYear);
     }
 
+    public static Date toDate(Month month) {
+        return month == null ? null : month.getDate();
+    }
+
     public static Month fromString(String dateString) {
         if (dateString == null) {
             return null;
