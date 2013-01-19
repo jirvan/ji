@@ -137,6 +137,37 @@ public class Day {
         return new Month(year, monthInYear);
     }
 
+    public DayOfWeek getDayOfWeek() {
+        int dayOfWeek = getCalendar().get(GregorianCalendar.DAY_OF_WEEK);
+        if (dayOfWeek == GregorianCalendar.MONDAY) {
+            return DayOfWeek.Monday;
+        } else if (dayOfWeek == GregorianCalendar.TUESDAY) {
+            return DayOfWeek.Tuesday;
+        } else if (dayOfWeek == GregorianCalendar.WEDNESDAY) {
+            return DayOfWeek.Wednesday;
+        } else if (dayOfWeek == GregorianCalendar.THURSDAY) {
+            return DayOfWeek.Thursday;
+        } else if (dayOfWeek == GregorianCalendar.FRIDAY) {
+            return DayOfWeek.Friday;
+        } else if (dayOfWeek == GregorianCalendar.SATURDAY) {
+            return DayOfWeek.Saturday;
+        } else if (dayOfWeek == GregorianCalendar.SUNDAY) {
+            return DayOfWeek.Sunday;
+        } else {
+            throw new RuntimeException(String.format("Unexpected error: Unrecognized GregorianCalendar.DAY_OF_WEEK %d", dayOfWeek));
+        }
+    }
+
+    public boolean isOnAWeekend() {
+        DayOfWeek dayOfWeek = getDayOfWeek();
+        return dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday;
+    }
+
+    public boolean isAWeekday() {
+        DayOfWeek dayOfWeek = getDayOfWeek();
+        return dayOfWeek != DayOfWeek.Saturday && dayOfWeek != DayOfWeek.Sunday;
+    }
+
     public Day next() {
         return advanced(1);
     }
@@ -151,6 +182,22 @@ public class Day {
         calendar.set(GregorianCalendar.MILLISECOND, 0);
         calendar.add(GregorianCalendar.DATE, days);
         return new Day(calendar);
+    }
+
+    public Day advancedMonths(int months) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.set(year, monthInYear - 1, dayInMonth, 0, 0, 0);
+        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        calendar.add(GregorianCalendar.MONTH, months);
+        return new Day(calendar);
+    }
+
+    public Day advanceToNextWeekday() {
+        Day day = new Day(year, monthInYear, dayInMonth);
+        while (day.isOnAWeekend()) {
+            day = day.advanced(1);
+        }
+        return day;
     }
 
     @Override
