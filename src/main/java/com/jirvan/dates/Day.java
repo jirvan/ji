@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012, Jirvan Pty Ltd
+Copyright (c) 2012,2013 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -43,7 +43,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day {
+public class Day implements Cloneable {
 
     private int year;
     private int monthInYear;
@@ -57,6 +57,10 @@ public class Day {
         this.year = year;
         this.monthInYear = monthInYear;
         this.dayInMonth = dayInMonth;
+    }
+
+    @Override public Day clone() {
+        return new Day(year, monthInYear, dayInMonth);
     }
 
     private Day(GregorianCalendar calendar) {
@@ -102,24 +106,27 @@ public class Day {
         return year;
     }
 
-    public void setYear(int year) {
+    public Day setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Day setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public int getDayInMonth() {
         return dayInMonth;
     }
 
-    public void setDayInMonth(int dayInMonth) {
+    public Day setDayInMonth(int dayInMonth) {
         this.dayInMonth = dayInMonth;
+        return this;
     }
 
     public Date getDate() {
@@ -184,12 +191,28 @@ public class Day {
         return new Day(calendar);
     }
 
+    public Day receded(int days) {
+        return advanced(-days);
+    }
+
     public Day advancedMonths(int months) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(year, monthInYear - 1, dayInMonth, 0, 0, 0);
         calendar.set(GregorianCalendar.MILLISECOND, 0);
         calendar.add(GregorianCalendar.MONTH, months);
         return new Day(calendar);
+    }
+
+    public Day recededMonths(int months) {
+        return advancedMonths(-months);
+    }
+
+    public Day advancedWeeks(int weeks) {
+        return advanced(weeks * 7);
+    }
+
+    public Day recededWeeks(int weeks) {
+        return advancedWeeks(-weeks);
     }
 
     public Day advanceToNextWeekday() {
