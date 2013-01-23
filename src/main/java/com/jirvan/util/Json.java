@@ -42,6 +42,14 @@ public class Json {
     private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
                                                                    .withDefaultPrettyPrinter();
 
+    public static <T> T treeToValue(JsonNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
+        return OBJECT_MAPPER.readValue(n, valueType);
+    }
+
+    public static JsonNode readTree(String content) throws IOException, JsonProcessingException {
+        return OBJECT_MAPPER.readTree(content);
+    }
+
     public static String toJsonString(Object object) {
         try {
             return OBJECT_WRITER.writeValueAsString(object).replaceAll("\\r", "");
