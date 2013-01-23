@@ -31,13 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.dates.*;
+import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
 
 import java.io.*;
 
 public class Json {
 
-    private static final ObjectWriter OBJECT_WRITER = setUpObjectWriter();
+    private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper();
+    private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
+                                                                   .withDefaultPrettyPrinter();
 
     public static String toJsonString(Object object) {
         try {
@@ -47,11 +50,36 @@ public class Json {
         }
     }
 
-    private static ObjectWriter setUpObjectWriter() {
+    public static <T> T fromJsonString(String jsonString, Class<T> valueType) {
+        try {
+
+            return OBJECT_MAPPER.readValue(jsonString, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonResourceFile(Object anchorObject, String filename, Class<T> valueType) {
+        return fromJsonResourceFile(anchorObject.getClass(), filename, valueType);
+    }
+
+    public static <T> T fromJsonResourceFile(Class anchorClass, String filename, Class<T> valueType) {
+        try {
+
+            String jsonString = Io.getResourceFileString(anchorClass, filename);
+            return OBJECT_MAPPER.readValue(jsonString, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static ObjectMapper setUpObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(Dates.getSerializerModule());
-        return objectMapper.writer()
-                           .withDefaultPrettyPrinter();
+        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        return objectMapper;
     }
 
 }
