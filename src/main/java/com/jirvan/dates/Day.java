@@ -50,7 +50,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day implements Cloneable, UserType {
+public class Day implements Cloneable, UserType, Serializable {
 
     private int year;
     private int monthInYear;
@@ -138,6 +138,10 @@ public class Day implements Cloneable, UserType {
 
     public Date getDate() {
         return getCalendar().getTime();
+    }
+
+    public Timestamp getTimestamp() {
+        return new Timestamp(getCalendar().getTimeInMillis());
     }
 
     public GregorianCalendar getCalendar() {
@@ -346,7 +350,7 @@ public class Day implements Cloneable, UserType {
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        return ( x == y ) || ( x != null && x.equals( y ) );
+        return (x == y) || (x != null && x.equals(y));
     }
 
     public int hashCode(Object x) throws HibernateException {
@@ -354,31 +358,51 @@ public class Day implements Cloneable, UserType {
     }
 
     public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-        Date date = rs.getTimestamp();
+        Date date = rs.getTimestamp(names[0]);
+        if (rs.wasNull()) {
+            return null;
+        } else {
+            return new Day(date);
+        }
     }
 
     public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.nullSafeSet method has not been implemented");
+        if (value == null) {
+            st.setNull(index, Types.DATE);
+        } else {
+            verifyType(value);
+            st.setTimestamp(index, ((Day) value).getTimestamp());
+        }
     }
 
     public Object deepCopy(Object value) throws HibernateException {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.deepCopy method has not been implemented");
+        verifyType(value);
+        return clone();
     }
 
     public boolean isMutable() {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.isMutable method has not been implemented");
+        return true;
     }
 
     public Serializable disassemble(Object value) throws HibernateException {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.disassemble method has not been implemented");
+        verifyType(value);
+        return value == null ? null : ((Day)value).clone();
     }
 
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.assemble method has not been implemented");
+        verifyType(cached);
+        return cached == null ? null : ((Day)cached).clone();
     }
 
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        throw new UnsupportedOperationException("The com.jirvan.dates.Day.replace method has not been implemented");
+        verifyType(original);
+        return original == null ? null : ((Day)original).clone();
+    }
+
+    private void verifyType(Object value) {
+        if (value != null && !(value instanceof Day)) {
+            throw new UnsupportedOperationException(String.format("expected an object of type %s", this.getClass().getName()));
+        }
     }
 
 }

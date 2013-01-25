@@ -33,6 +33,7 @@ package com.jirvan.dates;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.map.module.*;
+import org.codehaus.jackson.node.*;
 
 import java.io.*;
 
@@ -75,14 +76,14 @@ public class Dates {
             }
         });
 
-//        module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
-//            public Day deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-//                ObjectCodec oc = jsonParser.getCodec();
-//                JsonNode node = oc.readTree(jsonParser);
-////                return new User(null, node.get("username").getTextValue(), node.get("password").getTextValue());
-//                return null;
-//            }
-//        });
+        module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
+            public Day deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Day.fromString((jsonNode.getTextValue()));
+            }
+        });
 
 
         module.addSerializer(Hour.class, new JsonSerializer<Hour>() {
