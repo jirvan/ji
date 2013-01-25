@@ -30,6 +30,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import org.hibernate.*;
+import org.hibernate.engine.spi.*;
+import org.hibernate.usertype.*;
+
+import java.io.*;
+import java.sql.*;
+import java.util.Date;
 import java.util.*;
 import java.util.regex.*;
 
@@ -43,7 +50,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day implements Cloneable {
+public class Day implements Cloneable, UserType {
 
     private int year;
     private int monthInYear;
@@ -327,6 +334,51 @@ public class Day implements Cloneable {
             int day = Integer.parseInt(m.group(3));
             return new Day(year, month, day);
         }
+    }
+
+    //************  Hibernate UserType implementation ************
+    public int[] sqlTypes() {
+        return new int[]{Types.DATE};
+    }
+
+    public Class returnedClass() {
+        return Day.class;
+    }
+
+    public boolean equals(Object x, Object y) throws HibernateException {
+        return ( x == y ) || ( x != null && x.equals( y ) );
+    }
+
+    public int hashCode(Object x) throws HibernateException {
+        return x == null ? 0 : x.hashCode();
+    }
+
+    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
+        Date date = rs.getTimestamp();
+    }
+
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.nullSafeSet method has not been implemented");
+    }
+
+    public Object deepCopy(Object value) throws HibernateException {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.deepCopy method has not been implemented");
+    }
+
+    public boolean isMutable() {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.isMutable method has not been implemented");
+    }
+
+    public Serializable disassemble(Object value) throws HibernateException {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.disassemble method has not been implemented");
+    }
+
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.assemble method has not been implemented");
+    }
+
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+        throw new UnsupportedOperationException("The com.jirvan.dates.Day.replace method has not been implemented");
     }
 
 }

@@ -6,7 +6,7 @@ import org.codehaus.jackson.map.*;
 public class JsonObjectMapper extends ObjectMapper {
 
     public JsonObjectMapper() {
-        this.registerModule(Dates.getSerializerModule());
+        this.registerModule(Dates.getSerializerDeserializerModule());
     }
 
 }

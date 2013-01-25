@@ -85,7 +85,7 @@ public class Json {
 
     private static ObjectMapper setUpObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(Dates.getSerializerModule());
+        objectMapper.registerModule(Dates.getSerializerDeserializerModule());
         objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         return objectMapper;
     }

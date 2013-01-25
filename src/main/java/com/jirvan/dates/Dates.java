@@ -35,7 +35,6 @@ import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.map.module.*;
 
 import java.io.*;
-import java.util.*;
 
 public class Dates {
 
@@ -63,7 +62,7 @@ public class Dates {
                : totalMinutes - ((totalMinutes / 60) * 60);
     }
 
-    public static SimpleModule getSerializerModule() {
+    public static SimpleModule getSerializerDeserializerModule() {
         SimpleModule module = new SimpleModule("JiDatesSerializerModule", new Version(1, 0, 0, null));
         module.addSerializer(Month.class, new JsonSerializer<Month>() {
             public void serialize(Month value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
@@ -75,6 +74,17 @@ public class Dates {
                 jgen.writeString(value.toString());
             }
         });
+
+//        module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
+//            public Day deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+//                ObjectCodec oc = jsonParser.getCodec();
+//                JsonNode node = oc.readTree(jsonParser);
+////                return new User(null, node.get("username").getTextValue(), node.get("password").getTextValue());
+//                return null;
+//            }
+//        });
+
+
         module.addSerializer(Hour.class, new JsonSerializer<Hour>() {
             public void serialize(Hour value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
                 jgen.writeString(value.toString());
