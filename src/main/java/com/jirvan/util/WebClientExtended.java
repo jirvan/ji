@@ -73,7 +73,7 @@ public class WebClientExtended extends WebClient {
             if (!"application/json".equals(page.getWebResponse().getContentType())) {
                 throw new RuntimeException(String.format("Unexpected content type \"%s\" (expected \"application/json\")", page.getWebResponse().getContentType()));
             }
-            return page.getWebResponse().getContentAsString();
+            return page.getWebResponse().getContentAsString().replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
