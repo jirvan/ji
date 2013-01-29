@@ -52,7 +52,7 @@ public class Json {
 
     public static String toJsonString(Object object) {
         try {
-            return OBJECT_WRITER.writeValueAsString(object).replaceAll("\\r", "");
+            return OBJECT_WRITER.writeValueAsString(object).replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
