@@ -50,7 +50,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day implements Cloneable, UserType, Serializable {
+public class Day implements Cloneable, UserType, Serializable, Comparable<Day> {
 
     private int year;
     private int monthInYear;
@@ -353,6 +353,16 @@ public class Day implements Cloneable, UserType, Serializable {
         return (x == y) || (x != null && x.equals(y));
     }
 
+    public int compareTo(Day anotherDay) {
+        if (this.equals(anotherDay)) {
+            return 0;
+        } else if (this.before(anotherDay)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
     public int hashCode(Object x) throws HibernateException {
         return x == null ? 0 : x.hashCode();
     }
@@ -386,17 +396,17 @@ public class Day implements Cloneable, UserType, Serializable {
 
     public Serializable disassemble(Object value) throws HibernateException {
         verifyType(value);
-        return value == null ? null : ((Day)value).clone();
+        return value == null ? null : ((Day) value).clone();
     }
 
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
         verifyType(cached);
-        return cached == null ? null : ((Day)cached).clone();
+        return cached == null ? null : ((Day) cached).clone();
     }
 
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         verifyType(original);
-        return original == null ? null : ((Day)original).clone();
+        return original == null ? null : ((Day) original).clone();
     }
 
     private void verifyType(Object value) {
