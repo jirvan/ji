@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012, Jirvan Pty Ltd
+Copyright (c) 2013, Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -41,7 +41,7 @@ public class AssertionMethods {
      * @param condition the condition to be checked
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertTrue(String message, boolean condition) {
+    public static void assertTrue(String message, boolean condition) {
         if (!condition) throw message == null ? new AssertionError() : new AssertionError(message);
     }
 
@@ -52,7 +52,7 @@ public class AssertionMethods {
      * @param condition the condition to be checked
      * @throws AssertionError if the assertion fails
      */
-    public void assertTrue(boolean condition) {
+    public static void assertTrue(boolean condition) {
         assertTrue(null, condition);
     }
 
@@ -66,7 +66,7 @@ public class AssertionMethods {
      * @param aClass  the class the object needs to be checked against
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertObjectIsInstanceof(String message, Object object, Class aClass) {
+    public static void assertObjectIsInstanceof(String message, Object object, Class aClass) {
         if (!aClass.isInstance(object)) {
             throw message != null
                   ? new AssertionError(message)
@@ -84,7 +84,7 @@ public class AssertionMethods {
      * @param aClass the class the object needs to be checked against
      * @throws AssertionError if the assertion fails
      */
-    public void assertObjectIsInstanceof(Object object, Class aClass) {
+    public static void assertObjectIsInstanceof(Object object, Class aClass) {
         assertObjectIsInstanceof(null, object, aClass);
     }
 
@@ -96,7 +96,7 @@ public class AssertionMethods {
      * @param object  the object to be checked
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertNotNull(String message, Object object) {
+    public static void assertNotNull(String message, Object object) {
         if (object == null) {
             throw message != null
                   ? new AssertionError(message)
@@ -108,10 +108,10 @@ public class AssertionMethods {
      * Asserts that an object is not null.  If the assertion fails, then
      * an {@link AssertionError} is thrown.
      *
-     * @param object  the object to be checked
+     * @param object the object to be checked
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertNotNull(Object object) {
+    public static void assertNotNull(Object object) {
         assertNotNull(null, object);
     }
 
@@ -123,7 +123,7 @@ public class AssertionMethods {
      * @param object  the object to be checked
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertNull(String message, Object object) {
+    public static void assertNull(String message, Object object) {
         if (object != null) {
             throw message != null
                   ? new AssertionError(message)
@@ -135,10 +135,10 @@ public class AssertionMethods {
      * Asserts that an object is null.  If the assertion fails, then
      * an {@link AssertionError} is thrown.
      *
-     * @param object  the object to be checked
+     * @param object the object to be checked
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public void assertNull(Object object) {
+    public static void assertNull(Object object) {
         assertNull(null, object);
     }
 

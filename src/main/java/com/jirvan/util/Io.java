@@ -33,13 +33,15 @@ package com.jirvan.util;
 import java.io.*;
 import java.util.*;
 
-public class Io implements Assertions {
+import static com.jirvan.util.AssertionMethods.assertNotNull;
+
+public class Io {
 
 
     public static String getResourcePropertyValue(Class anchorClass, String propertiesFileRelativePath, String key) {
         Properties properties = getProperties(anchorClass, propertiesFileRelativePath);
         String version = properties.getProperty(key);
-        assertions.assertNotNull(String.format("%s not found in %s", key, propertiesFileRelativePath), version);
+        assertNotNull(String.format("%s not found in %s", key, propertiesFileRelativePath), version);
         return version;
     }
 
