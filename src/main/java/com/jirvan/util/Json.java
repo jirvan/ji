@@ -38,7 +38,8 @@ import java.io.*;
 
 public class Json {
 
-    private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper(false);
+    private static final ObjectMapper OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES = setUpObjectMapper(true);
     private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
                                                                    .withDefaultPrettyPrinter();
 
@@ -59,9 +60,15 @@ public class Json {
     }
 
     public static <T> T fromJsonString(String jsonString, Class<T> valueType) {
+        return fromJsonString(jsonString, valueType, false);
+    }
+
+    public static <T> T fromJsonString(String jsonString, Class<T> valueType, boolean ignoreUnknownProperties) {
         try {
 
-            return OBJECT_MAPPER.readValue(jsonString, valueType);
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(jsonString, valueType)
+                   : OBJECT_MAPPER.readValue(jsonString, valueType);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -69,24 +76,35 @@ public class Json {
     }
 
     public static <T> T fromJsonResourceFile(Object anchorObject, String filename, Class<T> valueType) {
-        return fromJsonResourceFile(anchorObject.getClass(), filename, valueType);
+        return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, false);
+    }
+
+    public static <T> T fromJsonResourceFile(Object anchorObject, String filename, Class<T> valueType, boolean ignoreUnknownProperties) {
+        return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, ignoreUnknownProperties);
     }
 
     public static <T> T fromJsonResourceFile(Class anchorClass, String filename, Class<T> valueType) {
+        return fromJsonResourceFile(anchorClass, filename, valueType, false);
+    }
+
+    public static <T> T fromJsonResourceFile(Class anchorClass, String filename, Class<T> valueType, boolean ignoreUnknownProperties) {
         try {
 
             String jsonString = Io.getResourceFileString(anchorClass, filename);
-            return OBJECT_MAPPER.readValue(jsonString, valueType);
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(jsonString, valueType)
+                   : OBJECT_MAPPER.readValue(jsonString, valueType);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static ObjectMapper setUpObjectMapper() {
+    private static ObjectMapper setUpObjectMapper(boolean ignoreUnknownProperties) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(Dates.getSerializerDeserializerModule());
         objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        if (ignoreUnknownProperties) objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 
