@@ -30,19 +30,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-@Deprecated
-public class AssertionMethods {
+public class Assertions {
 
     /**
      * Asserts that a condition is true.  If the assertion
      * fails, then an {@link AssertionError} with the provided
      * message is thrown.
      *
-     * @param message   the message associated with failure
+     *
      * @param condition the condition to be checked
+     * @param message   the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public static void assertTrue(String message, boolean condition) {
+    public static void assertTrue(boolean condition, String message) {
         if (!condition) throw message == null ? new AssertionError() : new AssertionError(message);
     }
 
@@ -54,7 +54,7 @@ public class AssertionMethods {
      * @throws AssertionError if the assertion fails
      */
     public static void assertTrue(boolean condition) {
-        assertTrue(null, condition);
+        assertTrue(condition, null);
     }
 
     /**
@@ -62,12 +62,13 @@ public class AssertionMethods {
      * assertion fails, then an {@link AssertionError} with the provided
      * message is thrown.
      *
-     * @param message the message associated with failure
+     *
      * @param object  the object to be checked
      * @param aClass  the class the object needs to be checked against
+     * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public static void assertObjectIsInstanceof(String message, Object object, Class aClass) {
+    public static void assertObjectIsInstanceof(Object object, Class aClass, String message) {
         if (!aClass.isInstance(object)) {
             throw message != null
                   ? new AssertionError(message)
@@ -86,18 +87,19 @@ public class AssertionMethods {
      * @throws AssertionError if the assertion fails
      */
     public static void assertObjectIsInstanceof(Object object, Class aClass) {
-        assertObjectIsInstanceof(null, object, aClass);
+        assertObjectIsInstanceof(object, aClass, null);
     }
 
     /**
      * Asserts that an object is not null.  If the assertion fails, then
      * an {@link AssertionError} with the provided message is thrown.
      *
-     * @param message the message associated with failure
+     *
      * @param object  the object to be checked
+     * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public static void assertNotNull(String message, Object object) {
+    public static void assertNotNull(Object object, String message) {
         if (object == null) {
             throw message != null
                   ? new AssertionError(message)
@@ -113,18 +115,19 @@ public class AssertionMethods {
      * @throws AssertionError with the provided message if the assertion fails
      */
     public static void assertNotNull(Object object) {
-        assertNotNull(null, object);
+        assertNotNull(object, null);
     }
 
     /**
      * Asserts that an object is null.  If the assertion fails, then
      * an {@link AssertionError} with the provided message is thrown.
      *
-     * @param message the message associated with failure
+     *
      * @param object  the object to be checked
+     * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails
      */
-    public static void assertNull(String message, Object object) {
+    public static void assertNull(Object object, String message) {
         if (object != null) {
             throw message != null
                   ? new AssertionError(message)
@@ -140,7 +143,7 @@ public class AssertionMethods {
      * @throws AssertionError with the provided message if the assertion fails
      */
     public static void assertNull(Object object) {
-        assertNull(null, object);
+        assertNull(object, null);
     }
 
 }
