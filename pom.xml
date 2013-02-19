@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
     <artifactId>ji</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -46,8 +46,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-  <scm>
-    <tag>v1.0.9</tag>
-  </scm>
 </project>
