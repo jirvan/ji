@@ -145,13 +145,19 @@ public class Month {
         if (dateString == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)$").matcher(dateString);
-            if (!m.matches()) {
-                throw new RuntimeException("Day date string must be of form \"YYYY-MM\" (e.g. 2012-05)");
+            Matcher matcherFull = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)$").matcher(dateString);
+            Matcher matcherAbbreviated = Pattern.compile("^(\\d\\d)/(\\d\\d)$").matcher(dateString);
+            if (matcherFull.matches()) {
+                int year = Integer.parseInt(matcherFull.group(1));
+                int month = Integer.parseInt(matcherFull.group(2));
+                return new Month(year, month);
+            } else if (matcherAbbreviated.matches()) {
+                int year = Integer.parseInt(matcherAbbreviated.group(2)) + 2000;
+                int month = Integer.parseInt(matcherAbbreviated.group(1));
+                return new Month(year, month);
+            } else {
+                throw new RuntimeException("Day date string must be of form \"YYYY-MM\" (e.g. 2012-05) or \"MM/YY\"");
             }
-            int year = Integer.parseInt(m.group(1));
-            int month = Integer.parseInt(m.group(2));
-            return new Month(year, month);
         }
     }
 
