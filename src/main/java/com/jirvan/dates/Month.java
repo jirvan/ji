@@ -146,7 +146,7 @@ public class Month {
             return null;
         } else {
             Matcher matcherFull = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)$").matcher(dateString);
-            Matcher matcherAbbreviated = Pattern.compile("^(\\d\\d)/(\\d\\d)$").matcher(dateString);
+            Matcher matcherAbbreviated = Pattern.compile("^(\\d\\d) */ *(\\d\\d)$").matcher(dateString);
             if (matcherFull.matches()) {
                 int year = Integer.parseInt(matcherFull.group(1));
                 int month = Integer.parseInt(matcherFull.group(2));
