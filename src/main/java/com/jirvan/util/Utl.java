@@ -32,6 +32,7 @@ package com.jirvan.util;
 
 import com.jirvan.dates.*;
 
+import java.io.*;
 import java.math.*;
 import java.util.*;
 
@@ -147,6 +148,17 @@ public class Utl {
         } else {
             return value1.equals(value2);
         }
+    }
+
+    public static String getStackTrace(Throwable t) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        try {
+            t.printStackTrace(printWriter);
+        } finally {
+            printWriter.close();
+        }
+        return stringWriter.toString();
     }
 
 }
