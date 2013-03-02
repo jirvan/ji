@@ -41,8 +41,12 @@ public class JobPool {
 
 
     public Job startNewJobForTask(Task task) {
+        return startNewJobForTask(false, task);
+    }
+
+    public Job startNewJobForTask(boolean throwExceptions, Task task) {
         Job job = new Job(++mostRecentJobId);
-        java.lang.Runnable runnable = new JobRunnable(job, task);
+        Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
         return job;
@@ -110,12 +114,15 @@ public class JobPool {
     }
 
     private static class JobRunnable implements Runnable {
+
         private Job job;
         private Task task;
+        private boolean throwExceptions;
 
-        public JobRunnable(Job job, Task task) {
+        public JobRunnable(Job job, Task task, boolean throwExceptions) {
             this.job = job;
             this.task = task;
+            this.throwExceptions = throwExceptions;
             task.outputBuffer = job.logBuffer;
         }
 
@@ -125,15 +132,25 @@ public class JobPool {
                 job.setStatus(Job.Status.finishedSuccessfully);
             } catch (Throwable t) {
                 job.setStatus(Job.Status.finishedWithError);
-                if (job.logBuffer.length() > 0) {
-                    job.logBuffer.append('\n');
-                }
-                if (t instanceof MessageException) {
-                    job.logBuffer.append("\nJob finished with ERROR: ");
-                    job.logBuffer.append(t.getMessage());
+                if (throwExceptions) {
+                    if (t instanceof RuntimeException) {
+                        throw (RuntimeException) t;
+                    } else if (t instanceof Error) {
+                        throw (Error) t;
+                    } else {
+                        throw new RuntimeException(t);
+                    }
                 } else {
-                    job.logBuffer.append("\nJob finished with ERROR\n\n");
-                    job.logBuffer.append(Utl.getStackTrace(t));
+                    if (job.logBuffer.length() > 0) {
+                        job.logBuffer.append('\n');
+                    }
+                    if (t instanceof MessageException) {
+                        job.logBuffer.append("\nJob finished with ERROR: ");
+                        job.logBuffer.append(t.getMessage());
+                    } else {
+                        job.logBuffer.append("\nJob finished with ERROR\n\n");
+                        job.logBuffer.append(Utl.getStackTrace(t));
+                    }
                 }
             }
         }
