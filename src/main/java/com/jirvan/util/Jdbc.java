@@ -202,6 +202,14 @@ public class Jdbc {
         private String dataSourceOrDriverClassName;
         private String connectString;
 
+        public ConnectionConfig() {
+        }
+
+        public ConnectionConfig(String dataSourceOrDriverClassName, String connectString) {
+            this.dataSourceOrDriverClassName = dataSourceOrDriverClassName;
+            this.connectString = connectString;
+        }
+
         public String getDataSourceOrDriverClassName() {
             return dataSourceOrDriverClassName;
         }
