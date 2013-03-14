@@ -189,45 +189,15 @@ public class Jdbc {
         }
     }
 
-    public static ConnectionConfig getConfigFromHomeDirectoryFile(String homeDirectoryConfigFile, String connectionName) {
+    public static JdbcConnectionConfig getConfigFromHomeDirectoryFile(String homeDirectoryConfigFile, String connectionName) {
         ExtendedProperties configFileProperties = Io.getHomeDirectoryConfigFileProperties(homeDirectoryConfigFile);
-        ConnectionConfig connectionConfig = new ConnectionConfig();
+        JdbcConnectionConfig connectionConfig = new JdbcConnectionConfig();
         connectionConfig.setDataSourceOrDriverClassName(configFileProperties.getMandatoryProperty(connectionName + ".connection.class"));
         connectionConfig.setConnectString(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
         return connectionConfig;
     }
 
-    public static class ConnectionConfig {
-
-        private String dataSourceOrDriverClassName;
-        private String connectString;
-
-        public ConnectionConfig() {
-        }
-
-        public ConnectionConfig(String dataSourceOrDriverClassName, String connectString) {
-            this.dataSourceOrDriverClassName = dataSourceOrDriverClassName;
-            this.connectString = connectString;
-        }
-
-        public String getDataSourceOrDriverClassName() {
-            return dataSourceOrDriverClassName;
-        }
-
-        public void setDataSourceOrDriverClassName(String dataSourceOrDriverClassName) {
-            this.dataSourceOrDriverClassName = dataSourceOrDriverClassName;
-        }
-
-        public String getConnectString() {
-            return connectString;
-        }
-
-        public void setConnectString(String connectString) {
-            this.connectString = connectString;
-        }
-    }
-
-    public static Connection getConnection(ConnectionConfig connectionConfig) {
+    public static Connection getConnection(JdbcConnectionConfig connectionConfig) {
         try {
 
             if ("org.postgresql.ds.PGSimpleDataSource".equals(connectionConfig.getDataSourceOrDriverClassName())) {
