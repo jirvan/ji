@@ -67,15 +67,6 @@ public class JobPool {
     public static abstract class Task {
 
         protected LogBuffer outputBuffer;
-        private boolean forkLogToStdout;
-
-        protected Task() {
-            this(false);
-        }
-
-        protected Task(boolean forkLogToStdout) {
-            this.forkLogToStdout = forkLogToStdout;
-        }
 
         public abstract void perform();
 
