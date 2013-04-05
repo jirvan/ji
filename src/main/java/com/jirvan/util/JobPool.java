@@ -44,6 +44,7 @@ public class JobPool {
         this(false);
     }
 
+
     public JobPool(boolean forkLogToStdout) {
         this.forkLogToStdout = forkLogToStdout;
     }
