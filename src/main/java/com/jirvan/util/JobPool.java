@@ -31,30 +31,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.lang.*;
+import org.apache.log4j.*;
 
+import java.io.*;
 import java.util.*;
+
+import static com.jirvan.util.Assertions.assertNotNull;
 
 public class JobPool {
 
     private Map<Long, Job> currentJobs = new HashMap<Long, Job>();
     private int mostRecentJobId = 0;
-    private boolean forkLogToStdout;
 
-    public JobPool() {
-        this(false);
+    public Job startNewJobForTask(Logger logger, Task task) {
+        return startNewJobForTask(false, logger, task);
     }
 
-
-    public JobPool(boolean forkLogToStdout) {
-        this.forkLogToStdout = forkLogToStdout;
-    }
-
-    public Job startNewJobForTask(Task task) {
-        return startNewJobForTask(false, task);
-    }
-
-    public Job startNewJobForTask(boolean throwExceptions, Task task) {
-        Job job = new Job(++mostRecentJobId, forkLogToStdout);
+    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Task task) {
+        Job job = new Job(++mostRecentJobId, logger);
         Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
@@ -67,22 +61,9 @@ public class JobPool {
 
     public static abstract class Task {
 
-        protected LogBuffer outputBuffer;
+        protected StringWriter outputWriter;
 
         public abstract void perform();
-
-        public void output(String string, Object... args) {
-            String formattedString = String.format(string, args);
-            outputBuffer.append(formattedString);
-        }
-
-        public void outputLine(String string, Object... args) {
-            if (outputBuffer.length() > 0) {
-                outputBuffer.append('\n');
-            }
-            String formattedString = String.format(string, args);
-            outputBuffer.append(formattedString);
-        }
 
     }
 
@@ -90,12 +71,15 @@ public class JobPool {
 
         private long jobId;
         private Status status;
-        private LogBuffer logBuffer;
+        private StringWriter logWriter;
 
-        public Job(long jobId, boolean forkLogToStdout) {
+        public Job(long jobId, Logger logger) {
             this.jobId = jobId;
             this.status = Status.inProgress;
-            this.logBuffer = new LogBuffer(forkLogToStdout);
+            assertNotNull(logger, "logger must be provided");
+            logWriter = new StringWriter();
+            WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m"), logWriter);
+            logger.addAppender(writerAppender);
         }
 
         public static enum Status {
@@ -119,43 +103,9 @@ public class JobPool {
         }
 
         public String getLog() {
-            return logBuffer.toString();
+            return logWriter.toString();
         }
 
-    }
-
-    public static class LogBuffer {
-
-        private StringBuffer internalStringBuffer = new StringBuffer();
-        private boolean forkLogToStdout;
-
-        public LogBuffer(boolean forkLogToStdout) {
-            this.forkLogToStdout = forkLogToStdout;
-        }
-
-        public synchronized int length() {
-            return internalStringBuffer.length();
-        }
-
-        public synchronized LogBuffer append(String str) {
-            internalStringBuffer.append(str);
-            if (forkLogToStdout) {
-                System.out.append(str);
-            }
-            return this;
-        }
-
-        public synchronized LogBuffer append(char c) {
-            internalStringBuffer.append(c);
-            if (forkLogToStdout) {
-                System.out.append(c);
-            }
-            return this;
-        }
-
-        @Override public String toString() {
-            return internalStringBuffer.toString();
-        }
     }
 
     private static class JobRunnable implements Runnable {
@@ -168,7 +118,7 @@ public class JobPool {
             this.job = job;
             this.task = task;
             this.throwExceptions = throwExceptions;
-            task.outputBuffer = job.logBuffer;
+            task.outputWriter = job.logWriter;
         }
 
         public void run() {
@@ -186,15 +136,15 @@ public class JobPool {
                         throw new RuntimeException(t);
                     }
                 } else {
-                    if (job.logBuffer.length() > 0) {
-                        job.logBuffer.append('\n');
+                    if (job.logWriter.getBuffer().length() > 0) {
+                        job.logWriter.append('\n');
                     }
                     if (t instanceof MessageException) {
-                        job.logBuffer.append("\nJob finished with ERROR: ");
-                        job.logBuffer.append(t.getMessage());
+                        job.logWriter.append("\nJob finished with ERROR: ");
+                        job.logWriter.append(t.getMessage());
                     } else {
-                        job.logBuffer.append("\nJob finished with ERROR\n\n");
-                        job.logBuffer.append(Utl.getStackTrace(t));
+                        job.logWriter.append("\nJob finished with ERROR\n\n");
+                        job.logWriter.append(Utl.getStackTrace(t));
                     }
                 }
             }
