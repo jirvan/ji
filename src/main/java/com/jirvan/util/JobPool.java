@@ -78,7 +78,7 @@ public class JobPool {
             this.status = Status.inProgress;
             assertNotNull(logger, "logger must be provided");
             logWriter = new StringWriter();
-            WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m"), logWriter);
+            WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), logWriter);
             logger.addAppender(writerAppender);
         }
 
