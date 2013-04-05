@@ -152,6 +152,9 @@ public class JobPool {
             return this;
         }
 
+        @Override public String toString() {
+            return internalStringBuffer.toString();
+        }
     }
 
     private static class JobRunnable implements Runnable {
