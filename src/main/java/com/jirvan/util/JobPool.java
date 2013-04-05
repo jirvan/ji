@@ -38,14 +38,22 @@ public class JobPool {
 
     private Map<Long, Job> currentJobs = new HashMap<Long, Job>();
     private int mostRecentJobId = 0;
+    private boolean forkLogToStdout;
 
+    public JobPool() {
+        this(false);
+    }
+
+    public JobPool(boolean forkLogToStdout) {
+        this.forkLogToStdout = forkLogToStdout;
+    }
 
     public Job startNewJobForTask(Task task) {
         return startNewJobForTask(false, task);
     }
 
     public Job startNewJobForTask(boolean throwExceptions, Task task) {
-        Job job = new Job(++mostRecentJobId);
+        Job job = new Job(++mostRecentJobId, forkLogToStdout);
         Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
@@ -58,19 +66,30 @@ public class JobPool {
 
     public static abstract class Task {
 
-        protected StringBuffer outputBuffer;
+        protected LogBuffer outputBuffer;
+        private boolean forkLogToStdout;
+
+        protected Task() {
+            this(false);
+        }
+
+        protected Task(boolean forkLogToStdout) {
+            this.forkLogToStdout = forkLogToStdout;
+        }
 
         public abstract void perform();
 
         public void output(String string, Object... args) {
-            outputBuffer.append(String.format(string, args));
+            String formattedString = String.format(string, args);
+            outputBuffer.append(formattedString);
         }
 
         public void outputLine(String string, Object... args) {
             if (outputBuffer.length() > 0) {
                 outputBuffer.append('\n');
             }
-            outputBuffer.append(String.format(string, args));
+            String formattedString = String.format(string, args);
+            outputBuffer.append(formattedString);
         }
 
     }
@@ -79,12 +98,12 @@ public class JobPool {
 
         private long jobId;
         private Status status;
-        private StringBuffer logBuffer;
+        private LogBuffer logBuffer;
 
-        public Job(long jobId) {
+        public Job(long jobId, boolean forkLogToStdout) {
             this.jobId = jobId;
             this.status = Status.inProgress;
-            this.logBuffer = new StringBuffer();
+            this.logBuffer = new LogBuffer(forkLogToStdout);
         }
 
         public static enum Status {
@@ -109,6 +128,37 @@ public class JobPool {
 
         public String getLog() {
             return logBuffer.toString();
+        }
+
+    }
+
+    public static class LogBuffer {
+
+        private StringBuffer internalStringBuffer = new StringBuffer();
+        private boolean forkLogToStdout;
+
+        public LogBuffer(boolean forkLogToStdout) {
+            this.forkLogToStdout = forkLogToStdout;
+        }
+
+        public synchronized int length() {
+            return internalStringBuffer.length();
+        }
+
+        public synchronized LogBuffer append(String str) {
+            internalStringBuffer.append(str);
+            if (forkLogToStdout) {
+                System.out.append(str);
+            }
+            return this;
+        }
+
+        public synchronized LogBuffer append(char c) {
+            internalStringBuffer.append(c);
+            if (forkLogToStdout) {
+                System.out.append(c);
+            }
+            return this;
         }
 
     }
