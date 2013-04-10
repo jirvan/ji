@@ -30,13 +30,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import java.io.*;
+
 public class Assertions {
+
+    /**
+     * Asserts that a file does not exist.  If the file
+     * exists, then an {@link AssertionError} with a default message is thrown.
+     *
+     * @param file the file to be checked
+     * @throws AssertionError with a default message
+     * @see {@link #assertFileDoesNotExist(File, String);}
+     */
+    public static void assertFileDoesNotExist(File file) {
+        if (file.exists()) {
+            throw new AssertionError(String.format("File \"%s\" exists", file.getAbsolutePath()));
+        }
+    }
+
+    /**
+     * Asserts that a file does not exist.  If the file
+     * exists, then an {@link AssertionError} with the provided
+     * message is thrown (or a default message if provided message is null).
+     *
+     * @param file    the file to be checked
+     * @param message the message associated with failure
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertFileDoesNotExist(File);}
+     */
+    public static void assertFileDoesNotExist(File file, String message) {
+        if (file.exists()) {
+            throw message == null
+                  ? new AssertionError(String.format("File \"%s\" exists", file.getAbsolutePath()))
+                  : new AssertionError(message);
+        }
+    }
 
     /**
      * Asserts that a condition is true.  If the assertion
      * fails, then an {@link AssertionError} with the provided
      * message is thrown.
-     *
      *
      * @param condition the condition to be checked
      * @param message   the message associated with failure
@@ -61,7 +94,6 @@ public class Assertions {
      * Asserts that an object is an instance of the given class.  If the
      * assertion fails, then an {@link AssertionError} with the provided
      * message is thrown.
-     *
      *
      * @param object  the object to be checked
      * @param aClass  the class the object needs to be checked against
@@ -94,7 +126,6 @@ public class Assertions {
      * Asserts that an object is not null.  If the assertion fails, then
      * an {@link AssertionError} with the provided message is thrown.
      *
-     *
      * @param object  the object to be checked
      * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails
@@ -121,7 +152,6 @@ public class Assertions {
     /**
      * Asserts that an object is null.  If the assertion fails, then
      * an {@link AssertionError} with the provided message is thrown.
-     *
      *
      * @param object  the object to be checked
      * @param message the message associated with failure
