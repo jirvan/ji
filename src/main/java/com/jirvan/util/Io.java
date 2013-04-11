@@ -169,4 +169,17 @@ public class Io {
         }
     }
 
+    public static String getFileString(File file) {
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            try {
+                return readStreamIntoString(inputStream);
+            } finally {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

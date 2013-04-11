@@ -88,16 +88,15 @@ public class Json {
     }
 
     public static <T> T fromJsonResourceFile(Class anchorClass, String filename, Class<T> valueType, boolean ignoreUnknownProperties) {
-        try {
+        return fromJsonString(Io.getResourceFileString(anchorClass, filename), valueType, ignoreUnknownProperties);
+    }
 
-            String jsonString = Io.getResourceFileString(anchorClass, filename);
-            return ignoreUnknownProperties
-                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(jsonString, valueType)
-                   : OBJECT_MAPPER.readValue(jsonString, valueType);
+    public static <T> T fromJsonFile(File file, Class<T> valueType) {
+        return fromJsonString(Io.getFileString(file), valueType, false);
+    }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static <T> T fromJsonFile(File file, Class<T> valueType, boolean ignoreUnknownProperties) {
+        return fromJsonString(Io.getFileString(file), valueType, ignoreUnknownProperties);
     }
 
     private static ObjectMapper setUpObjectMapper(boolean ignoreUnknownProperties) {

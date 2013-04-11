@@ -67,6 +67,39 @@ public class Assertions {
     }
 
     /**
+     * Asserts that a file exists.  If the file does not
+     * exist, then an {@link AssertionError} with a default message
+     * is thrown.
+     *
+     * @param file the file to be checked
+     * @throws AssertionError with a default message
+     * @see {@link #assertFileDoesNotExist(File);}
+     */
+    public static void assertFileExists(File file) {
+        if (!file.exists()) {
+            throw new AssertionError(String.format("File \"%s\" does not exist", file.getAbsolutePath()));
+        }
+    }
+
+    /**
+     * Asserts that a file exists.  If the file does not
+     * exist, then an {@link AssertionError} with the provided
+     * message is thrown (or a default message if provided message is null).
+     *
+     * @param file    the file to be checked
+     * @param message the message associated with failure
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertFileDoesNotExist(File);}
+     */
+    public static void assertFileExists(File file, String message) {
+        if (!file.exists()) {
+            throw message == null
+                  ? new AssertionError(String.format("File \"%s\" does not exist", file.getAbsolutePath()))
+                  : new AssertionError(message);
+        }
+    }
+
+    /**
      * Asserts that a condition is true.  If the assertion
      * fails, then an {@link AssertionError} with the provided
      * message is thrown.
