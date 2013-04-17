@@ -30,10 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import org.hibernate.*;
-import org.hibernate.engine.spi.*;
-import org.hibernate.usertype.*;
-
 import java.io.*;
 import java.sql.*;
 import java.util.Date;
@@ -50,7 +46,7 @@ import java.util.regex.*;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
-public class Day implements Cloneable, UserType, Serializable, Comparable<Day> {
+public class Day implements Cloneable, Serializable, Comparable<Day> {
 
     private int year;
     private int monthInYear;
@@ -340,19 +336,6 @@ public class Day implements Cloneable, UserType, Serializable, Comparable<Day> {
         }
     }
 
-    //************  Hibernate UserType implementation ************
-    public int[] sqlTypes() {
-        return new int[]{Types.DATE};
-    }
-
-    public Class returnedClass() {
-        return Day.class;
-    }
-
-    public boolean equals(Object x, Object y) throws HibernateException {
-        return (x == y) || (x != null && x.equals(y));
-    }
-
     public int compareTo(Day anotherDay) {
         if (this.equals(anotherDay)) {
             return 0;
@@ -360,58 +343,6 @@ public class Day implements Cloneable, UserType, Serializable, Comparable<Day> {
             return -1;
         } else {
             return 1;
-        }
-    }
-
-    public int hashCode(Object x) throws HibernateException {
-        return x == null ? 0 : x.hashCode();
-    }
-
-    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-        Date date = rs.getTimestamp(names[0]);
-        if (rs.wasNull()) {
-            return null;
-        } else {
-            return new Day(date);
-        }
-    }
-
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
-        if (value == null) {
-            st.setNull(index, Types.DATE);
-        } else {
-            verifyType(value);
-            st.setTimestamp(index, ((Day) value).getTimestamp());
-        }
-    }
-
-    public Object deepCopy(Object value) throws HibernateException {
-        verifyType(value);
-        return clone();
-    }
-
-    public boolean isMutable() {
-        return true;
-    }
-
-    public Serializable disassemble(Object value) throws HibernateException {
-        verifyType(value);
-        return value == null ? null : ((Day) value).clone();
-    }
-
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        verifyType(cached);
-        return cached == null ? null : ((Day) cached).clone();
-    }
-
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        verifyType(original);
-        return original == null ? null : ((Day) original).clone();
-    }
-
-    private void verifyType(Object value) {
-        if (value != null && !(value instanceof Day)) {
-            throw new UnsupportedOperationException(String.format("expected an object of type %s", this.getClass().getName()));
         }
     }
 
