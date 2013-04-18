@@ -138,11 +138,14 @@ public class JobPool {
                 } else {
                     if (job.logWriter.getBuffer().length() > 0) {
                         job.logWriter.append('\n');
+                        System.err.println("");
                     }
                     if (t instanceof MessageException) {
+                        System.err.printf("\nJob finished with ERROR: %s\n\n", t.getMessage());
                         job.logWriter.append("\nJob finished with ERROR: ");
                         job.logWriter.append(t.getMessage());
                     } else {
+                        System.err.printf("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t));
                         job.logWriter.append("\nJob finished with ERROR\n\n");
                         job.logWriter.append(Utl.getStackTrace(t));
                     }
