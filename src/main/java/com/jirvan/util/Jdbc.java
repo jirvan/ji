@@ -170,31 +170,11 @@ public class Jdbc {
     }
 
     public static Connection getConnectionFromHomeDirectoryConfigFile(String homeDirectoryConfigFile, String connectionName) {
-        ExtendedProperties configFileProperties = Io.getHomeDirectoryConfigFileProperties(homeDirectoryConfigFile);
-        String datasourceOrClassName = configFileProperties.getMandatoryProperty(connectionName + ".connection.class");
         try {
-
-            if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceOrClassName)) {
-                return getPostgresDataSource(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring")).getConnection();
-            } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceOrClassName)) {
-                return getSqlServerDataSource(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring")).getConnection();
-            } else {
-                throw new RuntimeException(String.format("%s is not currently a supported DataSource or JDBC Driver class\n" +
-                                                         "(supported classes are: org.postgresql.ds.PGSimpleDataSource,\n" +
-                                                         "                        placeholder.for.sqlserver)", datasourceOrClassName));
-            }
-
+            return getDataSourceFromHomeDirectoryConfigFile(homeDirectoryConfigFile, connectionName).getConnection();
         } catch (SQLException e) {
             throw new SQLRuntimeException(e);
         }
-    }
-
-    public static JdbcConnectionConfig getConfigFromHomeDirectoryFile(String homeDirectoryConfigFile, String connectionName) {
-        ExtendedProperties configFileProperties = Io.getHomeDirectoryConfigFileProperties(homeDirectoryConfigFile);
-        JdbcConnectionConfig connectionConfig = new JdbcConnectionConfig();
-        connectionConfig.setDataSourceOrDriverClassName(configFileProperties.getMandatoryProperty(connectionName + ".connection.class"));
-        connectionConfig.setConnectString(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
-        return connectionConfig;
     }
 
     public static Connection getConnection(JdbcConnectionConfig connectionConfig) {

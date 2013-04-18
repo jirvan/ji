@@ -43,6 +43,14 @@ public class JdbcConnectionConfig<T> implements ConnectionConfig<T> {
         this.connectString = connectString;
     }
 
+    public static JdbcConnectionConfig fromHomeDirectoryConfigFile(String homeDirectoryConfigFile, String connectionName) {
+        ExtendedProperties configFileProperties = Io.getHomeDirectoryConfigFileProperties(homeDirectoryConfigFile);
+        JdbcConnectionConfig connectionConfig = new JdbcConnectionConfig();
+        connectionConfig.setDataSourceOrDriverClassName(configFileProperties.getMandatoryProperty(connectionName + ".connection.class"));
+        connectionConfig.setConnectString(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
+        return connectionConfig;
+    }
+
     public String getDataSourceOrDriverClassName() {
         return dataSourceOrDriverClassName;
     }

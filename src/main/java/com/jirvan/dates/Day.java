@@ -97,6 +97,10 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         return date == null ? null : new Day(date);
     }
 
+    public static Day from(Timestamp timestamp) {
+        return timestamp == null ? null : new Day(timestamp);
+    }
+
     public static Day from(Date date, TimeZone timeZone) {
         return date == null ? null : new Day(date, timeZone);
     }
