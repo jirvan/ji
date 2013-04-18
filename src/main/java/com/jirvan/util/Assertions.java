@@ -76,9 +76,7 @@ public class Assertions {
      * @see {@link #assertFileDoesNotExist(File);}
      */
     public static void assertFileExists(File file) {
-        if (!file.exists()) {
-            throw new AssertionError(String.format("File \"%s\" does not exist", file.getAbsolutePath()));
-        }
+        assertFileExists(file, null);
     }
 
     /**
@@ -95,6 +93,70 @@ public class Assertions {
         if (!file.exists()) {
             throw message == null
                   ? new AssertionError(String.format("File \"%s\" does not exist", file.getAbsolutePath()))
+                  : new AssertionError(message);
+        }
+    }
+
+    /**
+     * Asserts that a file exists and is a normal file (not for example
+     * a directory).  If the file does not exist or is not a file, then
+     * an {@link AssertionError} with a default message is thrown.
+     *
+     * @param file    the file to be checked
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertIsDirectory(File);}
+     */
+    public static void assertIsFile(File file) {
+        assertIsFile(file, null);
+    }
+
+    /**
+     * Asserts that a file exists and is a normal file (not for example
+     * a directory).  If the file does not exist or is not a file, then
+     * an {@link AssertionError} with the provided message is thrown
+     * (or a default message if provided message is null).
+     *
+     * @param file    the file to be checked
+     * @param message the message associated with failure
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertIsDirectory(File, String);}
+     */
+    public static void assertIsFile(File file, String message) {
+        if (!file.isFile()) {
+            throw message == null
+                  ? new AssertionError(String.format("File \"%s\" does not exist or is not a file", file.getAbsolutePath()))
+                  : new AssertionError(message);
+        }
+    }
+
+    /**
+     * Asserts that a file exists and is a directory (not for example
+     * a normal file).  If the file does not exist or is not a directory,
+     * then an {@link AssertionError} with a default message is thrown.
+     *
+     * @param file    the file to be checked
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertIsFile(File, String);}
+     */
+    public static void assertIsDirectory(File file) {
+        assertIsDirectory(file, null);
+    }
+
+    /**
+     * Asserts that a file exists and is a directory (not for example
+     * a normal file).  If the file does not exist or is not a directory,
+     * then an {@link AssertionError} with the provided message is thrown
+     * (or a default message if provided message is null).
+     *
+     * @param file    the file to be checked
+     * @param message the message associated with failure
+     * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
+     * @see {@link #assertIsFile(File, String);}
+     */
+    public static void assertIsDirectory(File file, String message) {
+        if (!file.isDirectory()) {
+            throw message == null
+                  ? new AssertionError(String.format("Directory \"%s\" does not exist or is not a directory", file.getAbsolutePath()))
                   : new AssertionError(message);
         }
     }
