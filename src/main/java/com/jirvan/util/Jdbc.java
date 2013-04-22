@@ -206,7 +206,22 @@ public class Jdbc {
         } else {
             throw new RuntimeException(String.format("%s is not currently a supported DataSource class\n" +
                                                      "(supported classes are: org.postgresql.ds.PGSimpleDataSource,\n" +
-                                                     "                        placeholder.for.sqlserver)", datasourceClassName));
+                                                     "                        net.sourceforge.jtds.jdbcx.JtdsDataSource)", datasourceClassName));
+        }
+
+    }
+
+    public static DataSource getDataSourceFrom(JdbcConnectionConfig jdbcConnectionConfig) {
+        String datasourceClassName = jdbcConnectionConfig.getDataSourceOrDriverClassName();
+
+        if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceClassName)) {
+            return getPostgresDataSource(jdbcConnectionConfig.getConnectString());
+        } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
+            return getSqlServerDataSource(jdbcConnectionConfig.getConnectString());
+        } else {
+            throw new RuntimeException(String.format("%s is not currently a supported DataSource class\n" +
+                                                     "(supported classes are: org.postgresql.ds.PGSimpleDataSource,\n" +
+                                                     "                        net.sourceforge.jtds.jdbcx.JtdsDataSource)", datasourceClassName));
         }
 
     }
