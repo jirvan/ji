@@ -46,4 +46,20 @@ public class Strings {
         }
         return false;
     }
+
+    public static boolean inIgnoreCase(String string, String[] strings) {
+        for (String thisString : strings) {
+            if (string == null) {
+                if (thisString == null) {
+                    return true;
+                }
+            } else {
+                if (string.equalsIgnoreCase(thisString)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -182,4 +182,18 @@ public class Io {
         }
     }
 
+    public static void deleteFiles(File tablesDir, final String filenameRegexpPattern) {
+        File[] files = tablesDir.listFiles(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.isFile() && pathname.getName().matches(filenameRegexpPattern);
+            }
+        });
+        if (files != null) {
+            for (File child : files) {
+                child.delete();
+                //System.out.printf("Would have deleted %s\n", child.getPath());
+            }
+        }
+    }
+
 }
