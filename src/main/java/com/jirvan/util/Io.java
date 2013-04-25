@@ -33,15 +33,30 @@ package com.jirvan.util;
 import java.io.*;
 import java.util.*;
 
-import static com.jirvan.util.AssertionMethods.assertNotNull;
+import static com.jirvan.util.Assertions.*;
 
 public class Io {
 
+    public static File ensureDirectoryExists(File directory) {
+        if (directory.exists()) {
+            if (!directory.isDirectory()) {
+                throw new RuntimeException(String.format("\"%s\" exists but is not a directory", directory.getAbsolutePath()));
+            } else {
+                return directory;
+            }
+        } else {
+            if (directory.mkdirs()) {
+                return directory;
+            } else {
+                throw new RuntimeException(String.format("Error creating directory \"%s\" (some parent directories may have been successfully created", directory.getAbsolutePath()));
+            }
+        }
+    }
 
     public static String getResourcePropertyValue(Class anchorClass, String propertiesFileRelativePath, String key) {
         Properties properties = getProperties(anchorClass, propertiesFileRelativePath);
         String version = properties.getProperty(key);
-        assertNotNull(String.format("%s not found in %s", key, propertiesFileRelativePath), version);
+        assertNotNull(version, String.format("%s not found in %s", key, propertiesFileRelativePath));
         return version;
     }
 

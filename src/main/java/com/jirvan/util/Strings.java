@@ -30,9 +30,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import java.util.*;
+
 public class Strings {
 
     public static boolean in(String string, String[] strings) {
+        for (String thisString : strings) {
+            if (string == null) {
+                if (thisString == null) {
+                    return true;
+                }
+            } else {
+                if (string.equals(thisString)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean in(String string, Collection<String> strings) {
         for (String thisString : strings) {
             if (string == null) {
                 if (thisString == null) {
