@@ -38,6 +38,14 @@ import java.util.*;
 
 public class Utl {
 
+    public static <T> ArrayList<T> newArrayList(T... items) {
+        ArrayList<T> list = new ArrayList<T>();
+        for (T item : items) {
+            list.add(item);
+        }
+        return list;
+    }
+
     public static boolean areEqual(Integer value1, Integer value2) {
         if (value1 == null) {
             return value2 == null;
