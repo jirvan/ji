@@ -102,7 +102,7 @@ public class Assertions {
      * a directory).  If the file does not exist or is not a file, then
      * an {@link AssertionError} with a default message is thrown.
      *
-     * @param file    the file to be checked
+     * @param file the file to be checked
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
      * @see {@link #assertIsDirectory(File);}
      */
@@ -134,7 +134,7 @@ public class Assertions {
      * a normal file).  If the file does not exist or is not a directory,
      * then an {@link AssertionError} with a default message is thrown.
      *
-     * @param file    the file to be checked
+     * @param file the file to be checked
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
      * @see {@link #assertIsFile(File, String);}
      */
@@ -238,7 +238,7 @@ public class Assertions {
      * an {@link AssertionError} is thrown.
      *
      * @param object the object to be checked
-     * @throws AssertionError with the provided message if the assertion fails
+     * @throws AssertionError if the assertion fails
      */
     public static void assertNotNull(Object object) {
         assertNotNull(object, null);
@@ -257,6 +257,49 @@ public class Assertions {
             throw message != null
                   ? new AssertionError(message)
                   : new AssertionError("Object was expected to be null");
+        }
+    }
+
+    /**
+     * Asserts that 2 objects are equal.  If the assertion fails, then
+     * an {@link AssertionError} is thrown.
+     *
+     * @param object1 the first object to be checked
+     * @param object2 the second object to be checked
+     * @throws AssertionError if the assertion fails
+     */
+    public static void assertEquals(Object object1, Object object2) {
+        assertEquals(object1, object2, null);
+    }
+
+    /**
+     * Asserts that 2 objects are equal.  If the assertion fails, then
+     * an {@link AssertionError} with the provided message is thrown.
+     *
+     * @param object1 the first object to be checked
+     * @param object2 the second object to be checked
+     * @param message the message associated with failure
+     * @throws AssertionError with the provided message if the assertion fails
+     */
+    public static void assertEquals(Object object1, Object object2, String message) {
+        if (object1 == null) {
+            if (object2 != null) {
+                throw new AssertionError(message != null ? message : String.format("Object1 was expected to be equal to Object2\n" +
+                                                                                   "(Object 1 was null and object 2 was \"%s\")",
+                                                                                   object2.toString()));
+            }
+        } else {
+            if (object2 == null) {
+                throw new AssertionError(message != null ? message : String.format("Object1 was expected to be equal to Object2\n" +
+                                                                                   "(Object 2 was null and object 1 was \"%s\")",
+                                                                                   object1.toString()));
+            } else if (!object2.equals(object1)) {
+                throw new AssertionError(message != null ? message : String.format("Object1 was expected to be equal to Object2\n" +
+                                                                                   "(Object 1 was \"%s\"" +
+                                                                                   " and Object 2 was \"%s\")",
+                                                                                   object1.toString(),
+                                                                                   object2.toString()));
+            }
         }
     }
 
