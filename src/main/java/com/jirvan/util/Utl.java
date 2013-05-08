@@ -158,6 +158,14 @@ public class Utl {
         }
     }
 
+    public static Long toLong(Date value) {
+        if (value == null) {
+            return null;
+        } else {
+            return value.getTime();
+        }
+    }
+
     public static String getStackTrace(Throwable t) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
