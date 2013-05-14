@@ -32,32 +32,57 @@ package com.jirvan.assorted;
 
 public class ErrorResponse extends Response {
 
-    private java.lang.String errorType;
-    private String errorMessage;
+    protected Error error;
 
-    public ErrorResponse(Throwable throwable) {
-        this.errorType = throwable.getClass().getSimpleName();
-        this.errorMessage = throwable.getMessage();
+    public ErrorResponse(String errorName, String errorMessage) {
+        this.error = new Error(errorName, errorMessage);
+    }
+
+    public ErrorResponse(String errorMessage) {
+        this.error = new Error(errorMessage);
+    }
+
+    protected ErrorResponse(Error error) {
+        this.error = error;
     }
 
     public boolean getSuccess() {
         return false;
     }
 
-    public String getErrorType() {
-        return errorType;
+    public Error getError() {
+        return error;
     }
 
-    public void setErrorType(String errorType) {
-        this.errorType = errorType;
-    }
+    public static class Error {
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+        private String name;
+        private String message;
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+        public Error(String name, String message) {
+            this.name = name;
+            this.message = message;
+        }
 
+        public Error(String message) {
+            this.name = "Error";
+            this.message = message;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }
