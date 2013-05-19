@@ -34,6 +34,9 @@ public class SuccessResponse extends Response {
 
     private java.lang.Object content;
 
+    public SuccessResponse() {
+    }
+
     public SuccessResponse(Object content) {
         this.content = content;
     }
