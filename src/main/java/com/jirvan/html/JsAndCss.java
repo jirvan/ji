@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.html;
 
+/** This needs to have functionality added for minifying everything into one file for production use **/
 public class JsAndCss {
 
     private String contextPath;
