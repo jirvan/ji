@@ -30,57 +30,105 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.html;
 
-/** This needs to have functionality added for minifying everything into one file for production use **/
+/**
+ * This needs to have functionality added for minifying everything into one file for production use *
+ */
 public class JsAndCss {
 
     private String contextPath;
+    private boolean suppressMinification;
+    private String minifiedHtml;
+    private String unminifiedHtml;
 
-    private String html;
-
-    public JsAndCss(String contextPath) {
+    private JsAndCss(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public static JsAndCss forContextPath(String contextPath) {
+        return new JsAndCss(contextPath);
     }
 
     public JsAndCss setJsPaths(String... jsPaths) {
         if (jsPaths != null && jsPaths.length > 0) {
-            StringBuilder stringBuilder = html != null ? new StringBuilder(html) : new StringBuilder();
+            StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
             for (String jsPath : jsPaths) {
-                if (stringBuilder.length() != 0) stringBuilder.append("\n");
-                stringBuilder.append(String.format("    <script src=\"%s/%s\"></script>", contextPath, jsPath));
+                if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
+                stringBuilder.append(String.format("<script src=\"%s/%s\"></script>", contextPath, jsPath));
             }
-            html = stringBuilder.toString();
+            unminifiedHtml = stringBuilder.toString();
         }
         return this;
     }
 
     public JsAndCss setCssPaths(String... cssPaths) {
         if (cssPaths != null && cssPaths.length > 0) {
-            StringBuilder stringBuilder = html != null ? new StringBuilder(html) : new StringBuilder();
+            StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
             for (String cssPath : cssPaths) {
-                if (stringBuilder.length() != 0) stringBuilder.append("\n");
-                stringBuilder.append(String.format("    <link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, cssPath));
+                if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
+                stringBuilder.append(String.format("<link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, cssPath));
             }
-            html = stringBuilder.toString();
+            unminifiedHtml = stringBuilder.toString();
         }
         return this;
     }
 
     public JsAndCss setIeOnlyCssPaths(String... ieOnlyCssPaths) {
         if (ieOnlyCssPaths != null && ieOnlyCssPaths.length > 0) {
-            StringBuilder stringBuilder = html != null ? new StringBuilder(html) : new StringBuilder();
-            stringBuilder.append("\n    <!--[if IE]>");
+            StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
+            if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
+            stringBuilder.append("<!--[if IE]>");
             for (String ieOnlyCssPath : ieOnlyCssPaths) {
-                if (stringBuilder.length() != 0) stringBuilder.append("\n");
-                stringBuilder.append(String.format("    <link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, ieOnlyCssPath));
+                stringBuilder.append(String.format("\n    <link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, ieOnlyCssPath));
             }
             stringBuilder.append("\n    <![endif]-->");
-            html = stringBuilder.toString();
+            unminifiedHtml = stringBuilder.toString();
         }
         return this;
     }
 
+    public JsAndCss suppressMinification(boolean suppressMinification) {
+        this.suppressMinification = suppressMinification;
+        return this;
+    }
+
+    public JsAndCss setMinifiedCssFile(String filePath) {
+        if (this.minifiedHtml != null) {
+            this.minifiedHtml += "\n    ";
+        } else {
+            this.minifiedHtml = "";
+        }
+        this.minifiedHtml += String.format("<link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, filePath);
+        return this;
+    }
+
+    public JsAndCss setMinifiedIeOnlyCssFile(String filePath) {
+        if (this.minifiedHtml != null) {
+            this.minifiedHtml += "\n    ";
+        } else {
+            this.minifiedHtml = "";
+        }
+        this.minifiedHtml += String.format("<!--[if IE]>\n" +
+                                           "    <link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>\n" +
+                                           "    <![endif]-->", contextPath, filePath);
+        return this;
+    }
+
+    public JsAndCss setMinifiedJsFile(String filePath) {
+        if (this.minifiedHtml != null) {
+            this.minifiedHtml += "\n    ";
+        } else {
+            this.minifiedHtml = "";
+        }
+        this.minifiedHtml += String.format("<script src=\"%s/%s\"></script>", contextPath, filePath);
+        return this;
+    }
+
     public String getHtml() {
-        return html == null ? "" : html;
+        if (suppressMinification) {
+            return unminifiedHtml == null ? "" : unminifiedHtml;
+        } else {
+            return minifiedHtml == null ? "" : minifiedHtml;
+        }
     }
 
 }
