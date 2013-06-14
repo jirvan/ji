@@ -30,49 +30,76 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.html;
 
+import javax.servlet.http.*;
+import java.util.*;
+
 /**
  * This needs to have functionality added for minifying everything into one file for production use *
  */
 public class JsAndCss {
 
+    private HttpServletRequest request;
     private String contextPath;
     private boolean suppressMinification;
     private String minifiedHtml;
     private String unminifiedHtml;
 
-    private JsAndCss(String contextPath) {
-        this.contextPath = contextPath;
+    private JsAndCss(HttpServletRequest httpServletRequest) {
+        this.request = httpServletRequest;
+        this.contextPath = httpServletRequest.getContextPath();
     }
 
-    public static JsAndCss forContextPath(String contextPath) {
-        return new JsAndCss(contextPath);
+    public static JsAndCss forRequest(HttpServletRequest httpRequest) {
+        return new JsAndCss(httpRequest);
     }
 
-    public JsAndCss setJsPaths(String... jsPaths) {
+    public JsAndCss addJsPathsFoundIn(String rootPath) {
+        return addJsPathsFoundIn(rootPath, ".js");
+    }
+
+    public JsAndCss addJsPathsFoundIn(String rootPath, String jsFileSuffix) {
+        return addJsPaths(getSortedFilePathsFoundIn(rootPath, jsFileSuffix));
+    }
+
+    public JsAndCss addCssPathsFoundIn(String rootPath) {
+        return addCssPathsFoundIn(rootPath, ".css");
+    }
+
+    public JsAndCss addCssPathsFoundIn(String rootPath, String cssFileSuffix) {
+        return addCssPaths(getSortedFilePathsFoundIn(rootPath, cssFileSuffix));
+    }
+
+    public JsAndCss addJsPaths(String... jsPaths) {
         if (jsPaths != null && jsPaths.length > 0) {
             StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
             for (String jsPath : jsPaths) {
                 if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
-                stringBuilder.append(String.format("<script src=\"%s/%s\"></script>", contextPath, jsPath));
+                stringBuilder.append(String.format("<script src=\"%s%s%s\"></script>",
+                                                   contextPath,
+                                                   jsPath.startsWith("/") ? "" : "/",
+                                                   jsPath));
             }
             unminifiedHtml = stringBuilder.toString();
         }
         return this;
     }
 
-    public JsAndCss setCssPaths(String... cssPaths) {
+    public JsAndCss addCssPaths(String... cssPaths) {
         if (cssPaths != null && cssPaths.length > 0) {
             StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
             for (String cssPath : cssPaths) {
                 if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
-                stringBuilder.append(String.format("<link rel=\"stylesheet\" href=\"%s/%s\" type=\"text/css\"/>", contextPath, cssPath));
+                stringBuilder.append(String.format("<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>",
+                                                   contextPath,
+                                                   cssPath.startsWith("/") ? "" : "/",
+                                                   cssPath));
             }
             unminifiedHtml = stringBuilder.toString();
         }
         return this;
     }
 
-    public JsAndCss setIeOnlyCssPaths(String... ieOnlyCssPaths) {
+    public JsAndCss addIeOnlyCssPaths(String... ieOnlyCssPaths) {
         if (ieOnlyCssPaths != null && ieOnlyCssPaths.length > 0) {
             StringBuilder stringBuilder = unminifiedHtml != null ? new StringBuilder(unminifiedHtml) : new StringBuilder();
             if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
@@ -128,6 +155,31 @@ public class JsAndCss {
             return unminifiedHtml == null ? "" : unminifiedHtml;
         } else {
             return minifiedHtml == null ? "" : minifiedHtml;
+        }
+    }
+
+    private String[] getSortedFilePathsFoundIn(String rootPath, String jsFileSuffix) {
+        ArrayList<String> jsPaths = new ArrayList<String>();
+        addUnsortedFilePathsFoundIn(rootPath, jsFileSuffix, jsPaths);
+        Collections.sort(jsPaths, new Comparator<String>() {
+            @Override public int compare(String path1, String path2) {
+                return path1.replaceAll(".*/", "").compareTo(path2.replaceAll(".*/", ""));
+            }
+        });
+        return jsPaths.toArray(new String[jsPaths.size()]);
+    }
+
+    private void addUnsortedFilePathsFoundIn(String rootPath, String fileSuffix, List<String> jsPaths) {
+        Set resourcePaths = request.getSession().getServletContext().getResourcePaths(rootPath.startsWith("/")
+                                                                                      ? rootPath
+                                                                                      : "/" + rootPath);
+        for (String path : (Set<String>) resourcePaths) {
+            if (path.endsWith(fileSuffix)) {   // path is the right kind of file - add
+                jsPaths.add(path);
+            } else if (path.endsWith("/")) {     // path is a directory - recurse
+                addUnsortedFilePathsFoundIn(path, fileSuffix, jsPaths);
+            } else {                             // paths is another type of file - ignore
+            }
         }
     }
 
