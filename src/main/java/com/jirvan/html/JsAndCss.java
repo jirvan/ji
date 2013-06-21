@@ -42,18 +42,23 @@ import java.util.regex.*;
  */
 public class JsAndCss {
 
-    public static String getHtmlFileRefs(HttpServletRequest request, String minifyConfigFile, boolean referToOriginalSourceFiles) {
+    public static String getHtmlFileRefs(HttpServletRequest request, String projectVersion, String minifyConfigFile, boolean referToOriginalSourceFiles) {
 
         // Get config
         MinifyConfig minifyConfig;
         try {
-            InputStream configFileInputStream = request.getSession().getServletContext().getResourceAsStream(minifyConfigFile.startsWith("/")
-                                                                                                             ? minifyConfigFile
-                                                                                                             : "/" + minifyConfigFile);
-            try {
-                minifyConfig = Json.fromJsonString(Io.readStreamIntoString(configFileInputStream), MinifyConfig.class);
-            } finally {
-                configFileInputStream.close();
+            String configFilePath = minifyConfigFile.startsWith("/")
+                                  ? minifyConfigFile
+                                  : "/" + minifyConfigFile;
+            InputStream configFileInputStream = request.getSession().getServletContext().getResourceAsStream(configFilePath);
+            if (configFileInputStream != null) {
+                try {
+                    minifyConfig = Json.fromJsonString(Io.readStreamIntoString(configFileInputStream), MinifyConfig.class);
+                } finally {
+                    configFileInputStream.close();
+                }
+            } else {
+                throw new RuntimeException(String.format("Config file \"%s\" not found", configFilePath));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -64,7 +69,7 @@ public class JsAndCss {
             if (referToOriginalSourceFiles) {
                 addPaths(minifyConfigFile, stringBuilder, false, "<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>", request, minifyConfig.cssFiles.sourceFiles);
             } else {
-                addPath(stringBuilder, "<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>", request.getContextPath(), minifyConfig.cssFiles.minFile);
+                addPath(stringBuilder, "<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>", request.getContextPath(), minifyConfig.cssFiles.minFile.replaceAll("\\$\\{version\\}", projectVersion));
             }
         }
         if (minifyConfig.ieOnlyCssFiles != null) {
@@ -73,7 +78,7 @@ public class JsAndCss {
             } else {
                 if (stringBuilder.length() != 0) stringBuilder.append("\n    ");
                 stringBuilder.append("<!--[if IE]>");
-                addPath(stringBuilder, "<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>", request.getContextPath(), minifyConfig.ieOnlyCssFiles.minFile);
+                addPath(stringBuilder, "<link rel=\"stylesheet\" href=\"%s%s%s\" type=\"text/css\"/>", request.getContextPath(), minifyConfig.ieOnlyCssFiles.minFile.replaceAll("\\$\\{version\\}", projectVersion));
                 stringBuilder.append("\n    <![endif]-->");
             }
         }
@@ -81,13 +86,14 @@ public class JsAndCss {
             if (referToOriginalSourceFiles) {
                 addPaths(minifyConfigFile, stringBuilder, false, "<script src=\"%s%s%s\"></script>", request, minifyConfig.jsFiles.sourceFiles);
             } else {
-                addPath(stringBuilder, "<script src=\"%s%s%s\"></script>", request.getContextPath(), minifyConfig.jsFiles.minFile);
+                addPath(stringBuilder, "<script src=\"%s%s%s\"></script>", request.getContextPath(), minifyConfig.jsFiles.minFile.replaceAll("\\$\\{version\\}", projectVersion));
             }
         }
 
         return stringBuilder.toString();
 
     }
+
 
     private static void addPaths(String minifyConfigFile, StringBuilder stringBuilder, boolean ieOnly, String tagTemplate, HttpServletRequest request, String... paths) {
         if (paths != null && paths.length > 0) {
