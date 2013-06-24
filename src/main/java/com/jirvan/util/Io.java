@@ -30,10 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import com.jirvan.lang.*;
+
 import java.io.*;
 import java.util.*;
 
-import static com.jirvan.util.Assertions.*;
+import static com.jirvan.util.Assertions.assertNotNull;
 
 public class Io {
 
@@ -135,7 +137,7 @@ public class Io {
         File homedir = getHomeDirectory();
         File configFile = new File(homedir, filename);
         if (!configFile.exists()) {
-            throw new RuntimeException("File (" + configFile.getAbsolutePath() + ") does not exist)");
+            throw new FileNotFoundRuntimeException("File \"" + configFile.getAbsolutePath() + "\" does not exist");
         }
         return configFile;
     }
@@ -147,7 +149,7 @@ public class Io {
         }
         File homedir = new File(usersHomePath);
         if (!homedir.exists()) {
-            throw new RuntimeException("Couldn't find home directory for user (" + homedir.getAbsolutePath() + " does not exist)");
+            throw new FileNotFoundRuntimeException("Couldn't find home directory for user (" + homedir.getAbsolutePath() + " does not exist)");
         }
         return homedir;
     }
