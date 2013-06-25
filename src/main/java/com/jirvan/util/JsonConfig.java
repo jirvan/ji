@@ -31,34 +31,104 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.lang.*;
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.node.*;
 
 import static com.jirvan.util.Assertions.assertNotNull;
 
-public abstract class JsonConfig<T> {
+public abstract class JsonConfig {
 
+    private String filename;
 
-    public static <T extends JsonConfig> T getFromHomeDirectoryFile(Class<T> clazz, String filename) {
+    public static <T> JsonConfig getFromHomeDirectoryFile(String filename) {
         try {
-            T config = Json.fromJsonFile(Io.getHomeDirectoryFile(filename), clazz);
+            JsonConfig config;
+            try {
+
+                JsonNode tree = Json.readTree(Io.getFileString(Io.getHomeDirectoryFile(filename)));
+                if (!(tree instanceof ObjectNode)) {
+                    throw new RuntimeException(String.format("Error in %s.\nFile should look something like this:\n{\n  \"type\" : \"com.acme.ThingyConfig\",\n.\n.\n.\n}\n",
+                                                             filename));
+                }
+                JsonNode typeNode = ((ObjectNode) tree).remove("type");
+                if (typeNode == null) {
+                    throw new RuntimeException(String.format("Error in %s.\nFile should look something like this:\n{\n  \"type\" : \"com.acme.ThingyConfig\",\n.\n.\n.\n}\n",
+                                                             filename));
+                }
+                Class configClass = Class.forName(typeNode.asText());
+
+                config = Json.<JsonConfig>treeToValue(tree, configClass);
+                JsonConfig.class.getDeclaredField("filename").set(config, filename);
+
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            config.validate();
+
             return config;
         } catch (FileNotFoundRuntimeException e) {
-            T dummyConfig = null;
-            try {
-                dummyConfig = clazz.newInstance();
-            } catch (Throwable t) {
-                throw e;
-            }
-            throw new FileNotFoundRuntimeException(String.format("%s.\nIt should look something like this:\n%s\n", e.getMessage(), Json.toJsonString(dummyConfig.createExample())));
+            throw new FileNotFoundRuntimeException(String.format("%s.\nIt should look something like this:\n{\n  \"type\" : \"com.acme.ThingyConfig\",\n.\n.\n.\n}\n", e.getMessage()));
         }
     }
 
-    protected abstract JsonConfig<T> createExample();
+    //    public static <T extends JsonConfig> T getFromHomeDirectoryFile(Class<T> clazz, String filename) {
+//        try {
+//            T config;
+//            try {
+//
+//                JsonNode tree = Json.readTree(Io.getFileString(Io.getHomeDirectoryFile(filename)));
+//                if (!(tree instanceof ObjectNode)) {
+//                    throw new RuntimeException(String.format("Error in %s.\nFile should look something like this:\n%s\n",
+//                                                             filename,
+//                                                             exampleJsonString(clazz)));
+//                }
+//                JsonNode typeNode = ((ObjectNode) tree).remove("type");
+//                if (typeNode == null) {
+//                    throw new RuntimeException(String.format("Error in %s, type must be provided.\nFile should look something like this:\n%s\n",
+//                                                             filename,
+//                                                             exampleJsonString(clazz)));
+//                }
+//                Class configClass = Class.forName(typeNode.asText());
+//
+//                config = (T)Json.treeToValue(tree, configClass);
+//
+//
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            return config;
+//        } catch (FileNotFoundRuntimeException e) {
+//            throw new FileNotFoundRuntimeException(String.format("%s.\nIt should look something like this:\n%s\n", e.getMessage(), exampleJsonString(clazz)));
+//        }
+//    }
+//
+    private static <T extends JsonConfig> String exampleJsonString(Class<T> clazz) {
+        T dummyConfig = null;
+        try {
+            dummyConfig = clazz.newInstance();
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+        return dummyConfig.exampleJsonString();
+    }
 
-    public void assertPropertyNotNull(String filename, String propertyName, Object propertyValue) {
+    protected abstract JsonConfig createExample();
+
+    protected abstract void validate();
+
+    public void assertPropertyNotNull(String propertyName, Object propertyValue) {
         assertNotNull(propertyValue, String.format("Error in %s, %s must be provided.\nFile should look something like this:\n%s\n",
-                                                   filename,
+                                                   filename == null ? "config file"
+                                                                    : filename,
                                                    propertyName,
-                                                   Json.toJsonString(createExample())));
+                                                   exampleJsonString()));
+    }
+
+    protected String exampleJsonString() {
+        return Json.toJsonString(createExample()).replaceFirst("\\{", "{\n  \"type\" : \"" + this.getClass().getName() + "\",");
     }
 
 }
