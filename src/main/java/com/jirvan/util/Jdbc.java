@@ -226,6 +226,21 @@ public class Jdbc {
 
     }
 
+    public static DataSource getDataSourceFrom(DataSourceConfig config) {
+        String datasourceClassName = config.getDataSourceClass();
+
+        if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceClassName)) {
+            return getPostgresDataSource(config.getConnectString());
+        } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
+            return getSqlServerDataSource(config.getConnectString());
+        } else {
+            throw new RuntimeException(String.format("%s is not currently a supported DataSource class\n" +
+                                                     "(supported classes are: org.postgresql.ds.PGSimpleDataSource,\n" +
+                                                     "                        net.sourceforge.jtds.jdbcx.JtdsDataSource)", datasourceClassName));
+        }
+
+    }
+
     public static DataSource getOracleDataSource(String connectString) {
         String userid;
         String password;
