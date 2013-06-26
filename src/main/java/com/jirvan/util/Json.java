@@ -33,6 +33,8 @@ package com.jirvan.util;
 import com.jirvan.dates.*;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.module.*;
+import org.codehaus.jackson.node.*;
 
 import java.io.*;
 
@@ -102,9 +104,48 @@ public class Json {
     private static ObjectMapper setUpObjectMapper(boolean ignoreUnknownProperties) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(Dates.getSerializerDeserializerModule());
+        objectMapper.registerModule(getJsonShapeShifterSerializerModule());
         objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         if (ignoreUnknownProperties) objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
+    }
+
+    private static SimpleModule getJsonShapeShifterSerializerModule() {
+        SimpleModule module = new SimpleModule("JsonShapeShifterSerializerModule", new Version(1, 0, 0, null));
+
+        module.addDeserializer(JsonShapeShifter.class, new JsonDeserializer<JsonShapeShifter>() {
+            public JsonShapeShifter deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+
+                ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
+
+                // Get and tree node, and remove type field
+                JsonNode jsonNode = mapper.readTree(jsonParser);
+                if (!(jsonNode instanceof ObjectNode)) {
+                    throw new RuntimeException("Expected JsonShapeShifter nodes to be ObjectNodes");
+                }
+                JsonNode typeNode = ((ObjectNode) jsonNode).remove("type");
+                if (typeNode == null) {
+                    throw new RuntimeException("Expected JsonShapeShifter node to have a type field");
+                }
+                if (!(typeNode instanceof TextNode)) {
+                    throw new RuntimeException("Expected type to be a text node");
+                }
+
+                // Determine the object class based on the type field
+                String className = typeNode.asText();
+                Class configClass = null;
+                try {
+                    configClass = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(String.format("JsonShapeShifter type \"%s\" is not a recognized class", className));
+                }
+
+                // Extract and return the object
+                return (JsonShapeShifter) mapper.treeToValue(jsonNode, configClass);
+            }
+        });
+
+        return module;
     }
 
 }
