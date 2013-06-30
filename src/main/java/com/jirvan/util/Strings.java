@@ -79,4 +79,116 @@ public class Strings {
         return false;
     }
 
+    public static String commaList(String[] strings) {
+        return join(strings, ',');
+    }
+
+    public static String commaEllipsesList(String[] strings, int maxItems) {
+        if (strings.length <= maxItems) {
+            return join(strings, ',');
+        } else {
+            List<String> list = new ArrayList<String>();
+            Iterator<String> iterator = Arrays.asList(strings).iterator();
+            int count = 0;
+            while (iterator.hasNext() && count < maxItems) {
+                count++;
+                list.add(iterator.next());
+            }
+            list.add("...");
+            return join(list, ',');
+        }
+    }
+
+    public static String commaEllipsesListToString(String[] strings, int maxItems) {
+        List<String> list = new ArrayList<String>();
+        Iterator iterator = Arrays.asList(strings).iterator();
+        int count = 0;
+        while (iterator.hasNext() && count < maxItems) {
+            count++;
+            list.add(iterator.next().toString());
+        }
+        if (strings.length > maxItems) {
+            list.add("...");
+        }
+        return join(list, ',');
+    }
+
+    public static String commaSpaceList(String[] strings) {
+        return join(strings, ", ");
+    }
+
+    public static String join(String[] strings, String joinString) {
+        StringBuffer buf = new StringBuffer();
+        for (String string : strings) {
+            if (buf.length() != 0) buf.append(joinString);
+            buf.append(string);
+        }
+        return buf.toString();
+    }
+
+    public static String join(String[] strings, char joinChar) {
+        StringBuffer buf = new StringBuffer();
+        for (String string : strings) {
+            if (buf.length() != 0) buf.append(joinChar);
+            buf.append(string);
+        }
+        return buf.toString();
+    }
+
+    public static String commaList(Collection<String> strings) {
+        return join(strings, ',');
+    }
+
+    public static String commaEllipsesList(Collection<String> strings, int maxItems) {
+        if (strings.size() <= maxItems) {
+            return join(strings, ',');
+        } else {
+            List<String> list = new ArrayList<String>();
+            Iterator<String> iterator = strings.iterator();
+            int count = 0;
+            while (iterator.hasNext() && count < maxItems) {
+                count++;
+                list.add(iterator.next());
+            }
+            list.add("...");
+            return join(list, ',');
+        }
+    }
+
+    public static String commaEllipsesListToString(Collection strings, int maxItems) {
+        List<String> list = new ArrayList<String>();
+        Iterator iterator = strings.iterator();
+        int count = 0;
+        while (iterator.hasNext() && count < maxItems) {
+            count++;
+            list.add(iterator.next().toString());
+        }
+        if (strings.size() > maxItems) {
+            list.add("...");
+        }
+        return join(list, ',');
+    }
+
+    public static String commaSpaceList(Collection<String> strings) {
+        return join(strings, ", ");
+    }
+
+    public static String join(Collection<String> strings, String joinString) {
+        StringBuffer buf = new StringBuffer();
+        for (String string : strings) {
+            if (buf.length() != 0) buf.append(joinString);
+            buf.append(string);
+        }
+        return buf.toString();
+    }
+
+    public static String join(Collection<String> strings, char joinChar) {
+        StringBuffer buf = new StringBuffer();
+        for (String string : strings) {
+            if (buf.length() != 0) buf.append(joinChar);
+            buf.append(string);
+        }
+        return buf.toString();
+    }
+
 }
