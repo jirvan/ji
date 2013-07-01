@@ -65,17 +65,26 @@ public class Dates {
 
     public static SimpleModule getSerializerDeserializerModule() {
         SimpleModule module = new SimpleModule("JiDatesSerializerModule", new Version(1, 0, 0, null));
+
         module.addSerializer(Month.class, new JsonSerializer<Month>() {
             public void serialize(Month value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
                 jgen.writeString(value.toString());
             }
         });
+        module.addDeserializer(Month.class, new JsonDeserializer<Month>() {
+            public Month deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Month.fromString((jsonNode.getTextValue()));
+            }
+        });
+
         module.addSerializer(Day.class, new JsonSerializer<Day>() {
             public void serialize(Day value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
                 jgen.writeString(value.toString());
             }
         });
-
         module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
             public Day deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
                 ObjectCodec oc = jsonParser.getCodec();
@@ -85,17 +94,26 @@ public class Dates {
             }
         });
 
-
         module.addSerializer(Hour.class, new JsonSerializer<Hour>() {
             public void serialize(Hour value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
                 jgen.writeString(value.toString());
             }
         });
+        module.addDeserializer(Hour.class, new JsonDeserializer<Hour>() {
+            public Hour deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Hour.fromString((jsonNode.getTextValue()));
+            }
+        });
+
         module.addSerializer(Minute.class, new JsonSerializer<Minute>() {
             public void serialize(Minute value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
                 jgen.writeString(value.toString());
             }
         });
+
         return module;
     }
 
