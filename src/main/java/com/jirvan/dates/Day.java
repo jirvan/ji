@@ -32,6 +32,7 @@ package com.jirvan.dates;
 
 import java.io.*;
 import java.sql.*;
+import java.text.*;
 import java.util.Date;
 import java.util.*;
 import java.util.regex.*;
@@ -47,6 +48,8 @@ import java.util.regex.*;
  * Gregorian calendar is assumed.
  */
 public class Day implements Cloneable, Serializable, Comparable<Day> {
+
+    private static final DateFormat JAVASCRIPT_DAY_FORMAT = new SimpleDateFormat("MMM d, yyyy");
 
     private int year;
     private int monthInYear;
@@ -321,6 +324,30 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         return String.format("%04d-%02d-%02d", year, monthInYear, dayInMonth);
     }
 
+    public String toJavascriptString() {
+        return JAVASCRIPT_DAY_FORMAT.format(getDate());
+    }
+
+    public static String toJavascriptString(Day day) {
+        return toJavascriptString(day, null);
+    }
+
+    public static String toJavascriptString(Day day, String valueIfNull) {
+        return day == null ? valueIfNull : JAVASCRIPT_DAY_FORMAT.format(day.getDate());
+    }
+
+    public String format(String pattern) {
+        return new SimpleDateFormat(pattern).format(getDate());
+    }
+
+    public static String format(Day day, String pattern) {
+        return format(day, pattern, null);
+    }
+
+    public static String format(Day day, String pattern, String valueIfNull) {
+        return day == null ? valueIfNull : new SimpleDateFormat(pattern).format(day.getDate());
+    }
+
     public String toFilenameSafeString() {
         return String.format("%04d%02d%02d", year, monthInYear, dayInMonth);
     }
@@ -329,14 +356,53 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         if (dateString == null) {
             return null;
         } else {
+
             Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)$").matcher(dateString);
-            if (!m.matches()) {
-                throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01)");
+            if (m.matches()) {
+                int year = Integer.parseInt(m.group(1));
+                int month = Integer.parseInt(m.group(2));
+                int day = Integer.parseInt(m.group(3));
+                return new Day(year, month, day);
             }
-            int year = Integer.parseInt(m.group(1));
-            int month = Integer.parseInt(m.group(2));
-            int day = Integer.parseInt(m.group(3));
-            return new Day(year, month, day);
+
+            m = Pattern.compile("^([a-z]{3}) (\\d\\d?), (\\d{4})$").matcher(dateString.toLowerCase());
+            if (m.matches()) {
+                int year = Integer.parseInt(m.group(3));
+                int day = Integer.parseInt(m.group(2));
+                String monthString = m.group(1);
+                int month;
+                if ("jan".equals(monthString)) {
+                    month = 1;
+                } else if ("feb".equals(monthString)) {
+                    month = 2;
+                } else if ("mar".equals(monthString)) {
+                    month = 3;
+                } else if ("apr".equals(monthString)) {
+                    month = 4;
+                } else if ("may".equals(monthString)) {
+                    month = 5;
+                } else if ("jun".equals(monthString)) {
+                    month = 6;
+                } else if ("jul".equals(monthString)) {
+                    month = 7;
+                } else if ("aug".equals(monthString)) {
+                    month = 8;
+                } else if ("sep".equals(monthString)) {
+                    month = 9;
+                } else if ("oct".equals(monthString)) {
+                    month = 10;
+                } else if ("nov".equals(monthString)) {
+                    month = 11;
+                } else if ("dec".equals(monthString)) {
+                    month = 12;
+                } else {
+                    throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")");
+                }
+                return new Day(year, month, day);
+            }
+
+            throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")");
+
         }
     }
 

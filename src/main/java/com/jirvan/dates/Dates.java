@@ -82,7 +82,7 @@ public class Dates {
 
         module.addSerializer(Day.class, new JsonSerializer<Day>() {
             public void serialize(Day value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-                jgen.writeString(value.toString());
+                jgen.writeString(value.toJavascriptString());
             }
         });
         module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
