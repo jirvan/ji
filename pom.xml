@@ -76,4 +76,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>com.jirvan.repo</id>
+            <name>Jirvan Repository</name>
+            <url>https://jirvan.com:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>com.jirvan.snapshotRepo</id>
+            <name>Jirvan Snapshot Repository</name>
+            <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
