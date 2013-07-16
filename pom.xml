@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
     <artifactId>ji</artifactId>
-    <version>1.0.27-SNAPSHOT</version>
+    <version>1.0.27</version>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -96,4 +96,8 @@
             <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+  <scm>
+    <tag>v1.0.27</tag>
+  </scm>
 </project>
