@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.jirvan</groupId>
         <artifactId>ji-maven-project</artifactId>
-        <version>1.0.10</version>
+        <version>1.0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
@@ -76,15 +76,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>com.jirvan.repo</id>
+            <url>https://jirvan.com:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>com.jirvan.snapshotRepo</id>
+            <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>com.jirvan.repo</id>
-            <name>Jirvan Repository</name>
             <url>https://jirvan.com:8081/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>com.jirvan.snapshotRepo</id>
-            <name>Jirvan Snapshot Repository</name>
             <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
