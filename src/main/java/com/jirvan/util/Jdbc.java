@@ -34,6 +34,7 @@ import com.jirvan.lang.*;
 import net.sourceforge.jtds.jdbcx.*;
 import oracle.jdbc.pool.*;
 import org.postgresql.ds.*;
+import org.postgresql.ds.common.*;
 
 import javax.sql.*;
 import java.sql.*;
@@ -119,7 +120,7 @@ public class Jdbc {
     }
 
     public static Connection getPostgresConnection(String connectString) throws SQLException {
-        return getPostgresDataSource(connectString).getConnection();
+        return getPostgresDataSource((String) connectString).getConnection();
     }
 
     public static Connection getOracleConnection(String connectString) throws SQLException {
@@ -136,10 +137,15 @@ public class Jdbc {
                                      password == null ? "" : password,
                                      database,
                                      server,
-                                     port).getConnection();
+                                     port,
+                                     PGSimpleDataSource.class).getConnection();
     }
 
     public static DataSource getPostgresDataSource(String connectString) {
+        return getPostgresDataSource(connectString, PGSimpleDataSource.class);
+    }
+
+    public static DataSource getPostgresDataSource(String connectString, Class dataSourceClass) {
         String userid;
         String password;
         String host;
@@ -166,7 +172,8 @@ public class Jdbc {
                                           password == null ? "" : password,
                                           database,
                                           host,
-                                          5432);
+                                          5432,
+                                          dataSourceClass);
     }
 
     public static Connection getConnectionFromHomeDirectoryConfigFile(String homeDirectoryConfigFile, String connectionName) {
@@ -181,7 +188,7 @@ public class Jdbc {
         try {
 
             if ("org.postgresql.ds.PGSimpleDataSource".equals(connectionConfig.getDataSourceOrDriverClassName())) {
-                return getPostgresDataSource(connectionConfig.getConnectString()).getConnection();
+                return getPostgresDataSource((String) connectionConfig.getConnectString()).getConnection();
             } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(connectionConfig.getDataSourceOrDriverClassName())) {
                 return getSqlServerDataSource(connectionConfig.getConnectString()).getConnection();
             } else {
@@ -200,7 +207,7 @@ public class Jdbc {
         String datasourceClassName = configFileProperties.getMandatoryProperty(connectionName + ".connection.class");
 
         if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceClassName)) {
-            return getPostgresDataSource(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
+            return getPostgresDataSource((String) configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
         } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
             return getSqlServerDataSource(configFileProperties.getMandatoryProperty(connectionName + ".connection.connectstring"));
         } else {
@@ -215,7 +222,7 @@ public class Jdbc {
         String datasourceClassName = jdbcConnectionConfig.getDataSourceOrDriverClassName();
 
         if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceClassName)) {
-            return getPostgresDataSource(jdbcConnectionConfig.getConnectString());
+            return getPostgresDataSource((String) jdbcConnectionConfig.getConnectString());
         } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
             return getSqlServerDataSource(jdbcConnectionConfig.getConnectString());
         } else {
@@ -229,14 +236,20 @@ public class Jdbc {
     public static DataSource getDataSourceFrom(DataSourceConfig config) {
         String datasourceClassName = config.getDataSourceClass();
 
-        if ("org.postgresql.ds.PGSimpleDataSource".equals(datasourceClassName)) {
-            return getPostgresDataSource(config.getConnectString());
-        } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
-            return getSqlServerDataSource(config.getConnectString());
-        } else {
-            throw new RuntimeException(String.format("%s is not currently a supported DataSource class\n" +
-                                                     "(supported classes are: org.postgresql.ds.PGSimpleDataSource,\n" +
-                                                     "                        net.sourceforge.jtds.jdbcx.JtdsDataSource)", datasourceClassName));
+        try {
+            if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                             "org.postgresql.ds.PGPoolingDataSource"})) {
+                return getPostgresDataSource(config.getConnectString(), Class.forName(datasourceClassName));
+            } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
+                return getSqlServerDataSource(config.getConnectString());
+            } else {
+                throw new RuntimeException(String.format("%s is not currently a supported DataSource class\n" +
+                                                         "(supported classes are: org.postgresql.ds.PGPoolingDataSource,\n" +
+                                                         "                        org.postgresql.ds.PGSimpleDataSource,\n" +
+                                                         "                        net.sourceforge.jtds.jdbcx.JtdsDataSource)", datasourceClassName));
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -347,15 +360,24 @@ public class Jdbc {
                                                    String password,
                                                    String database,
                                                    String server,
-                                                   int port) {
+                                                   int port,
+                                                   Class dataSourceClass) {
 
-        PGSimpleDataSource pgDataSource = new PGSimpleDataSource();
+//        org.postgresql.ds.PGPoolingDataSource pgDataSource = new org.postgresql.ds.PGPoolingDataSource();
+        BaseDataSource pgDataSource = null;
+        try {
+            pgDataSource = (BaseDataSource) dataSourceClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         pgDataSource.setUser(user);
         pgDataSource.setPassword(password);
         pgDataSource.setDatabaseName(database);
         pgDataSource.setServerName(server);
         pgDataSource.setPortNumber(port);
-        return pgDataSource;
+        return (DataSource) pgDataSource;
 
     }
 
