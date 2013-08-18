@@ -31,7 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.regex.*;
 
 /**
@@ -75,6 +77,22 @@ public class Month {
         calendar.setTime(date);
         this.year = calendar.get(GregorianCalendar.YEAR);
         this.monthInYear = calendar.get(GregorianCalendar.MONTH) + 1;
+    }
+
+    public static Month from(GregorianCalendar calendar) {
+        return calendar == null ? null : new Month(calendar);
+    }
+
+    public static Month from(Date date) {
+        return date == null ? null : new Month(date);
+    }
+
+    public static Month from(Timestamp timestamp) {
+        return timestamp == null ? null : new Month(timestamp);
+    }
+
+    public static Month from(Date date, TimeZone timeZone) {
+        return date == null ? null : new Month(date, timeZone);
     }
 
     public static Month current() {
