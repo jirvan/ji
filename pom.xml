@@ -10,6 +10,12 @@
     <version>1.0.31-SNAPSHOT</version>
     <dependencies>
         <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>1.8</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>3.2.0.RELEASE</version>
