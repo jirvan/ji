@@ -73,6 +73,38 @@ public class CsvTableImporter {
         return importFromFile(connection, tableName, columnMappings, ignoreColumns, timestampFormatOverride, commitInterval, dataFile, false);
     }
 
+    public static long importFromResourceFile(DataSource dataSource, String tableName, Class anchorClass, String fileRelativePath) {
+        return importFromResourceFile(dataSource, tableName, null, null, null, 0, anchorClass, fileRelativePath, false);
+    }
+
+    public static long importFromResourceFile(Connection connection, String tableName, Class anchorClass, String fileRelativePath) {
+        return importFromResourceFile(connection, tableName, null, null, null, 0, anchorClass, fileRelativePath, false);
+    }
+
+    public static long importFromResourceFile(DataSource dataSource,
+                                              String tableName,
+                                              DateFormat timestampFormatOverride,
+                                              Class anchorClass,
+                                              String fileRelativePath) {
+        return importFromResourceFile(dataSource, tableName, null, null, timestampFormatOverride, 0, anchorClass, fileRelativePath, false);
+    }
+
+    public static long importFromResourceFile(Connection connection,
+                                              String tableName,
+                                              DateFormat timestampFormatOverride,
+                                              Class anchorClass,
+                                              String fileRelativePath) {
+        return importFromResourceFile(connection, tableName, null, null, timestampFormatOverride, 0, anchorClass, fileRelativePath, false);
+    }
+
+    public static long importFromResourceFile(DataSource dataSource, String tableName, Map columnMappings, String[] ignoreColumns, DateFormat timestampFormatOverride, int commitInterval, Class anchorClass, String fileRelativePath) {
+        return importFromResourceFile(dataSource, tableName, columnMappings, ignoreColumns, timestampFormatOverride, commitInterval, anchorClass, fileRelativePath, false);
+    }
+
+    public static long importFromResourceFile(Connection connection, String tableName, Map columnMappings, String[] ignoreColumns, DateFormat timestampFormatOverride, int commitInterval, Class anchorClass, String fileRelativePath) {
+        return importFromResourceFile(connection, tableName, columnMappings, ignoreColumns, timestampFormatOverride, commitInterval, anchorClass, fileRelativePath, false);
+    }
+
     public static long importFromFile(DataSource dataSource,
                                       String tableName,
                                       Map columnMappings,
@@ -103,6 +135,121 @@ public class CsvTableImporter {
                                       File dataFile,
                                       boolean resetAutonumberedPrimaryKey) {
         try {
+            return importFromReader(connection,
+                                    tableName,
+                                    columnMappings,
+                                    ignoreColumns,
+                                    timestampFormatOverride,
+                                    commitInterval,
+                                    new FileReader(dataFile),
+                                    resetAutonumberedPrimaryKey);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long importFromResourceFile(Connection connection,
+                                              String tableName,
+                                              Map columnMappings,
+                                              String[] ignoreColumns,
+                                              DateFormat timestampFormatOverride,
+                                              int commitInterval,
+                                              Class anchorClass,
+                                              String fileRelativePath,
+                                              boolean resetAutonumberedPrimaryKey) {
+        try {
+            InputStream inputStream = anchorClass.getResourceAsStream(fileRelativePath);
+            try {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                try {
+                    return importFromReader(connection,
+                                            tableName,
+                                            columnMappings,
+                                            ignoreColumns,
+                                            timestampFormatOverride,
+                                            commitInterval,
+                                            inputStreamReader,
+                                            resetAutonumberedPrimaryKey);
+                } finally {
+                    inputStreamReader.close();
+                }
+            } finally {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long importFromResourceFile(DataSource dataSource,
+                                              String tableName,
+                                              Map columnMappings,
+                                              String[] ignoreColumns,
+                                              DateFormat timestampFormatOverride,
+                                              int commitInterval,
+                                              Class anchorClass,
+                                              String fileRelativePath,
+                                              boolean resetAutonumberedPrimaryKey) {
+        try {
+            InputStream inputStream = anchorClass.getResourceAsStream(fileRelativePath);
+            try {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                try {
+                    return importFromReader(dataSource,
+                                            tableName,
+                                            columnMappings,
+                                            ignoreColumns,
+                                            timestampFormatOverride,
+                                            commitInterval,
+                                            inputStreamReader,
+                                            resetAutonumberedPrimaryKey);
+                } finally {
+                    inputStreamReader.close();
+                }
+            } finally {
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long importFromReader(DataSource dataSource,
+                                        String tableName,
+                                        Map columnMappings,
+                                        String[] ignoreColumns,
+                                        DateFormat timestampFormatOverride,
+                                        int commitInterval,
+                                        Reader reader,
+                                        boolean resetAutonumberedPrimaryKey) {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                return importFromReader(connection,
+                                        tableName,
+                                        columnMappings,
+                                        ignoreColumns,
+                                        timestampFormatOverride,
+                                        commitInterval,
+                                        reader,
+                                        resetAutonumberedPrimaryKey);
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long importFromReader(Connection connection,
+                                        String tableName,
+                                        Map columnMappings,
+                                        String[] ignoreColumns,
+                                        DateFormat timestampFormatOverride,
+                                        int commitInterval,
+                                        Reader reader,
+                                        boolean resetAutonumberedPrimaryKey) {
+        try {
 
             boolean databaseIsOracle;
             try {
@@ -111,12 +258,12 @@ public class CsvTableImporter {
                 throw new SQLRuntimeException(e);
             }
 
-            CSVReader reader = new CSVReader(new FileReader(dataFile));
+            CSVReader csvReader = new CSVReader(reader);
             int lineNumber = 1;
             try {
 
                 // Get the column names
-                String[] columnNames = reader.readNext();
+                String[] columnNames = csvReader.readNext();
                 if (columnNames == null || columnNames.length == 0) {
                     throw new RuntimeException("First row is empty (expected column names");
                 }
@@ -177,7 +324,7 @@ public class CsvTableImporter {
                     try {
                         String[] nextLine;
                         int rowsWithoutCommit = 0;
-                        while ((nextLine = reader.readNext()) != null) {
+                        while ((nextLine = csvReader.readNext()) != null) {
                             lineNumber++;
 
                             if (nextLine.length == 1 && (nextLine[0] == null || nextLine[0].trim().length() == 0)) {
@@ -273,7 +420,7 @@ public class CsvTableImporter {
                 }
 
             } finally {
-                reader.close();
+                csvReader.close();
             }
 
             if (resetAutonumberedPrimaryKey) {
