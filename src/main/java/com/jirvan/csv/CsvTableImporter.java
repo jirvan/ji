@@ -40,6 +40,7 @@ import java.math.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+import static com.jirvan.util.Assertions.*;
 
 public class CsvTableImporter {
 
@@ -249,6 +250,8 @@ public class CsvTableImporter {
                                         int commitInterval,
                                         Reader reader,
                                         boolean resetAutonumberedPrimaryKey) {
+        assertNotNull(connection, "connection is null");
+        assertNotNull(connection, "tableName is null");
         try {
 
             boolean databaseIsOracle;
@@ -283,7 +286,7 @@ public class CsvTableImporter {
                 for (int i = 0; i < columnNames.length; i++) {
 
                     // Add to the sql buffer and the parameter string buffer
-                    if (!Strings.in(columnNames[i], ignoreColumns)) {
+                    if (ignoreColumns == null || !Strings.in(columnNames[i], ignoreColumns)) {
                         if (sqlBuffer.length() == 0) {
                             sqlBuffer.append("insert into " + tableName + " (\n   ");
                             sqlParameterBuffer.append('?');
@@ -344,7 +347,7 @@ public class CsvTableImporter {
                                 Vector parameters = new Vector();
                                 int parameterNumber = 0;
                                 for (int i = 0; i < nextLine.length; i++) {
-                                    if (!Strings.in(columnNames[i], ignoreColumns)) {
+                                    if (ignoreColumns == null || !Strings.in(columnNames[i], ignoreColumns)) {
                                         parameterNumber++;
                                         try {
                                             if (nextLine[i] == null || nextLine[i].length() == 0) {
