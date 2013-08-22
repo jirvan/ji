@@ -40,6 +40,7 @@ import java.math.*;
 import java.sql.*;
 import java.text.*;
 import java.util.*;
+
 import static com.jirvan.util.Assertions.*;
 
 public class CsvTableImporter {
@@ -160,6 +161,7 @@ public class CsvTableImporter {
                                               boolean resetAutonumberedPrimaryKey) {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(fileRelativePath);
+            assertNotNull(inputStream, String.format("Couldn't access resource \"%s\" anchored by \"%s\"", fileRelativePath, anchorClass.getName()));
             try {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 try {
@@ -193,6 +195,7 @@ public class CsvTableImporter {
                                               boolean resetAutonumberedPrimaryKey) {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(fileRelativePath);
+            assertNotNull(inputStream, String.format("Couldn't access resource \"%s\" anchored by \"%s\"", fileRelativePath, anchorClass.getName()));
             try {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 try {
