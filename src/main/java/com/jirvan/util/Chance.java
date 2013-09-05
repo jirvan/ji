@@ -52,22 +52,22 @@ public class Chance {
 
     public static <T> T oneOf(int firstWeighting,
                               Object firstObject,
-                              Object... remainingWeightsAndTasks) {
+                              Object... remainingWeightsAndObjects) {
         if (firstObject instanceof Task) {
             RandomObjectFactory<Task> randomActionFactory = new RandomObjectFactory<Task>(seed,
                                                                                           firstWeighting, (Task) firstObject,
-                                                                                          remainingWeightsAndTasks);
+                                                                                          remainingWeightsAndObjects);
             randomActionFactory.getRandomObject().perform();
             return null;
         } else if (firstObject instanceof SupplierTask) {
             RandomObjectFactory<SupplierTask> randomActionFactory = new RandomObjectFactory<SupplierTask>(seed,
                                                                                                           firstWeighting, (SupplierTask) firstObject,
-                                                                                                          remainingWeightsAndTasks);
+                                                                                                          remainingWeightsAndObjects);
             return (T) randomActionFactory.getRandomObject().perform();
         } else {
             RandomObjectFactory<T> randomActionFactory = new RandomObjectFactory<T>(seed,
                                                                                     firstWeighting, (T) firstObject,
-                                                                                    remainingWeightsAndTasks);
+                                                                                    remainingWeightsAndObjects);
             return randomActionFactory.getRandomObject();
         }
     }
