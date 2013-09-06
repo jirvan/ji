@@ -40,15 +40,25 @@ public class RandomObjectFactory<T> {
     public RandomObjectFactory(int firstWeighting,
                                T firstObject,
                                Object... remainingWeightsAndObjects) {
-        this(null, firstWeighting, firstObject, remainingWeightsAndObjects);
+        this((Long) null, firstWeighting, firstObject, remainingWeightsAndObjects);
     }
 
     public RandomObjectFactory(Long seed,
                                int firstWeighting,
                                T firstObject,
                                Object... remainingWeightsAndObjects) {
+        this(seed == null ? new Random() : new Random(seed),
+             firstWeighting,
+             firstObject,
+             remainingWeightsAndObjects);
+    }
 
-        random = seed == null ? new Random() : new Random(seed);
+    public RandomObjectFactory(Random random,
+                               int firstWeighting,
+                               T firstObject,
+                               Object... remainingWeightsAndObjects) {
+
+        this.random = random;
 
         // Create array of weighted objects sorted by descending weight
         List<WeightedObject> weightedObjectsList = new ArrayList<WeightedObject>();
