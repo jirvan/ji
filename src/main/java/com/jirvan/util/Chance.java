@@ -34,16 +34,18 @@ import java.util.*;
 
 public class Chance {
 
-    private static Long seed;
     private static Random random = new Random();
 
     public static void resetSeed(long newSeed) {
-        seed = newSeed;
-        random = new Random(newSeed);
+        Chance.random = new Random(newSeed);
     }
 
-    public static void resetSeedRandom() {
-        random = new Random();
+    public static void resetRandom(Random random) {
+        Chance.random = random;
+    }
+
+    public static void resetRandom() {
+        Chance.random = new Random();
     }
 
     public static boolean percent(int percentageChance) {
@@ -54,20 +56,20 @@ public class Chance {
                               Object firstObject,
                               Object... remainingWeightsAndObjects) {
         if (firstObject instanceof Task) {
-            RandomObjectFactory<Task> randomActionFactory = new RandomObjectFactory<Task>(seed,
-                                                                                          firstWeighting, (Task) firstObject,
-                                                                                          remainingWeightsAndObjects);
+            RandomObjectFactory<Task> randomActionFactory = new RandomObjectFactory<>(random,
+                                                                                      firstWeighting, (Task) firstObject,
+                                                                                      remainingWeightsAndObjects);
             randomActionFactory.getRandomObject().perform();
             return null;
         } else if (firstObject instanceof SupplierTask) {
-            RandomObjectFactory<SupplierTask> randomActionFactory = new RandomObjectFactory<SupplierTask>(seed,
-                                                                                                          firstWeighting, (SupplierTask) firstObject,
-                                                                                                          remainingWeightsAndObjects);
+            RandomObjectFactory<SupplierTask> randomActionFactory = new RandomObjectFactory<>(random,
+                                                                                              firstWeighting, (SupplierTask) firstObject,
+                                                                                              remainingWeightsAndObjects);
             return (T) randomActionFactory.getRandomObject().perform();
         } else {
-            RandomObjectFactory<T> randomActionFactory = new RandomObjectFactory<T>(seed,
-                                                                                    firstWeighting, (T) firstObject,
-                                                                                    remainingWeightsAndObjects);
+            RandomObjectFactory<T> randomActionFactory = new RandomObjectFactory<>(random,
+                                                                                   firstWeighting, (T) firstObject,
+                                                                                   remainingWeightsAndObjects);
             return randomActionFactory.getRandomObject();
         }
     }
