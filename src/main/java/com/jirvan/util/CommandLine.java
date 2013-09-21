@@ -39,10 +39,12 @@ import static com.jirvan.util.Assertions.*;
 class LogStreamer extends Thread {
 
     private InputStream inputStream;
+    private String logLinePrefix;
     private Logger log;
 
-    LogStreamer(InputStream inputStream, Logger log) {
+    LogStreamer(InputStream inputStream, String logLinePrefix, Logger log) {
         this.inputStream = inputStream;
+        this.logLinePrefix = logLinePrefix;
         this.log = log;
     }
 
@@ -52,7 +54,11 @@ class LogStreamer extends Thread {
             BufferedReader br = new BufferedReader(isr);
             String line = null;
             while ((line = br.readLine()) != null) {
-                log.info(line);
+                if (logLinePrefix != null) {
+                    log.info(logLinePrefix + line);
+                } else {
+                    log.info(line);
+                }
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -63,21 +69,17 @@ class LogStreamer extends Thread {
 public class CommandLine {
 
     public static void execute(Logger log, String command) {
-        execute(log, command, null);
+        execute(null, log, command);
     }
 
-    public static void execute(Logger log, String command, String input) {
+    public static void execute(String logLinePrefix, Logger log, String command) {
         assertNotNull(command, "command is null");
         try {
 
-            log.info(String.format("Executing \"%s\"", command));
+            log.info(String.format("%sExecuting \"%s\"", logLinePrefix == null ? "" : logLinePrefix, command));
             Process proc = Runtime.getRuntime().exec(command);
-            new LogStreamer(proc.getErrorStream(), log).start();
-            new LogStreamer(proc.getInputStream(), log).start();
-            Thread.sleep(3000l);
-            if (input != null) {
-                proc.getOutputStream().write(input.getBytes());
-            }
+            new LogStreamer(proc.getErrorStream(), logLinePrefix, log).start();
+            new LogStreamer(proc.getInputStream(), logLinePrefix, log).start();
             if (proc.waitFor() != 0) {
                 throw new RuntimeException(String.format("Error executing \"%s\"", command));
             }
