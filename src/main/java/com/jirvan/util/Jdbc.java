@@ -145,35 +145,44 @@ public class Jdbc {
         return getPostgresDataSource(connectString, PGSimpleDataSource.class);
     }
 
+    public static class PostgresConnectParameters {
+        public String username;
+        public String password;
+        public String host;
+        public String database;
+    }
+
     public static DataSource getPostgresDataSource(String connectString, Class dataSourceClass) {
-        String userid;
-        String password;
-        String host;
-        String database;
+        PostgresConnectParameters postgresConnectParameters = extractPostgresConnectParameters(connectString);
+        return Jdbc.getPostgresDataSource(postgresConnectParameters.username,
+                                          postgresConnectParameters.password == null ? "" : postgresConnectParameters.password,
+                                          postgresConnectParameters.database,
+                                          postgresConnectParameters.host,
+                                          5432,
+                                          dataSourceClass);
+    }
+
+    private static PostgresConnectParameters extractPostgresConnectParameters(String connectString) {
+        PostgresConnectParameters postgresConnectParameters = new PostgresConnectParameters();
         Matcher noPasswordMatcher = Pattern.compile("^([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
         if (noPasswordMatcher.matches()) {
-            userid = noPasswordMatcher.group(1);
-            password = null;
-            host = noPasswordMatcher.group(2);
-            database = noPasswordMatcher.group(3);
+            postgresConnectParameters.username = noPasswordMatcher.group(1);
+            postgresConnectParameters.password = null;
+            postgresConnectParameters.host = noPasswordMatcher.group(2);
+            postgresConnectParameters.database = noPasswordMatcher.group(3);
         } else {
             Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
             if (withPasswordMatcher.matches()) {
-                userid = withPasswordMatcher.group(1);
-                password = withPasswordMatcher.group(2);
-                host = withPasswordMatcher.group(3);
-                database = withPasswordMatcher.group(4);
+                postgresConnectParameters.username = withPasswordMatcher.group(1);
+                postgresConnectParameters.password = withPasswordMatcher.group(2);
+                postgresConnectParameters.host = withPasswordMatcher.group(3);
+                postgresConnectParameters.database = withPasswordMatcher.group(4);
             } else {
                 throw new RuntimeException("Invalid PostgreSQL connect string \"" + connectString + "\"\n" +
                                            "(expected something of the form \"<user>/<password>@<server>/<database>\"");
             }
         }
-        return Jdbc.getPostgresDataSource(userid,
-                                          password == null ? "" : password,
-                                          database,
-                                          host,
-                                          5432,
-                                          dataSourceClass);
+        return postgresConnectParameters;
     }
 
     public static Connection getConnectionFromHomeDirectoryConfigFile(String homeDirectoryConfigFile, String connectionName) {
@@ -252,6 +261,42 @@ public class Jdbc {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public static String getDatabaseNameFrom(DataSourceConfig config) {
+        String datasourceClassName = config.getDataSourceClass();
+        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+            return extractPostgresConnectParameters(config.getConnectString()).database;
+        } else {
+            throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +
+                                                     "(supported classes are: org.postgresql.ds.PGPoolingDataSource,\n" +
+                                                     "                        org.postgresql.ds.PGSimpleDataSource)", datasourceClassName));
+        }
+    }
+
+    public static String getUsernameFrom(DataSourceConfig config) {
+        String datasourceClassName = config.getDataSourceClass();
+        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+            return extractPostgresConnectParameters(config.getConnectString()).username;
+        } else {
+            throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +
+                                                     "(supported classes are: org.postgresql.ds.PGPoolingDataSource,\n" +
+                                                     "                        org.postgresql.ds.PGSimpleDataSource)", datasourceClassName));
+        }
+    }
+
+    public static PostgresConnectParameters getConnectParametersFrom(DataSourceConfig config) {
+        String datasourceClassName = config.getDataSourceClass();
+        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+            return extractPostgresConnectParameters(config.getConnectString());
+        } else {
+            throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +
+                                                     "(supported classes are: org.postgresql.ds.PGPoolingDataSource,\n" +
+                                                     "                        org.postgresql.ds.PGSimpleDataSource)", datasourceClassName));
+        }
     }
 
     public static DataSource getOracleDataSource(String connectString) {
