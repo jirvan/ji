@@ -42,17 +42,25 @@ public class CsvTableExporter {
 
     private static DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
+    public static long exportToFile(DataSource dataSource, String tableName, File outFile) {
+        return exportToFile(dataSource, tableName, null, null, outFile);
+    }
+
     public static long exportToFile(DataSource dataSource, String tableName, String sql, String whereClauseCondition, File outFile) {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                return exportToFile(connection, tableName, sql, whereClauseCondition, outFile);
+                return exportToFile((Connection) connection, (String) tableName, (String) sql, (String) whereClauseCondition, (File) outFile);
             } finally {
                 connection.close();
             }
         } catch (SQLException e) {
             throw new SQLRuntimeException(e);
         }
+    }
+
+    public static long exportToFile(Connection connection, String tableName, File outFile) {
+        return exportToFile(connection, tableName, null, null, outFile);
     }
 
     public static long exportToFile(Connection connection, String tableName, String sql, String whereClauseCondition, File outFile) {
