@@ -40,15 +40,23 @@ import static com.jirvan.util.Assertions.assertNotNull;
 
 public class JobPool {
 
-    private Map<Long, Job> currentJobs = new HashMap<Long, Job>();
+    private Map<Long, Job> currentJobs = new HashMap<>();
     private int mostRecentJobId = 0;
 
-    public Job startNewJobForTask(Logger logger, Task task) {
-        return startNewJobForTask(false, logger, task);
+    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Task task) {
+         return startNewJobForTask(throwExceptions,  logger, null, task);
     }
 
-    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Task task) {
-        Job job = new Job(++mostRecentJobId, logger);
+    public Job startNewJobForTask(Logger logger, Task task) {
+        return startNewJobForTask(false, logger, null, task);
+    }
+
+    public Job startNewJobForTask(Logger logger, Level level, Task task) {
+        return startNewJobForTask(false, logger, level, task);
+    }
+
+    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Level level, Task task) {
+        Job job = new Job(++mostRecentJobId, logger, level);
         Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
@@ -73,12 +81,13 @@ public class JobPool {
         private Status status;
         private StringWriter logWriter;
 
-        public Job(long jobId, Logger logger) {
+        public Job(long jobId, Logger logger, Level level) {
             this.jobId = jobId;
             this.status = Status.inProgress;
             assertNotNull(logger, "logger must be provided");
             logWriter = new StringWriter();
             WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), logWriter);
+            if (level != null) writerAppender.setThreshold(level);
             logger.addAppender(writerAppender);
         }
 
