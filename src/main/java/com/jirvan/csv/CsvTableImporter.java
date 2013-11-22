@@ -376,6 +376,20 @@ public class CsvTableImporter {
                                                         parameters.add(timestampString);
                                                         stmt.setTimestamp(parameterNumber, new Timestamp(timestampFormat.parse(timestampString).getTime()));
                                                     }
+                                                } else if (columnDataTypes[i] == Types.BIT
+                                                           || columnDataTypes[i] == Types.BOOLEAN) {
+                                                    parameters.add(nextLine[i]);
+                                                    if ("true".equalsIgnoreCase(nextLine[i])
+                                                        || "Y".equalsIgnoreCase(nextLine[i])
+                                                        || "1".equalsIgnoreCase(nextLine[i])) {
+                                                        stmt.setBoolean(parameterNumber, true);
+                                                    } else if ("false".equalsIgnoreCase(nextLine[i])
+                                                               || "N".equalsIgnoreCase(nextLine[i])
+                                                               || "0".equalsIgnoreCase(nextLine[i])) {
+                                                        stmt.setBoolean(parameterNumber, false);
+                                                    } else {
+                                                        throw new RuntimeException("\"%s\" is an invalid value for Column \"" + columnNames[i] + "\" (must be one of true, false, Y, N, 1, 0)");
+                                                    }
                                                 } else if (columnDataTypes[i] == Types.TINYINT
                                                            || columnDataTypes[i] == Types.SMALLINT
                                                            || columnDataTypes[i] == Types.INTEGER
