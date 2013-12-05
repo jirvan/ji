@@ -4,6 +4,14 @@ import java.lang.reflect.*;
 
 public class JiReflection {
 
+    public static <T> T newInstance(String classname, Object... initargs) {
+        try {
+            return newInstance((Class<? extends T>) Class.forName(classname), initargs);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundRuntimeException(e);
+        }
+    }
+
     public static <T> T newInstance(Class<? extends T> clazz, Object... initargs) {
         try {
             return clazz.getConstructor().newInstance(initargs);
