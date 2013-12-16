@@ -149,6 +149,7 @@ public class Jdbc {
         public String username;
         public String password;
         public String host;
+        public int port;
         public String database;
     }
 
@@ -171,15 +172,24 @@ public class Jdbc {
             postgresConnectParameters.host = noPasswordMatcher.group(2);
             postgresConnectParameters.database = noPasswordMatcher.group(3);
         } else {
-            Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
+            Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+)/([^/]+)$").matcher(connectString);
             if (withPasswordMatcher.matches()) {
                 postgresConnectParameters.username = withPasswordMatcher.group(1);
                 postgresConnectParameters.password = withPasswordMatcher.group(2);
                 postgresConnectParameters.host = withPasswordMatcher.group(3);
                 postgresConnectParameters.database = withPasswordMatcher.group(4);
             } else {
-                throw new RuntimeException("Invalid PostgreSQL connect string \"" + connectString + "\"\n" +
-                                           "(expected something of the form \"<user>/<password>@<server>/<database>\"");
+                Matcher withPasswordAndPortMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+):([^/:]+)/([^/]+)$").matcher(connectString);
+                if (withPasswordAndPortMatcher.matches()) {
+                    postgresConnectParameters.username = withPasswordAndPortMatcher.group(1);
+                    postgresConnectParameters.password = withPasswordAndPortMatcher.group(2);
+                    postgresConnectParameters.host = withPasswordAndPortMatcher.group(3);
+                    postgresConnectParameters.port = Integer.parseInt(withPasswordAndPortMatcher.group(4));
+                    postgresConnectParameters.database = withPasswordAndPortMatcher.group(5);
+                } else {
+                    throw new RuntimeException("Invalid PostgreSQL connect string \"" + connectString + "\"\n" +
+                                               "(expected something of the form \"<user>/<password>@<server>[:port]/<database>\"");
+                }
             }
         }
         return postgresConnectParameters;
@@ -349,6 +359,7 @@ public class Jdbc {
         String userid;
         String password;
         String host;
+        int port = 1433;
         String database;
         Matcher noPasswordMatcher = Pattern.compile("^([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
         if (noPasswordMatcher.matches()) {
@@ -357,21 +368,31 @@ public class Jdbc {
             host = noPasswordMatcher.group(2);
             database = noPasswordMatcher.group(3);
         } else {
-            Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
+            Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+)/([^/]+)$").matcher(connectString);
             if (withPasswordMatcher.matches()) {
                 userid = withPasswordMatcher.group(1);
                 password = withPasswordMatcher.group(2);
                 host = withPasswordMatcher.group(3);
                 database = withPasswordMatcher.group(4);
             } else {
-                throw new RuntimeException("Invalid Sql Server connect string \"" + connectString + "\"");
+                Matcher withPasswordAndPortMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+):([0-9]+)/([^/]+)$").matcher(connectString);
+                if (withPasswordAndPortMatcher.matches()) {
+                    userid = withPasswordAndPortMatcher.group(1);
+                    password = withPasswordAndPortMatcher.group(2);
+                    host = withPasswordAndPortMatcher.group(3);
+                    database = withPasswordAndPortMatcher.group(4);
+                    port = Integer.parseInt(withPasswordAndPortMatcher.group(5));
+                } else {
+                    throw new RuntimeException("Invalid Sql Server connect string \"" + connectString + "\"\n" +
+                                               "(expected something of the form \"<user>/<password>@<server>[:port]/<database>\"");
+                }
             }
         }
         return getSqlServerDataSource(userid,
                                       password == null ? "" : password,
                                       database,
                                       host,
-                                      1433);
+                                      port);
     }
 
     public static DataSource getSqlServerDataSource(String user,
