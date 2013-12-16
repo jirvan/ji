@@ -159,7 +159,7 @@ public class Jdbc {
                                           postgresConnectParameters.password == null ? "" : postgresConnectParameters.password,
                                           postgresConnectParameters.database,
                                           postgresConnectParameters.host,
-                                          5432,
+                                          postgresConnectParameters.port,
                                           dataSourceClass);
     }
 
@@ -170,6 +170,7 @@ public class Jdbc {
             postgresConnectParameters.username = noPasswordMatcher.group(1);
             postgresConnectParameters.password = null;
             postgresConnectParameters.host = noPasswordMatcher.group(2);
+            postgresConnectParameters.port = 5432;
             postgresConnectParameters.database = noPasswordMatcher.group(3);
         } else {
             Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+)/([^/]+)$").matcher(connectString);
@@ -177,6 +178,7 @@ public class Jdbc {
                 postgresConnectParameters.username = withPasswordMatcher.group(1);
                 postgresConnectParameters.password = withPasswordMatcher.group(2);
                 postgresConnectParameters.host = withPasswordMatcher.group(3);
+                postgresConnectParameters.port = 5432;
                 postgresConnectParameters.database = withPasswordMatcher.group(4);
             } else {
                 Matcher withPasswordAndPortMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+):([^/:]+)/([^/]+)$").matcher(connectString);
