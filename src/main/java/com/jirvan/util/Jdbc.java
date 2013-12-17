@@ -382,8 +382,8 @@ public class Jdbc {
                     userid = withPasswordAndPortMatcher.group(1);
                     password = withPasswordAndPortMatcher.group(2);
                     host = withPasswordAndPortMatcher.group(3);
-                    database = withPasswordAndPortMatcher.group(4);
-                    port = Integer.parseInt(withPasswordAndPortMatcher.group(5));
+                    port = Integer.parseInt(withPasswordAndPortMatcher.group(4));
+                    database = withPasswordAndPortMatcher.group(5);
                 } else {
                     throw new RuntimeException("Invalid Sql Server connect string \"" + connectString + "\"\n" +
                                                "(expected something of the form \"<user>/<password>@<server>[:port]/<database>\"");
