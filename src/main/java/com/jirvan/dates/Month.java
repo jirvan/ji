@@ -121,7 +121,7 @@ public class Month {
 
     public Calendar getCalendar() {
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.set(year, monthInYear - 1, 0, 0, 0, 0);
+        calendar.set(year, monthInYear - 1, 1, 0, 0, 0);
         calendar.set(GregorianCalendar.MILLISECOND, 0);
         return calendar;
     }
@@ -136,7 +136,7 @@ public class Month {
 
     public Month advanced(int months) {
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.set(year, monthInYear - 1, 0, 0, 0, 0);
+        calendar.set(year, monthInYear - 1, 1, 0, 0, 0);
         calendar.set(GregorianCalendar.MILLISECOND, 0);
         calendar.add(GregorianCalendar.MONTH, months);
         return new Month(calendar);
