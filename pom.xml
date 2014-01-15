@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
     <artifactId>ji</artifactId>
-    <version>1.0.45-SNAPSHOT</version>
+    <version>1.0.45</version>
     <dependencies>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
@@ -107,4 +107,8 @@
             <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+  <scm>
+    <tag>v1.0.45</tag>
+  </scm>
 </project>
