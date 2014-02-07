@@ -254,7 +254,7 @@ public class CsvTableImporter {
                                         Reader reader,
                                         boolean resetAutonumberedPrimaryKey) {
         assertNotNull(connection, "connection is null");
-        assertNotNull(connection, "tableName is null");
+        assertNotNull(tableName, "tableName is null");
         try {
 
             boolean databaseIsOracle;
