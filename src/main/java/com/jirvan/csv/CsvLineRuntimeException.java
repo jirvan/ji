@@ -34,6 +34,11 @@ public class CsvLineRuntimeException extends RuntimeException {
 
     private int lineNumber;
 
+    public CsvLineRuntimeException(int lineNumber, String message) {
+        super("Exception processing line " + lineNumber + ": " + message);
+        this.lineNumber = lineNumber;
+    }
+
     public CsvLineRuntimeException(int lineNumber, Throwable cause) {
         super("Exception processing line " + lineNumber + ": " + (cause.getMessage() == null ? cause.getClass().getName() : cause.getMessage()), cause);
         this.lineNumber = lineNumber;
