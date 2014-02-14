@@ -115,7 +115,7 @@ public class CsvTableExporter {
         }
     }
 
-    private static String formatValue(Object value) throws SQLException {
+    public static String formatValue(Object value) throws SQLException {
         if (value == null) {
             return "";
         } else if (value instanceof Timestamp) {
