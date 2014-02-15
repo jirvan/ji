@@ -28,25 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan;
+import com.jirvan.*;
 
-import com.jirvan.util.*;
-
-public class JiInfo {
-
-    public static final String version = Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.version");
-    public static final String name = Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.name");
-
-    public static void main(String[] args) {
-        System.out.printf("\n%s\n", getDetails());
-    }
-
-    public static String getDetails() {
-        return String.format("%s: %s", JiInfo.name, JiInfo.version);
-    }
-
-    public static String getDetailsJson() {
-        return String.format("{ \"name\": \"%s\", \"version\": \"%s\" }", JiInfo.name, JiInfo.version);
-    }
-
+public class JarInfo extends JiInfo {
 }
