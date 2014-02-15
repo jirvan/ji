@@ -31,4 +31,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import com.jirvan.*;
 
 public class JarInfo extends JiInfo {
+
+    public static final String USAGE = "\n   java -cp <jar file> JarInfo [-v|-j]";
+
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.printf("\n%s\n", getDetails());
+        } else if (args.length == 1 && "-j".equals(args[0])) {
+            System.out.printf("\n%s\n", getDetailsJson());
+        } else if (args.length == 1 && "-v".equals(args[0])) {
+            System.out.printf("\n%s\n", getDetailsJson());
+        } else {
+            System.err.println(USAGE);
+        }
+    }
+
 }

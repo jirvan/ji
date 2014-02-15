@@ -34,11 +34,15 @@ import com.jirvan.util.*;
 
 public class JiInfo {
 
-    public static final String version = Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.version");
     public static final String name = Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.name");
+    public static final String version = Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.version");
 
-    public static void main(String[] args) {
-        System.out.printf("\n%s\n", getDetails());
+    public static String getName() {
+        return JiInfo.name;
+    }
+
+    public static String getVersion() {
+        return JiInfo.version;
     }
 
     public static String getDetails() {
@@ -46,7 +50,10 @@ public class JiInfo {
     }
 
     public static String getDetailsJson() {
-        return String.format("{ \"name\": \"%s\", \"version\": \"%s\" }", JiInfo.name, JiInfo.version);
+        return String.format("{\n" +
+                             "    \"name\": \"%s\",\n" +
+                             "    \"version\": \"%s\"\n" +
+                             "}", JiInfo.name, JiInfo.version);
     }
 
 }
