@@ -258,8 +258,8 @@ public class Jdbc {
         String datasourceClassName = config.getDataSourceClass();
 
         try {
-            if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
-                                                             "org.postgresql.ds.PGPoolingDataSource"})) {
+            if (Strings.isIn(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                               "org.postgresql.ds.PGPoolingDataSource"})) {
                 return getPostgresDataSource(config.getConnectString(), Class.forName(datasourceClassName));
             } else if ("net.sourceforge.jtds.jdbcx.JtdsDataSource".equals(datasourceClassName)) {
                 return getSqlServerDataSource(config.getConnectString());
@@ -277,8 +277,8 @@ public class Jdbc {
 
     public static String getDatabaseNameFrom(DataSourceConfig config) {
         String datasourceClassName = config.getDataSourceClass();
-        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
-                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+        if (Strings.isIn(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                           "org.postgresql.ds.PGPoolingDataSource"})) {
             return extractPostgresConnectParameters(config.getConnectString()).database;
         } else {
             throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +
@@ -289,8 +289,8 @@ public class Jdbc {
 
     public static String getUsernameFrom(DataSourceConfig config) {
         String datasourceClassName = config.getDataSourceClass();
-        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
-                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+        if (Strings.isIn(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                           "org.postgresql.ds.PGPoolingDataSource"})) {
             return extractPostgresConnectParameters(config.getConnectString()).username;
         } else {
             throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +
@@ -301,8 +301,8 @@ public class Jdbc {
 
     public static PostgresConnectParameters getConnectParametersFrom(DataSourceConfig config) {
         String datasourceClassName = config.getDataSourceClass();
-        if (Strings.in(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
-                                                         "org.postgresql.ds.PGPoolingDataSource"})) {
+        if (Strings.isIn(datasourceClassName, new String[]{"org.postgresql.ds.PGSimpleDataSource",
+                                                           "org.postgresql.ds.PGPoolingDataSource"})) {
             return extractPostgresConnectParameters(config.getConnectString());
         } else {
             throw new RuntimeException(String.format("Cannot get database name from configuration for %s class\n" +

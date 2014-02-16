@@ -289,7 +289,7 @@ public class CsvTableImporter {
                 for (int i = 0; i < columnNames.length; i++) {
 
                     // Add to the sql buffer and the parameter string buffer
-                    if (ignoreColumns == null || !Strings.in(columnNames[i], ignoreColumns)) {
+                    if (ignoreColumns == null || !Strings.isIn(columnNames[i], ignoreColumns)) {
                         if (sqlBuffer.length() == 0) {
                             sqlBuffer.append("insert into " + tableName + " (\n   ");
                             sqlParameterBuffer.append('?');
@@ -350,7 +350,7 @@ public class CsvTableImporter {
                                 Vector parameters = new Vector();
                                 int parameterNumber = 0;
                                 for (int i = 0; i < nextLine.length; i++) {
-                                    if (ignoreColumns == null || !Strings.in(columnNames[i], ignoreColumns)) {
+                                    if (ignoreColumns == null || !Strings.isIn(columnNames[i], ignoreColumns)) {
                                         parameterNumber++;
                                         try {
                                             if (nextLine[i] == null || nextLine[i].length() == 0) {
