@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jirvan</groupId>
     <artifactId>ji</artifactId>
-    <version>1.0.52-SNAPSHOT</version>
+    <version>1.0.52</version>
 
     <dependencies>
         <dependency>
@@ -127,4 +127,8 @@
         </snapshotRepository>
     </distributionManagement>
 
+
+  <scm>
+    <tag>v1.0.52</tag>
+  </scm>
 </project>
