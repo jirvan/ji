@@ -30,34 +30,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan;
 
-import com.jirvan.util.*;
+public class ArtifactInfo {
 
-public class JiInfo {
+    private String name;
+    private String version;
 
-    private static final ArtifactInfo jiInfo = new ArtifactInfo(Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.name"),
-                                                                Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.version"));
-
-    public static ArtifactInfo getInfo() {
-        return jiInfo;
+    public ArtifactInfo(String name, String version) {
+        this.name = name;
+        this.version = version;
     }
 
-    public static String getName() {
-        return jiInfo.getName();
+    public String getName() {
+        return name;
     }
 
-    public static String getVersion() {
-        return jiInfo.getVersion();
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public static String getDetails() {
-        return String.format("%s: %s", jiInfo.getName(), jiInfo.getVersion());
+    public String getVersion() {
+        return version;
     }
 
-    public static String getDetailsJson() {
-        return String.format("{\n" +
-                             "    \"name\": \"%s\",\n" +
-                             "    \"version\": \"%s\"\n" +
-                             "}", jiInfo.getName(), jiInfo.getVersion());
+    public void setVersion(String version) {
+        this.version = version;
     }
-
 }
