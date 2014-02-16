@@ -30,32 +30,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan;
 
-public class ArtifactInfo {
+import java.util.*;
 
-    private String name;
-    private String version;
+public class ArtifactAndDependenciesInfo extends ArtifactInfo {
 
-    public ArtifactInfo() {
+    private List<ArtifactInfo> dependencies;
+
+    public ArtifactAndDependenciesInfo() {
     }
 
-    public ArtifactInfo(String name, String version) {
-        this.name = name;
-        this.version = version;
+    public ArtifactAndDependenciesInfo(String name, String version) {
+        super(name, version);
     }
 
-    public String getName() {
-        return name;
+    public ArtifactAndDependenciesInfo(String name, String version, List<ArtifactInfo> dependencies) {
+        super(name, version);
+        this.dependencies = dependencies;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<ArtifactInfo> getDependencies() {
+        return dependencies;
     }
 
-    public String getVersion() {
-        return version;
+    public void setDependencies(List<ArtifactInfo> dependencies) {
+        this.dependencies = dependencies;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
 }
