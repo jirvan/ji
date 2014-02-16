@@ -37,6 +37,18 @@ public class JiInfo {
     private static final ArtifactInfo jiInfo = new ArtifactInfo(Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.name"),
                                                                 Io.getResourcePropertyValue(JiInfo.class, "ji.build.properties", "project.version"));
 
+    public static final String USAGE = "\nUsage:\n\n   java -jar <jar file> [-j]";
+
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.printf("\n%s\n", getDetails());
+        } else if (args.length == 1 && "-j".equals(args[0])) {
+            System.out.printf("\n%s\n", getDetailsJson());
+        } else {
+            System.err.println(USAGE);
+        }
+    }
+
     public static ArtifactInfo getInfo() {
         return jiInfo;
     }
