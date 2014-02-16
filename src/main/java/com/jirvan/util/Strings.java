@@ -34,7 +34,26 @@ import java.util.*;
 
 public class Strings {
 
-    public static boolean in(String string, String[] strings) {
+    /**
+     * Returns a wrapped string for use in method chaining.
+     * e.g. if (String.string(aString).isIn("some string", "another string", "yet another string")
+     *
+     * @param stringToWrap the string to wrap.
+     * @return the wrapped string.
+     */
+    public static StringWrapper string(String stringToWrap) {
+        return new StringWrapper(stringToWrap);
+    }
+
+    /**
+     * Returns a boolean indicating whether or not a string is one of
+     * a number of other strings.
+     *
+     * @param string  the string to look for.
+     * @param strings the group of strings to look in
+     * @return whether or not a string is a member of a group of strings
+     */
+    public static boolean isIn(String string, String... strings) {
         for (String thisString : strings) {
             if (string == null) {
                 if (thisString == null) {
@@ -49,7 +68,15 @@ public class Strings {
         return false;
     }
 
-    public static boolean in(String string, Collection<String> strings) {
+    /**
+     * Returns a boolean indicating whether or not a string is one of
+     * a number of other strings whilst ignoring the case.
+     *
+     * @param string  the string to look for.
+     * @param strings the group of strings to look in
+     * @return whether or not a string is a member of a group of strings.
+     */
+    public static boolean isIn(String string, Collection<String> strings) {
         for (String thisString : strings) {
             if (string == null) {
                 if (thisString == null) {
@@ -64,7 +91,41 @@ public class Strings {
         return false;
     }
 
-    public static boolean inIgnoreCase(String string, String[] strings) {
+    /**
+     * Returns a boolean indicating whether or not a string is one of
+     * a number of other strings whilst ignoring the case.
+     *
+     * @param string  the string to look for.
+     * @param strings the group of strings to look in
+     * @return whether or not a string is a member of a group of
+     * strings (ignoring case).
+     */
+    public static boolean isInIgnoreCase(String string, Collection<String> strings) {
+        for (String thisString : strings) {
+            if (string == null) {
+                if (thisString == null) {
+                    return true;
+                }
+            } else {
+                if (string.equalsIgnoreCase(thisString)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Returns a boolean indicating whether or not a string is one of
+     * a number of other strings whilst ignoring the case.
+     *
+     * @param string  the string to look for.
+     * @param strings the group of strings to look in
+     * @return whether or not a string is a member of a group of
+     * strings (ignoring case).
+     */
+    public static boolean isInIgnoreCase(String string, String... strings) {
         for (String thisString : strings) {
             if (string == null) {
                 if (thisString == null) {
@@ -189,6 +250,63 @@ public class Strings {
             buf.append(string);
         }
         return buf.toString();
+    }
+
+    public static class StringWrapper {
+
+        private java.lang.String wrappedString;
+
+        public StringWrapper(java.lang.String stringToWrap) {
+            this.wrappedString = stringToWrap;
+        }
+
+        /**
+         * Returns a boolean indicating whether or not the string is one of
+         * a number of other strings.
+         *
+         * @param strings the group of strings to look in
+         * @return whether or not the string is a member of a group of strings
+         */
+        public boolean isIn(String... strings) {
+            return Strings.isIn(wrappedString, strings);
+        }
+
+        /**
+         * Returns a boolean indicating whether or not the string is one of
+         * a number of other strings whilst ignoring the case.
+         *
+         * @param strings the group of strings to look in
+         * @return whether or not the string is a member of a group of strings.
+         */
+        public boolean isIn(Collection<String> strings) {
+            return Strings.isIn(wrappedString, strings);
+        }
+
+        /**
+         * Returns a boolean indicating whether or not the string is one of
+         * a number of other strings whilst ignoring the case.
+         *
+         * @param strings the group of strings to look in
+         * @return whether or not the string is a member of a group of
+         * strings (ignoring case).
+         */
+        public boolean isInIgnoreCase(Collection<String> strings) {
+            return Strings.isInIgnoreCase(wrappedString, strings);
+        }
+
+
+        /**
+         * Returns a boolean indicating whether or not the string is one of
+         * a number of other strings whilst ignoring the case.
+         *
+         * @param strings the group of strings to look in
+         * @return whether or not the string is a member of a group of
+         * strings (ignoring case).
+         */
+        public boolean isInIgnoreCase(String... strings) {
+            return Strings.isInIgnoreCase(wrappedString, strings);
+        }
+
     }
 
 }
