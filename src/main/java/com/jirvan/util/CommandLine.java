@@ -120,14 +120,15 @@ public class CommandLine {
     public static String execute(String command) {
         assertNotNull(command, "command is null");
         try {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stderrStringBuilder = new StringBuilder();
+            StringBuilder stdoutStringBuilder = new StringBuilder();
             Process proc = Runtime.getRuntime().exec(command);
-            new StringBuilderStreamer(proc.getErrorStream(), stringBuilder).start();
-            new StringBuilderStreamer(proc.getInputStream(), stringBuilder).start();
+            new StringBuilderStreamer(proc.getErrorStream(), stderrStringBuilder).start();
+            new StringBuilderStreamer(proc.getInputStream(), stdoutStringBuilder).start();
             if (proc.waitFor() != 0) {
-                throw new RuntimeException(String.format("Error executing \"%s\":\n%s", command, stringBuilder.toString()));
+                throw new RuntimeException(String.format("Error executing \"%s\":\n%s", command, stderrStringBuilder.toString()));
             } else {
-                return stringBuilder.toString();
+                return stdoutStringBuilder.toString();
             }
 
         } catch (IOException e) {
