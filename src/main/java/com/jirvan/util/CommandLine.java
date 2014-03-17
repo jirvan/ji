@@ -66,14 +66,14 @@ class LogStreamer extends Thread {
     }
 }
 
-class StringBuilderStreamer extends Thread {
+class StringBufferStreamer extends Thread {
 
     private InputStream inputStream;
-    private StringBuilder stringBuilder;
+    private StringBuffer stringBuffer;
 
-    StringBuilderStreamer(InputStream inputStream, StringBuilder stringBuilder) {
+    StringBufferStreamer(InputStream inputStream, StringBuffer stringBuffer) {
         this.inputStream = inputStream;
-        this.stringBuilder = stringBuilder;
+        this.stringBuffer = stringBuffer;
     }
 
     public void run() {
@@ -82,8 +82,8 @@ class StringBuilderStreamer extends Thread {
             BufferedReader br = new BufferedReader(isr);
             String line = null;
             while ((line = br.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append('\n');
+                stringBuffer.append(line);
+                stringBuffer.append('\n');
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -120,15 +120,15 @@ public class CommandLine {
     public static String execute(String command) {
         assertNotNull(command, "command is null");
         try {
-            StringBuilder stderrStringBuilder = new StringBuilder();
-            StringBuilder stdoutStringBuilder = new StringBuilder();
+            StringBuffer stderrStringBuffer = new StringBuffer();
+            StringBuffer stdoutStringBuffer = new StringBuffer();
             Process proc = Runtime.getRuntime().exec(command);
-            new StringBuilderStreamer(proc.getErrorStream(), stderrStringBuilder).start();
-            new StringBuilderStreamer(proc.getInputStream(), stdoutStringBuilder).start();
+            new StringBufferStreamer(proc.getErrorStream(), stderrStringBuffer).start();
+            new StringBufferStreamer(proc.getInputStream(), stdoutStringBuffer).start();
             if (proc.waitFor() != 0) {
-                throw new RuntimeException(String.format("Error executing \"%s\":\n%s", command, stderrStringBuilder.toString()));
+                throw new RuntimeException(String.format("Error executing \"%s\":\n%s", command, stderrStringBuffer.toString()));
             } else {
-                return stdoutStringBuilder.toString();
+                return stdoutStringBuffer.toString();
             }
 
         } catch (IOException e) {
