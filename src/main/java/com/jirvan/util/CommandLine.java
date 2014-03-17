@@ -66,6 +66,31 @@ class LogStreamer extends Thread {
     }
 }
 
+class StringBuilderStreamer extends Thread {
+
+    private InputStream inputStream;
+    private StringBuilder stringBuilder;
+
+    StringBuilderStreamer(InputStream inputStream, StringBuilder stringBuilder) {
+        this.inputStream = inputStream;
+        this.stringBuilder = stringBuilder;
+    }
+
+    public void run() {
+        try {
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append('\n');
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+}
+
 public class CommandLine {
 
     public static void execute(Logger log, String command) {
@@ -80,6 +105,25 @@ public class CommandLine {
             Process proc = Runtime.getRuntime().exec(command);
             new LogStreamer(proc.getErrorStream(), logLinePrefix, log).start();
             new LogStreamer(proc.getInputStream(), logLinePrefix, log).start();
+            if (proc.waitFor() != 0) {
+                throw new RuntimeException(String.format("Error executing \"%s\"", command));
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void execute(StringBuilder stringBuilder, String command) {
+        assertNotNull(command, "command is null");
+        try {
+
+            Process proc = Runtime.getRuntime().exec(command);
+            new StringBuilderStreamer(proc.getErrorStream(), stringBuilder).start();
+            new StringBuilderStreamer(proc.getInputStream(), stringBuilder).start();
             if (proc.waitFor() != 0) {
                 throw new RuntimeException(String.format("Error executing \"%s\"", command));
             }
