@@ -46,6 +46,13 @@ public class Utl {
         return list;
     }
 
+    public static Object coalesce(Object... objects) {
+        for (Object object : objects) {
+            if (object != null) return object;
+        }
+        return null;
+    }
+
     public static boolean areEqual(Integer value1, Integer value2) {
         if (value1 == null) {
             return value2 == null;
