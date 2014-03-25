@@ -46,8 +46,8 @@ public class Utl {
         return list;
     }
 
-    public static Object coalesce(Object... objects) {
-        for (Object object : objects) {
+    public static <T> T coalesce(T... objects) {
+        for (T object : objects) {
             if (object != null) return object;
         }
         return null;
