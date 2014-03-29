@@ -30,22 +30,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import java.lang.reflect.*;
 import java.util.*;
 
-public class Lists {
+public class JiArrays {
 
-    public static <T> List<T> create(T... items) {
-        return Arrays.<T>asList(items);
-    }
-
-    public static <T> List<T> createFromNotNullItems(T... items) {
+    public static <T> T[] createFromNotNullItems(T... items) {
         List<T> list = new ArrayList<>();
         for (T item : items) {
             if (item != null) {
                 list.add(item);
             }
         }
-        return list;
+        T[] array = (T[]) Array.newInstance(items.getClass().getComponentType(), list.size());
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 
 }
