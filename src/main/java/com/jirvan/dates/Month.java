@@ -147,6 +147,42 @@ public class Month {
         return obj != null && obj instanceof Month && ((Month) obj).getYear() == year && ((Month) obj).getMonthInYear() == monthInYear;
     }
 
+    public boolean after(Month anotherMonth) {
+        if (anotherMonth == null) {
+            throw new NullPointerException("anotherMonth cannot be null");
+        } else {
+            if (year > anotherMonth.getYear()) {
+                return true;
+            } else if (year < anotherMonth.getYear()) {
+                return false;
+            } else {
+                if (monthInYear > anotherMonth.getMonthInYear()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    public boolean before(Month anotherMonth) {
+        if (anotherMonth == null) {
+            throw new NullPointerException("anotherMonth cannot be null");
+        } else {
+            if (year < anotherMonth.getYear()) {
+                return true;
+            } else if (year > anotherMonth.getYear()) {
+                return false;
+            } else {
+                if (monthInYear < anotherMonth.getMonthInYear()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
     public String toString() {
         return String.format("%04d-%02d", year, monthInYear);
     }
