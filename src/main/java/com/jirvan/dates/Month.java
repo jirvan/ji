@@ -130,6 +130,14 @@ public class Month {
         return advanced(1);
     }
 
+    public Day firstDay() {
+        return new Day(year, monthInYear, 1);
+    }
+
+    public Day lastDay() {
+        return this.next().firstDay().previous();
+    }
+
     public Month previous() {
         return advanced(-1);
     }
