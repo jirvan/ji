@@ -14,7 +14,15 @@ public class JiReflection {
 
     public static <T> T newInstance(Class<? extends T> clazz, Object... initargs) {
         try {
-            return clazz.getConstructor().newInstance(initargs);
+            if (initargs != null && initargs.length > 0) {
+                Class<?>[] parameterTypes = new Class<?>[initargs.length];
+                for (int i = 0; i < parameterTypes.length; i++) {
+                    parameterTypes[i] = initargs[i].getClass();
+                }
+                return clazz.getConstructor(parameterTypes).newInstance(initargs);
+            } else {
+                return clazz.getConstructor().newInstance();
+            }
         } catch (NoSuchMethodException e) {
             throw new NoSuchMethodRuntimeException(e);
         } catch (InvocationTargetException e) {
