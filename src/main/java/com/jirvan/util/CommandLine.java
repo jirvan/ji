@@ -91,6 +91,10 @@ class StringBufferStreamer extends Thread {
     }
 }
 
+/**
+ * Used to execute commands on the native command line
+ * @see @AbstractCommandLineProcessor
+ */
 public class CommandLine {
 
     public static void execute(Logger log, String command) {
