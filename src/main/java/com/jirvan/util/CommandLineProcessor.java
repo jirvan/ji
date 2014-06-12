@@ -43,11 +43,11 @@ import java.util.*;
  */
 public class CommandLineProcessor {
 
-    private List<String> unprocessedArgs;
+    private ArrayList<String> unprocessedArgs;
     private String usage;
 
     public CommandLineProcessor(String[] args, String usage) {
-        this.unprocessedArgs = Arrays.asList(args);
+        this.unprocessedArgs = Lists.createArrayList(args);
         this.usage = usage;
     }
 

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013, Jirvan Pty Ltd
+Copyright (c) 2013,2014 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,16 @@ public class Lists {
 
     public static <T> List<T> create(T... items) {
         return Arrays.<T>asList(items);
+    }
+
+    public static <T> ArrayList<T> createArrayList(T... items) {
+        ArrayList<T> list = new ArrayList<>();
+        for (T item : items) {
+            if (item != null) {
+                list.add(item);
+            }
+        }
+        return list;
     }
 
     public static <T> List<T> createFromNotNullItems(T... items) {

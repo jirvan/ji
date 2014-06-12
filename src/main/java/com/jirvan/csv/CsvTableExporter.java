@@ -50,7 +50,7 @@ public class CsvTableExporter {
         try {
             Connection connection = dataSource.getConnection();
             try {
-                return exportToFile((Connection) connection, (String) tableName, (String) sql, (String) whereClauseCondition, (File) outFile);
+                return exportToFile(connection, tableName, sql, whereClauseCondition, outFile);
             } finally {
                 connection.close();
             }
@@ -64,43 +64,64 @@ public class CsvTableExporter {
     }
 
     public static long exportToFile(Connection connection, String tableName, String sql, String whereClauseCondition, File outFile) {
-        if (sql == null || sql.trim().length() == 0) {
-            sql = whereClauseCondition == null || whereClauseCondition.trim().length() == 0
-                  ? "select * from " + tableName
-                  : "select * from " + tableName + " where " + whereClauseCondition;
-        }
         try {
+            OutputStream fileOutputStream = new FileOutputStream(outFile);
+            try {
+                return exportToOutputStream(connection, tableName, sql, whereClauseCondition, fileOutputStream);
+            } finally {
+                fileOutputStream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long exportToOutputStream(DataSource dataSource, String tableName, String sql, String whereClauseCondition, OutputStream outputStream) throws IOException {
+        try {
+            Connection connection = dataSource.getConnection();
+            try {
+                return exportToOutputStream(connection, tableName, sql, whereClauseCondition, outputStream);
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        }
+    }
+
+    public static long exportToOutputStream(Connection connection, String tableName, String sql, String whereClauseCondition, OutputStream outputStream) throws IOException {
+        try {
+            if (sql == null || sql.trim().length() == 0) {
+                sql = whereClauseCondition == null || whereClauseCondition.trim().length() == 0
+                      ? "select * from " + tableName
+                      : "select * from " + tableName + " where " + whereClauseCondition;
+            }
             PreparedStatement stmt = connection.prepareStatement(sql);
             try {
                 ResultSet rset = stmt.executeQuery();
                 try {
-                    FileWriter writer = new FileWriter(outFile);
-                    try {
 
-                        // Write the header
-                        int columnCount = rset.getMetaData().getColumnCount();
-                        for (int i = 0; i < columnCount; i++) {
-                            if (i != 0) writer.write(",");
-                            writer.write(rset.getMetaData().getColumnName(i + 1));
-                        }
-                        writer.write("\n");
-
-                        // Write the data lines
-                        long rowsExported = 0;
-                        while (rset.next()) {
-                            for (int i = 0; i < columnCount; i++) {
-                                if (i != 0) writer.write(",");
-                                writer.write(formatValue(rset.getObject(i + 1)));
-                            }
-                            writer.write("\n");
-                            rowsExported++;
-                        }
-
-                        return rowsExported;
-
-                    } finally {
-                        writer.close();
+                    // Write the header
+                    int columnCount = rset.getMetaData().getColumnCount();
+                    for (int i = 0; i < columnCount; i++) {
+                        if (i != 0) outputStream.write(',');
+                        outputStream.write(rset.getMetaData().getColumnName(i + 1).getBytes());
                     }
+                    outputStream.write('\n');
+
+                    // Write the data lines
+                    long rowsExported = 0;
+                    while (rset.next()) {
+                        for (int i = 0; i < columnCount; i++) {
+                            if (i != 0) outputStream.write(',');
+                            outputStream.write(formatValue(rset.getObject(i + 1)).getBytes());
+                        }
+                        outputStream.write('\n');
+                        rowsExported++;
+                    }
+
+                    return rowsExported;
+
                 } finally {
                     stmt.close();
                 }
@@ -108,8 +129,6 @@ public class CsvTableExporter {
                 stmt.close();
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new SQLRuntimeException(e, sql);
         }
