@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2008,2009,2010,2011,2012,2013 Jirvan Pty Ltd
+Copyright (c) 2008,2009,2010,2011,2012,2013,2014 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -44,6 +44,24 @@ import java.util.regex.*;
 //import com.teradata.jdbc.*;
 
 public class Jdbc {
+
+    public static String parameterPlaceHolderString(Collection collection) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Object parameter : collection) {
+            if (stringBuilder.length() > 0) stringBuilder.append(',');
+            stringBuilder.append('?');
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String parameterPlaceHolderString(Object... parameters) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Object parameter : parameters) {
+            if (stringBuilder.length() > 0) stringBuilder.append(',');
+            stringBuilder.append('?');
+        }
+        return stringBuilder.toString();
+    }
 
     public static int queryForInt(Connection conn, String sql) {
         try {
