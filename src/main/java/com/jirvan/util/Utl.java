@@ -33,6 +33,7 @@ package com.jirvan.util;
 import com.jirvan.dates.*;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 
@@ -44,6 +45,23 @@ public class Utl {
             list.add(item);
         }
         return list;
+    }
+
+    public static <T> T[] merge(T firstItem, T[] theRest) {
+        if (firstItem == null) {
+            throw new RuntimeException("Jdbc.merge(T firstItem, T[] theRest): firstItem must not be null (if this is a possibility you should use merge(Class<?> arrayClass, T firstItem, T[] theRest) instead.");
+        }
+        return merge(firstItem.getClass(), firstItem, theRest);
+    }
+
+    public static <T> T[] merge(Class<?> arrayClass, T firstItem, T[] theRest) {
+        @SuppressWarnings("unchecked")
+        T[] mergedArray = (T[]) Array.newInstance(arrayClass, theRest.length + 1);
+        mergedArray[0] = firstItem;
+        for (int i = 0; i < theRest.length; i++) {
+            mergedArray[i + 1] = theRest[i];
+        }
+        return mergedArray;
     }
 
     public static <T> T coalesce(T... objects) {
