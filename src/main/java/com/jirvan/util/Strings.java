@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012,2013 Jirvan Pty Ltd
+Copyright (c) 2012,2013,2014 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,34 @@ package com.jirvan.util;
 import java.util.*;
 
 public class Strings {
+
+    public static String[] appendToAll(String stringToAppend, String... strings) {
+        if (stringToAppend == null) {
+            return strings;
+        } else if (strings == null) {
+            return strings;
+        } else {
+            String[] returnArray = new String[strings.length];
+            for (int i = 0; i < returnArray.length; i++) {
+                returnArray[i] = strings[i] == null ? null : strings[i] + stringToAppend;
+            }
+            return returnArray;
+        }
+    }
+
+    public static String[] prependToAll(String stringToAppend, String... strings) {
+        if (stringToAppend == null) {
+            return strings;
+        } else if (strings == null) {
+            return strings;
+        } else {
+            String[] returnArray = new String[strings.length];
+            for (int i = 0; i < returnArray.length; i++) {
+                returnArray[i] = strings[i] == null ? null : stringToAppend + strings[i];
+            }
+            return returnArray;
+        }
+    }
 
     /**
      * Returns a wrapped string for use in method chaining.
