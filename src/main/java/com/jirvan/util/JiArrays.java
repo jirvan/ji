@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013, Jirvan Pty Ltd
+Copyright (c) 2013,2014 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +47,43 @@ public class JiArrays {
             array[i] = list.get(i);
         }
         return array;
+    }
+
+    public static void main(String[] args) {
+        String[] zzz = concatArrays(new String[]{"cat", "dog"}, new String[]{"giraffe", "snake"});
+        String[] sfd = concatArrays(new String[]{"budgie"});
+        String[] sdf = concatArrays(new String[0]);
+        int adf = 4;
+    }
+
+    public static <T> T[] concatArrays(T[] array1, T[]... arrays2ToN) {
+        Objects.requireNonNull(array1, "array1 must not be null");
+
+        // Determine resulting array length
+        int resultLength = array1.length;
+        for (T[] array : arrays2ToN) {
+            resultLength += array.length;
+        }
+
+        // Create resulting array
+        Class arrayComponentType = array1.getClass().getComponentType();
+        T[] result = (T[]) Array.newInstance(arrayComponentType, resultLength);
+
+        // Set resulting array values for items from first array
+        int i = 0;
+        for (T item : array1) {
+            result[i++] = item;
+        }
+
+        // Set resulting array values for items from arrays 2 to n
+        for (T[] array : arrays2ToN) {
+            for (T item : array) {
+                result[i++] = item;
+            }
+        }
+
+        return result;
+
     }
 
 }
