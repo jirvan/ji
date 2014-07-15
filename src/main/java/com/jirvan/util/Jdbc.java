@@ -162,7 +162,7 @@ public class Jdbc {
                                      PGSimpleDataSource.class).getConnection();
     }
 
-    protected DataSource getDataSource(String connectString) {
+    public static DataSource getDataSource(String connectString) {
         DataSource dataSource;
         Pattern databaseTypePattern = Pattern.compile("^([^:]+):.*$");
         Matcher m;
