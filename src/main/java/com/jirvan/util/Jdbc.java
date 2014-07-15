@@ -37,7 +37,6 @@ import org.postgresql.ds.*;
 import org.postgresql.ds.common.*;
 
 import javax.sql.*;
-import java.lang.reflect.Array;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.*;
@@ -45,6 +44,9 @@ import java.util.regex.*;
 //import com.teradata.jdbc.*;
 
 public class Jdbc {
+
+    public static final String POSTGRES_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
+    public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
 
     public static String parameterPlaceHolderString(Collection collection) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -160,6 +162,25 @@ public class Jdbc {
                                      PGSimpleDataSource.class).getConnection();
     }
 
+    protected DataSource getDataSource(String connectString) {
+        DataSource dataSource;
+        Pattern databaseTypePattern = Pattern.compile("^([^:]+):.*$");
+        Matcher m;
+        if (connectString.toLowerCase().startsWith("postgresql:")) {
+            dataSource = Jdbc.getPostgresDataSource(connectString.replaceFirst("postgresql:", ""));
+        } else if (connectString.toLowerCase().startsWith("sqlserver:")) {
+            dataSource = Jdbc.getSqlServerDataSource(connectString.replaceFirst("sqlserver:", ""));
+        } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
+            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"sqlserver\"", m.group(1)));
+        } else {
+            throw new MessageException(String.format("Invalid connect string \"%s\"\n" +
+                                                     "connectString must be of the form \"postgresql:" + POSTGRES_CONNECT_STRING_DEFINITION + "\"\n" +
+                                                     "                                or \"sqlserver:" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"",
+                                                     connectString));
+        }
+        return dataSource;
+    }
+
     public static DataSource getPostgresDataSource(String connectString) {
         return getPostgresDataSource(connectString, PGSimpleDataSource.class);
     }
@@ -209,7 +230,7 @@ public class Jdbc {
                     postgresConnectParameters.database = withPasswordAndPortMatcher.group(5);
                 } else {
                     throw new RuntimeException("Invalid PostgreSQL connect string \"" + connectString + "\"\n" +
-                                               "(expected something of the form \"<user>/<password>@<server>[:port]/<database>\"");
+                                               "(expected something of the form \"" + POSTGRES_CONNECT_STRING_DEFINITION + "\"");
                 }
             }
         }
@@ -405,7 +426,7 @@ public class Jdbc {
                     database = withPasswordAndPortMatcher.group(5);
                 } else {
                     throw new RuntimeException("Invalid Sql Server connect string \"" + connectString + "\"\n" +
-                                               "(expected something of the form \"<user>/<password>@<server>[:port]/<database>\"");
+                                               "(expected something of the form \"" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"");
                 }
             }
         }
