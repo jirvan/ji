@@ -31,10 +31,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.dates.*;
+import com.jirvan.lang.*;
 
+import javax.sql.*;
 import java.io.*;
 import java.math.*;
 import java.util.*;
+import java.util.regex.*;
 
 /**
  * Base class for implementing command line processing
@@ -118,6 +121,23 @@ public class CommandLineProcessor {
 
     protected Day nextArg_Day() throws UsageException {
         return Day.fromString(nextArg());
+    }
+
+    protected DataSource nextArg_DataSource() throws UsageException {
+        DataSource dataSource;
+        String connectString = nextArg();
+        Pattern databaseTypePattern = Pattern.compile("^([^:]+):.*$");
+        Matcher m;
+        if (connectString.toLowerCase().startsWith("postgresql:")) {
+            dataSource = Jdbc.getPostgresDataSource(connectString.replaceFirst("postgresql:", ""));
+        } else if (connectString.toLowerCase().startsWith("sqlserver:")) {
+            dataSource = Jdbc.getSqlServerDataSource(connectString.replaceFirst("sqlserver:", ""));
+        } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
+            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"sqlserver\"", m.group(1)));
+        } else {
+            throw new MessageException(String.format("Invalid connect string \"%s\"", connectString));
+        }
+        return dataSource;
     }
 
     protected Day nextArgOptional_Day() throws UsageException {
