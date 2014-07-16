@@ -100,7 +100,8 @@ public class CommandLineProcessor {
     }
 
     protected Long nextArgOptional_Long() throws UsageException {
-        return Long.parseLong(nextArg(true));
+        String stringValue = nextArgOptional();
+        return stringValue == null ? null : Long.parseLong(stringValue);
     }
 
     protected BigDecimal nextArg_BigDecimal() throws UsageException {
@@ -108,7 +109,8 @@ public class CommandLineProcessor {
     }
 
     protected BigDecimal nextArgOptional_BigDecimal() throws UsageException {
-        return new BigDecimal(nextArg(true));
+        String stringValue = nextArgOptional();
+        return stringValue == null ? null : new BigDecimal(stringValue);
     }
 
     protected File nextArg_File() throws UsageException {
@@ -116,7 +118,8 @@ public class CommandLineProcessor {
     }
 
     protected File nextArgOptional_File() throws UsageException {
-        return new File(nextArg(true));
+        String stringValue = nextArgOptional();
+        return stringValue == null ? null : new File(stringValue);
     }
 
     protected Day nextArg_Day() throws UsageException {
@@ -141,7 +144,8 @@ public class CommandLineProcessor {
     }
 
     protected Day nextArgOptional_Day() throws UsageException {
-        return Day.fromString(nextArg(true));
+        String stringValue = nextArgOptional();
+        return stringValue == null ? null : Day.fromString(stringValue);
     }
 
     protected void verifyNoMoreArgs() throws UsageException {
