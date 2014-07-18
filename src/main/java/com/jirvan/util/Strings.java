@@ -34,6 +34,14 @@ import java.util.*;
 
 public class Strings {
 
+    public static boolean notBlank(String string) {
+        return string != null && string.trim().length() > 0;
+    }
+
+    public static boolean isBlank(String string) {
+        return !notBlank(string);
+    }
+
     public static String[] appendToAll(String stringToAppend, String... strings) {
         if (stringToAppend == null) {
             return strings;
