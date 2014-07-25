@@ -28,9 +28,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.util;
+package com.jirvan.json;
 
 import com.jirvan.lang.*;
+import com.jirvan.util.*;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.node.*;
 

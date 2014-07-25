@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.util;
+package com.jirvan.json;
 
 /**
  * Just a marker interface to indicate that json strings representing

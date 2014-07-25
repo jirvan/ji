@@ -1,4 +1,4 @@
-package com.jirvan.util;
+package com.jirvan.json;
 
 import com.jirvan.dates.*;
 import org.codehaus.jackson.map.*;

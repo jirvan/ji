@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.dates.*;
+import com.jirvan.json.*;
+import com.jirvan.util.*;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.map.module.*;
@@ -43,7 +45,7 @@ public class Json {
     private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper(false);
     private static final ObjectMapper OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES = setUpObjectMapper(true);
     private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
-                                                                   .withDefaultPrettyPrinter();
+                                                                   .withPrettyPrinter(new JsonPrettyPrinter());
 
     public static <T> T treeToValue(JsonNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
         return OBJECT_MAPPER.readValue(n, valueType);
