@@ -54,7 +54,7 @@ public enum DatabaseType {
         try {
             return DatabaseType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedDatabaseTypeException(name);
+            throw new UnsupportedDatabaseTypeException(name,DatabaseType.values());
         }
     }
 
@@ -63,7 +63,7 @@ public enum DatabaseType {
         if (databaseType.isOneOf(supportedDatabaseTypes)) {
             return databaseType;
         } else {
-            throw new UnsupportedDatabaseTypeException(name);
+            throw new UnsupportedDatabaseTypeException(name, supportedDatabaseTypes);
         }
     }
 
