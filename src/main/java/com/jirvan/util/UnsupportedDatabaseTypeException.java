@@ -30,54 +30,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-public enum DatabaseType {
+public class UnsupportedDatabaseTypeException extends RuntimeException {
 
-    sqlserver("Microsoft SQL Server"),
-    postgres("PostgreSQL");
-
-    private String databaseProductName;
-
-    private DatabaseType(String databaseProductName) {
-        this.databaseProductName = databaseProductName;
+    public UnsupportedDatabaseTypeException(String databaseTypeName) {
+        super(buildMessage(databaseTypeName));
     }
 
-    public String getDatabaseProductName() {
-        return databaseProductName;
-    }
-
-    public static DatabaseType get(String name) {
-        for (DatabaseType databaseType : DatabaseType.values()) {
-            if (databaseType.databaseProductName.equals(name)) {
-                return databaseType;
+    private static String buildMessage(String databaseTypeName, DatabaseType... supportedDatabaseTypes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("\"%s\" databases are not supported", databaseTypeName));
+        for (int i = 0; i < supportedDatabaseTypes.length; i++) {
+            DatabaseType supportedDatabaseType = supportedDatabaseTypes[i];
+            if (i == 0) {
+                stringBuilder.append(String.format("\nvalid databases are : \"%s\" (or \"%s\")\n", supportedDatabaseType.name(), supportedDatabaseType.getDatabaseProductName()));
+            } else {
+                stringBuilder.append(String.format(",\n                      \"%s\" (or \"%s\")\n", supportedDatabaseType.name(), supportedDatabaseType.getDatabaseProductName()));
             }
-        }
-        try {
-            return DatabaseType.valueOf(name);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedDatabaseTypeException(name);
-        }
-    }
 
-    public static DatabaseType getIfSupported(String name, DatabaseType... supportedDatabaseTypes) {
-        DatabaseType databaseType = get(name);
-        if (databaseType.isOneOf(supportedDatabaseTypes)) {
-            return databaseType;
-        } else {
-            throw new UnsupportedDatabaseTypeException(name);
         }
-    }
-
-    public boolean isOneOf(DatabaseType... values) {
-        for (DatabaseType value : values) {
-            if (this == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isNotOneOf(DatabaseType... values) {
-        return !isOneOf(values);
+        return stringBuilder.toString();
     }
 
 }
