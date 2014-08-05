@@ -30,15 +30,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.csv;
 
-import com.jirvan.lang.*;
+import com.jirvan.lang.SQLRuntimeException;
+import com.jirvan.util.Jdbc;
 
-import javax.sql.*;
-import java.io.*;
-import java.math.*;
-import java.sql.*;
-import java.text.*;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class CsvTableExporter {
+
+    public static void main(String[] args) {
+        CsvTableExporter.exportToFile(Jdbc.getDataSource("sqlserver:cm/zippee@denver2/LifeCare"), "merchant_products", new File("L:\\Desktop\\test.csv"));
+    }
 
     private static DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
@@ -140,7 +153,9 @@ public class CsvTableExporter {
         } else if (value instanceof Timestamp) {
             return timestampFormat.format((Timestamp) value);
         } else if (value instanceof String) {
-            if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1) {
+            if (((String) value).trim().length() == 0) {
+                return "\"" + value + "\"";
+            } else if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1) {
                 return ((String) value).replaceAll("\"", "\"\"");
             } else {
                 return "\"" + ((String) value).replaceAll("\"", "\"\"") + "\"";
