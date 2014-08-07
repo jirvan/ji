@@ -357,8 +357,9 @@ public class CsvTableImporter {
                                                 parameters.add(null);
                                                 stmt.setNull(parameterNumber, columnDataTypes[i]);
                                             } else {
-                                                if (columnDataTypes[i] == Types.VARCHAR
-                                                        ||columnDataTypes[i] == Types.CLOB) {
+                                                if (columnDataTypes[i] == Types.VARCHAR) {
+//                                                if (columnDataTypes[i] == Types.VARCHAR
+//                                                        ||columnDataTypes[i] == Types.CLOB) {
                                                     parameters.add(nextLine[i]);
                                                     stmt.setString(parameterNumber, nextLine[i]);
                                                 } else if (columnDataTypes[i] == Types.CHAR) {
