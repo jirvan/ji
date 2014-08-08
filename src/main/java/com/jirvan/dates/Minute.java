@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -208,7 +207,7 @@ public class Minute {
         } else {
             Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d)$").matcher(dateString);
             if (!m.matches()) {
-                throw new RuntimeException("Minute date string must be of form \"YYYY-MM-DD hh:mm\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh:mm (e.g. 2012-05-01T09:30)");
+                throw new MinuteFormatException();
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));

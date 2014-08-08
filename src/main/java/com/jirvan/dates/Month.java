@@ -218,7 +218,7 @@ public class Month {
                 int month = Integer.parseInt(matcherAbbreviated.group(1));
                 return new Month(year, month);
             } else {
-                throw new RuntimeException("Day date string must be of form \"YYYY-MM\" (e.g. 2012-05) or \"MM/YY\"");
+                throw new MonthFormatException();
             }
         }
     }

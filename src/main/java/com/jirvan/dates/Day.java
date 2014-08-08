@@ -30,12 +30,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.io.*;
-import java.sql.*;
-import java.text.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.*;
-import java.util.regex.*;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -400,12 +403,12 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
                 } else if ("dec".equals(monthString)) {
                     month = 12;
                 } else {
-                    throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")");
+                    throw new DayFormatException();
                 }
                 return new Day(year, month, day);
             }
 
-            throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")");
+            throw new DayFormatException();
 
         }
     }

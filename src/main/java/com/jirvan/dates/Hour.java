@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -190,7 +189,7 @@ public class Hour {
         } else {
             Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d)$").matcher(dateString);
             if (!m.matches()) {
-                throw new RuntimeException("Hour date string must be of form \"YYYY-MM-DD hh\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh (e.g. 2012-05-01T09)");
+                throw new HourFormatException();
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));

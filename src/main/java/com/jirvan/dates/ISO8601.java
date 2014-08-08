@@ -30,8 +30,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ISO8601 {
 
@@ -58,7 +60,7 @@ public class ISO8601 {
                 try {
                     return TIMESTAMP_FORMAT2.parse(timestampString);
                 } catch (ParseException e2) {
-                    throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-31 01:49:10Z) or  \"YYYY-MM-DDThh:mm:ss\" (e.g. 2012-05-31T01:49:10Z)", e2);
+                    throw new ISO8601TimestampFormatException(e2);
                 }
             }
         }
@@ -71,7 +73,7 @@ public class ISO8601 {
             try {
                 return TO_DAY_DATEFORMAT.parse(dayDateString);
             } catch (ParseException e) {
-                throw new RuntimeException("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01)", e);
+                throw new ISO8601DayFormatException(e);
             }
         }
     }
