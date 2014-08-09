@@ -30,20 +30,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.csv;
 
-import au.com.bytecode.opencsv.*;
-import com.jirvan.lang.*;
-import com.jirvan.util.*;
+import au.com.bytecode.opencsv.CSVReader;
+import com.jirvan.lang.SQLRuntimeException;
+import com.jirvan.util.Strings;
 
-import javax.sql.*;
-import java.io.*;
-import java.math.*;
-import java.sql.*;
-import java.text.*;
-import java.util.*;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Map;
+import java.util.Vector;
 
 import static com.jirvan.util.Assertions.*;
 
 public class CsvTableImporter {
+
+    public static String emptyStringIndicatorString;  // This is a quick and dirty
 
     public static long importFromFile(DataSource dataSource, String tableName, File dataFile) {
         return importFromFile(dataSource, tableName, null, null, null, 0, dataFile, false);
@@ -360,8 +375,13 @@ public class CsvTableImporter {
                                                 if (columnDataTypes[i] == Types.VARCHAR) {
 //                                                if (columnDataTypes[i] == Types.VARCHAR
 //                                                        ||columnDataTypes[i] == Types.CLOB) {
-                                                    parameters.add(nextLine[i]);
-                                                    stmt.setString(parameterNumber, nextLine[i]);
+                                                    if (emptyStringIndicatorString != null && emptyStringIndicatorString.equals(nextLine[i])) {
+                                                        parameters.add("");
+                                                        stmt.setString(parameterNumber, "");
+                                                    } else {
+                                                        parameters.add(nextLine[i]);
+                                                        stmt.setString(parameterNumber, nextLine[i]);
+                                                    }
                                                 } else if (columnDataTypes[i] == Types.CHAR) {
                                                     parameters.add(nextLine[i]);
                                                     stmt.setString(parameterNumber, nextLine[i]);

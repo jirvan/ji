@@ -49,6 +49,8 @@ import java.text.SimpleDateFormat;
 
 public class CsvTableExporter {
 
+    public static String emptyStringIndicatorString;  // This is a quick and dirty
+
     public static void main(String[] args) {
         CsvTableExporter.exportToFile(Jdbc.getDataSource("sqlserver:cm/zippee@denver2/LifeCare"), "merchant_products", new File("L:\\Desktop\\test.csv"));
     }
@@ -153,7 +155,9 @@ public class CsvTableExporter {
         } else if (value instanceof Timestamp) {
             return timestampFormat.format((Timestamp) value);
         } else if (value instanceof String) {
-            if (((String) value).trim().length() == 0) {
+            if (emptyStringIndicatorString != null && "".equals(value)) {
+                return emptyStringIndicatorString;
+            } else if (((String) value).trim().length() == 0) {
                 return "\"" + value + "\"";
             } else if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1) {
                 return ((String) value).replaceAll("\"", "\"\"");
