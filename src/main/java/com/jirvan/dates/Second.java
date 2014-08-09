@@ -221,7 +221,7 @@ public class Second {
         } else {
             Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d)$").matcher(dateString);
             if (!m.matches()) {
-                throw new SecondFormatException();
+                throw new SecondTimestampFormatException();
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));

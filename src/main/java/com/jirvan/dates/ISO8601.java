@@ -73,7 +73,7 @@ public class ISO8601 {
             try {
                 return TO_DAY_DATEFORMAT.parse(dayDateString);
             } catch (ParseException e) {
-                throw new ISO8601DayFormatException(e);
+                throw new ISO8601DateFormatException(e);
             }
         }
     }

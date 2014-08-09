@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-public class MillisecondFormatException extends RuntimeException {
-    public MillisecondFormatException() {
-        super("Millisecond date string must be of form \"YYYY-MM-DD hh:mm:ss.SSS\" (e.g. 2012-05-01 09:30:15.345) or YYYY-MM-DDThh:mm:ss.SSS (e.g. 2012-05-01T09:30:15.345)");
+public class ISO8601DateFormatException extends RuntimeException {
+    public ISO8601DateFormatException(Throwable cause) {
+        super("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01)", cause);
     }
 }

@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-public class ISO8601DayFormatException extends RuntimeException {
-    public ISO8601DayFormatException(Throwable cause) {
-        super("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01)", cause);
+public class MinuteTimestampFormatException extends RuntimeException {
+    public MinuteTimestampFormatException() {
+        super("Minute date string must be of form \"YYYY-MM-DD hh:mm\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh:mm (e.g. 2012-05-01T09:30)");
     }
 }

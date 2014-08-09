@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-public class DayFormatException extends RuntimeException {
-    public DayFormatException() {
+public class DateFormatException extends RuntimeException {
+    public DateFormatException() {
         super("Day date string must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")");
     }
 }

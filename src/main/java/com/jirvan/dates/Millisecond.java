@@ -234,7 +234,7 @@ public class Millisecond {
         } else {
             Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)$").matcher(dateString);
             if (!m.matches()) {
-                throw new MillisecondFormatException();
+                throw new MillisecondTimestampFormatException();
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));
