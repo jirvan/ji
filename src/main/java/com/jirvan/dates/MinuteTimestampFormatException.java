@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class MinuteTimestampFormatException extends RuntimeException {
-    public MinuteTimestampFormatException() {
-        super("Minute date string must be of form \"YYYY-MM-DD hh:mm\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh:mm (e.g. 2012-05-01T09:30)");
+    public MinuteTimestampFormatException(String invalidString) {
+        super(String.format("Invalid minute timestamp string \"%s\" -  must be of form \"YYYY-MM-DD hh:mm\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh:mm (e.g. 2012-05-01T09:30)", invalidString));
     }
 }

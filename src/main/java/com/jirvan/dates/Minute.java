@@ -201,13 +201,13 @@ public class Minute {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
-    public static Minute from(String dateString) {
-        if (dateString == null) {
+    public static Minute from(String string) {
+        if (string == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d)$").matcher(dateString);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d)$").matcher(string);
             if (!m.matches()) {
-                throw new MinuteTimestampFormatException();
+                throw new MinuteTimestampFormatException(string);
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));

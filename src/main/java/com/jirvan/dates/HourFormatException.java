@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class HourFormatException extends RuntimeException {
-    public HourFormatException() {
-        super("Hour date string must be of form \"YYYY-MM-DD hh\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh (e.g. 2012-05-01T09)");
+    public HourFormatException(String invalidString) {
+        super(String.format("Invalid hour string \"%s\" - must be of form \"YYYY-MM-DD hh\" (e.g. 2012-05-01 09:30) or YYYY-MM-DDThh (e.g. 2012-05-01T09)", invalidString));
     }
 }

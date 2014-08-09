@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class SecondTimestampFormatException extends RuntimeException {
-    public SecondTimestampFormatException() {
-        super("Second date string must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-01 09:30:15) or YYYY-MM-DDThh:mm:ss (e.g. 2012-05-01T09:30:15)");
+    public SecondTimestampFormatException(String invalidString) {
+        super(String.format("Invalid hour string \"%s\" - must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-01 09:30:15) or YYYY-MM-DDThh:mm:ss (e.g. 2012-05-01T09:30:15)", invalidString));
     }
 }

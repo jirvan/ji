@@ -203,12 +203,12 @@ public class Month {
         return month == null ? null : month.getDate();
     }
 
-    public static Month fromString(String dateString) {
-        if (dateString == null) {
+    public static Month fromString(String monthString) {
+        if (monthString == null) {
             return null;
         } else {
-            Matcher matcherFull = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)$").matcher(dateString);
-            Matcher matcherAbbreviated = Pattern.compile("^(\\d\\d) */ *(\\d\\d)$").matcher(dateString);
+            Matcher matcherFull = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)$").matcher(monthString);
+            Matcher matcherAbbreviated = Pattern.compile("^(\\d\\d) */ *(\\d\\d)$").matcher(monthString);
             if (matcherFull.matches()) {
                 int year = Integer.parseInt(matcherFull.group(1));
                 int month = Integer.parseInt(matcherFull.group(2));
@@ -218,7 +218,7 @@ public class Month {
                 int month = Integer.parseInt(matcherAbbreviated.group(1));
                 return new Month(year, month);
             } else {
-                throw new MonthFormatException();
+                throw new MonthFormatException(monthString);
             }
         }
     }

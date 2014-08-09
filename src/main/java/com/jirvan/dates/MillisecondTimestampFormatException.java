@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class MillisecondTimestampFormatException extends RuntimeException {
-    public MillisecondTimestampFormatException() {
-        super("Millisecond timestamp string must be of form \"YYYY-MM-DD hh:mm:ss.SSS\" (e.g. 2012-05-01 09:30:15.345) or YYYY-MM-DDThh:mm:ss.SSS (e.g. 2012-05-01T09:30:15.345)");
+    public MillisecondTimestampFormatException(String invalidString) {
+        super(String.format("Invalid millisecond timestamp string \"%s\" -  must be of form \"YYYY-MM-DD hh:mm:ss.SSS\" (e.g. 2012-05-01 09:30:15.345) or YYYY-MM-DDThh:mm:ss.SSS (e.g. 2012-05-01T09:30:15.345)", invalidString));
     }
 }

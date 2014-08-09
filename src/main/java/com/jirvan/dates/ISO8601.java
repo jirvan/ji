@@ -60,7 +60,7 @@ public class ISO8601 {
                 try {
                     return TIMESTAMP_FORMAT2.parse(timestampString);
                 } catch (ParseException e2) {
-                    throw new ISO8601TimestampFormatException(e2);
+                    throw new ISO8601TimestampFormatException(timestampString, e2);
                 }
             }
         }
@@ -73,7 +73,7 @@ public class ISO8601 {
             try {
                 return TO_DAY_DATEFORMAT.parse(dayDateString);
             } catch (ParseException e) {
-                throw new ISO8601DateFormatException(e);
+                throw new ISO8601DateFormatException(dayDateString, e);
             }
         }
     }

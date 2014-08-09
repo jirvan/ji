@@ -228,13 +228,13 @@ public class Millisecond {
         return String.format("%04d%02d%02d-%02d%02d-%02d.%03d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute, millisecondInSecond);
     }
 
-    public static Millisecond from(String dateString) {
-        if (dateString == null) {
+    public static Millisecond from(String string) {
+        if (string == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)$").matcher(dateString);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)$").matcher(string);
             if (!m.matches()) {
-                throw new MillisecondTimestampFormatException();
+                throw new MillisecondTimestampFormatException(string);
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));

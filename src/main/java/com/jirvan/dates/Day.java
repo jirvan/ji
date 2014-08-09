@@ -403,12 +403,12 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
                 } else if ("dec".equals(monthString)) {
                     month = 12;
                 } else {
-                    throw new DateFormatException();
+                    throw new DateFormatException(dateString);
                 }
                 return new Day(year, month, day);
             }
 
-            throw new DateFormatException();
+            throw new DateFormatException(dateString);
 
         }
     }

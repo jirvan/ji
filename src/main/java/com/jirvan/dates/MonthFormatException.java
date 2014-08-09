@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class MonthFormatException extends RuntimeException {
-    public MonthFormatException() {
-        super("Month string must be of form \"YYYY-MM\" (e.g. 2012-05) or \"MM/YY\"");
+    public MonthFormatException(String invalidString) {
+        super(String.format("Invalid month string \"%s\" - must be of form \"YYYY-MM\" (e.g. 2012-05) or \"MM/YY\"", invalidString));
     }
 }

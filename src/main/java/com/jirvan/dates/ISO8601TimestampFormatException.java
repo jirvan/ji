@@ -31,7 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 public class ISO8601TimestampFormatException extends RuntimeException {
-    public ISO8601TimestampFormatException(Throwable cause) {
-        super("Timestamp string must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-31 01:49:10Z) or  \"YYYY-MM-DDThh:mm:ss\" (e.g. 2012-05-31T01:49:10Z)", cause);
+    public ISO8601TimestampFormatException(String invalidString, Throwable cause) {
+        super(String.format("Invalid ISO8601 timestamp string \"%s\" - must be of form \"YYYY-MM-DD hh:mm:ss\" (e.g. 2012-05-31 01:49:10Z) or  \"YYYY-MM-DDThh:mm:ss\" (e.g. 2012-05-31T01:49:10Z)",
+                            invalidString),
+              cause);
     }
 }

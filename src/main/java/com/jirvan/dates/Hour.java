@@ -183,13 +183,13 @@ public class Hour {
         return String.format("%04d-%02d-%02dT%02d", year, monthInYear, dayInMonth, hourInDay);
     }
 
-    public static Hour fromString(String dateString) {
-        if (dateString == null) {
+    public static Hour fromString(String string) {
+        if (string == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d)$").matcher(dateString);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d)$").matcher(string);
             if (!m.matches()) {
-                throw new HourFormatException();
+                throw new HourFormatException(string);
             }
             int year = Integer.parseInt(m.group(1));
             int month = Integer.parseInt(m.group(2));
