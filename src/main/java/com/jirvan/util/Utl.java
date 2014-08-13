@@ -30,14 +30,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import com.jirvan.dates.*;
+import com.jirvan.dates.Day;
+import com.jirvan.dates.Hour;
+import com.jirvan.dates.Millisecond;
+import com.jirvan.dates.Minute;
+import com.jirvan.dates.Month;
+import com.jirvan.dates.Second;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.math.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static com.jirvan.util.Assertions.*;
 
 public class Utl {
+
 
     public static <T> ArrayList<T> newArrayList(T... items) {
         ArrayList<T> list = new ArrayList<T>();
@@ -200,6 +211,30 @@ public class Utl {
             printWriter.close();
         }
         return stringWriter.toString();
+    }
+
+    public static <T extends Comparable> T min(T... values) {
+        assertTrue(values.length > 0, "At least one value must be provided");
+        T min = null;
+        for (T value : values) {
+            assertTrue(value != null, "Value is null");
+            if (min == null || value.compareTo(min) < 0) {
+                min = value;
+            }
+        }
+        return min;
+    }
+
+    public static <T extends Comparable> T max(T... values) {
+        assertTrue(values.length > 0, "At least one value must be provided");
+        T max = null;
+        for (T value : values) {
+            assertTrue(value != null, "Value is null");
+            if (max == null || value.compareTo(max) > 0) {
+                max = value;
+            }
+        }
+        return max;
     }
 
 }
