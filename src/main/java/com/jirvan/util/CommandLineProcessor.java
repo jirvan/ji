@@ -104,6 +104,16 @@ public class CommandLineProcessor {
         return stringValue == null ? null : Long.parseLong(stringValue);
     }
 
+    protected Integer nextArgOptional_Integer() throws UsageException {
+        String stringValue = nextArgOptional();
+        return stringValue == null ? null : Integer.parseInt(stringValue);
+    }
+
+    protected Integer nextArgOptional_Integer(int defaultValue) throws UsageException {
+        String stringValue = nextArgOptional();
+        return stringValue == null ? defaultValue : Integer.parseInt(stringValue);
+    }
+
     protected BigDecimal nextArg_BigDecimal() throws UsageException {
         return new BigDecimal(nextArg());
     }
