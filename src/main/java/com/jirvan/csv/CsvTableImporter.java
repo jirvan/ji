@@ -324,10 +324,14 @@ public class CsvTableImporter {
                                                                              schemaPattern,
                                                                              databaseIsOracle ? tableName.toUpperCase() : tableName,
                                                                              databaseIsOracle ? columnNames[i].toUpperCase() : columnNames[i]);
-                        if (rset.next()) {
-                            columnDataTypes[i] = rset.getInt(5);
-                        } else {
-                            throw new RuntimeException("Table \"" + tableName + "\" or column \"" + tableName + "." + columnNames[i] + "\" does not exist");
+                        try {
+                            if (rset.next()) {
+                                columnDataTypes[i] = rset.getInt(5);
+                            } else {
+                                throw new RuntimeException("Table \"" + tableName + "\" or column \"" + tableName + "." + columnNames[i] + "\" does not exist");
+                            }
+                        } finally {
+                            rset.close();
                         }
                     } catch (SQLException e) {
                         throw new SQLRuntimeException(e);
@@ -412,9 +416,15 @@ public class CsvTableImporter {
                                                     } else {
                                                         throw new RuntimeException("\"%s\" is an invalid value for Column \"" + columnNames[i] + "\" (must be one of true, false, Y, N, 1, 0)");
                                                     }
+                                                } else if (columnDataTypes[i] == Types.INTEGER) {
+                                                    parameters.add(nextLine[i].trim());
+                                                    String stringValue = nextLine[i].trim().replaceAll(",", "").replaceAll("\\$", "");
+                                                    if (stringValue.charAt(0) == '(' && stringValue.charAt(stringValue.length() - 1) == ')') {
+                                                        stringValue = "-" + stringValue.substring(1, stringValue.length() - 1);
+                                                    }
+                                                    stmt.setInt(parameterNumber, new Integer(stringValue));
                                                 } else if (columnDataTypes[i] == Types.TINYINT
                                                            || columnDataTypes[i] == Types.SMALLINT
-                                                           || columnDataTypes[i] == Types.INTEGER
                                                            || columnDataTypes[i] == Types.BIGINT
                                                            || columnDataTypes[i] == Types.FLOAT
                                                            || columnDataTypes[i] == Types.REAL
