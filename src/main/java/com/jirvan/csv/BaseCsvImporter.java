@@ -60,24 +60,27 @@ import static com.jirvan.util.Strings.*;
 public class BaseCsvImporter {
 
     private LinkedHashMap<String, CsvFileImporter> csvFileImporterMap;
+    private DataSource dataSource;
 
-    protected BaseCsvImporter(CsvFileImporter... csvFileImporters) {
+    protected BaseCsvImporter(DataSource dataSource, CsvFileImporter... csvFileImporters) {
+        assertNotNull(dataSource, "dataSource must be provided");
         assertTrue(csvFileImporters.length > 0, "At least one CsvFileImporter must be provided");
+        this.dataSource = dataSource;
         this.csvFileImporterMap = new LinkedHashMap<>();
         for (CsvFileImporter csvFileImporter : csvFileImporters) {
             this.csvFileImporterMap.put(csvFileImporter.handlesFileWithName(), csvFileImporter);
         }
     }
 
-    public void importFromZipFile(DataSource dataSource, File zipFile) {
+    public void importFromZipFile(File zipFile) {
         try (InputStream zipInputStream = new FileInputStream(zipFile)) {
-            importFromZippedInputStream(dataSource, zipInputStream);
+            importFromZippedInputStream(zipInputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void importFromZippedInputStream(DataSource dataSource, InputStream zippedInputStream) {
+    public void importFromZippedInputStream(InputStream zippedInputStream) {
         try {
             File tempDir = Files.createTempDirectory("BaseCsvImporter.importDataEtc").toFile();
             try {
@@ -102,7 +105,7 @@ public class BaseCsvImporter {
                 }
 
                 // Import from the temp data directory
-                importFromDataDirectory(dataSource, tempDir);
+                importFromDataDirectory(tempDir);
 
             } finally {
                 FileUtils.deleteDirectory(tempDir);
@@ -112,7 +115,7 @@ public class BaseCsvImporter {
         }
     }
 
-    public void importFromDataDirectory(DataSource dataSource, File dataDir) {
+    public void importFromDataDirectory(File dataDir) {
 
         checkDataDirectory(dataDir);
         StringBuilder pendingOutput = new StringBuilder();
@@ -215,38 +218,6 @@ public class BaseCsvImporter {
 
     }
 
-    protected interface CsvFileImporter {
-
-        public String handlesFileWithName();
-
-//        public void importFromCsvFile(StringBuilder pendingOutput, Connection connection, File csvFile);
-
-    }
-
-    protected interface LineBasedCsvFileImporter extends CsvFileImporter {
-
-        public void processCsvLine(Connection connection, String[] nextLine);
-
-    }
-
-    public static class SimpleCsvFileImporter implements CsvFileImporter {
-
-        private String handlesFilesWithName;
-
-        public SimpleCsvFileImporter(String handlesFilesWithName) {
-            this.handlesFilesWithName = handlesFilesWithName;
-        }
-
-        public String handlesFileWithName() {
-            return handlesFilesWithName;
-        }
-
-        public long importFromCsvFile(Connection connection, File csvFile) {
-            String tableName = csvFile.getName().replaceFirst("(?i)\\.csv$", "");
-            return CsvTableImporter.importFromFile(connection, tableName, csvFile);
-        }
-    }
-
     private void checkDataDirectory(File dataDir) {
 
         // Check directory exists
@@ -273,6 +244,36 @@ public class BaseCsvImporter {
             }
         }
 
+    }
+
+    public interface CsvFileImporter {
+
+        public String handlesFileWithName();
+
+    }
+
+    public interface LineBasedCsvFileImporter extends CsvFileImporter {
+
+        public void processCsvLine(Connection connection, String[] nextLine);
+
+    }
+
+    public static class SimpleCsvFileImporter implements CsvFileImporter {
+
+        private String handlesFilesWithName;
+
+        public SimpleCsvFileImporter(String handlesFilesWithName) {
+            this.handlesFilesWithName = handlesFilesWithName;
+        }
+
+        public String handlesFileWithName() {
+            return handlesFilesWithName;
+        }
+
+        public long importFromCsvFile(Connection connection, File csvFile) {
+            String tableName = csvFile.getName().replaceFirst("(?i)\\.csv$", "");
+            return CsvTableImporter.importFromFile(connection, tableName, csvFile);
+        }
     }
 
 }
