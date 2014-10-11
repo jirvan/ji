@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.csv;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.jirvan.lang.MessageException;
 import com.jirvan.lang.SQLRuntimeException;
 import com.jirvan.util.Strings;
@@ -38,9 +39,12 @@ import org.apache.commons.io.FileUtils;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -122,9 +126,10 @@ public class BaseCsvImporter {
                 for (Map.Entry<String, CsvFileImporter> entry : csvFileImporterMap.entrySet()) {
                     File csvFile = new File(dataDir, entry.getKey());
                     CsvFileImporter csvFileImporter = entry.getValue();
-                    csvFileImporter.importFromCsvFile(pendingOutput,
-                                                      connection,
-                                                      csvFile);
+                    importFromCsvFile(pendingOutput,
+                                      connection,
+                                      csvFileImporter,
+                                      csvFile);
                 }
 
                 connection.commit();
@@ -141,11 +146,86 @@ public class BaseCsvImporter {
 
     }
 
+    private void importFromCsvFile(StringBuilder pendingOutput, Connection connection, CsvFileImporter csvFileImporter, File csvFile) {
+        long rows = 0;
+        try {
+            if (csvFileImporter instanceof SimpleCsvFileImporter) {
+                rows = ((SimpleCsvFileImporter) csvFileImporter).importFromCsvFile(connection, csvFile);
+            } else if (csvFileImporter instanceof LineBasedCsvFileImporter) {
+                rows = importFromReader(connection, (LineBasedCsvFileImporter) csvFileImporter, new FileReader(csvFile));
+            } else {
+                throw new RuntimeException(String.format("Unsupported CsvFileImporter sub type \"%s\"", csvFileImporter.getClass().getName()));
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        pendingOutput.append(String.format("  - processed %d rows from %s\n", rows, csvFile.getName()));
+    }
+
+    private static long importFromReader(Connection connection,
+                                         LineBasedCsvFileImporter csvFileImporter,
+                                         Reader reader) {
+        assertNotNull(connection, "connection is null");
+        try {
+
+            CSVReader csvReader = new CSVReader(reader);
+            int lineNumber = 1;
+            try {
+
+                // Get the column names
+                String[] columnNames = csvReader.readNext();
+                if (columnNames == null || columnNames.length == 0) {
+                    throw new RuntimeException("First row is empty (expected column names");
+                }
+
+                // Prepare the insert statement and execute it for each row in the csv file
+                String[] nextLine;
+                while ((nextLine = csvReader.readNext()) != null) {
+                    lineNumber++;
+
+                    if (nextLine.length == 1 && (nextLine[0] == null || nextLine[0].trim().length() == 0)) {
+                        continue;
+                    }
+
+                    try {
+
+                        // Check the number of fields is correct
+                        if (nextLine.length != columnNames.length) {
+                            throw new RuntimeException("Exception processing line " + lineNumber + ": This line has "
+                                                       + nextLine.length + " fields, but " + columnNames.length
+                                                       + " (the number of headings in the first line) were expected.");
+                        }
+                        csvFileImporter.processCsvLine(connection, nextLine);
+
+                    } catch (Throwable t) {
+                        throw CsvLineRuntimeException.wrapIfAppropriate(lineNumber, t);
+                    }
+
+                }
+
+            } finally {
+                csvReader.close();
+            }
+
+            return lineNumber - 1;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     protected interface CsvFileImporter {
 
         public String handlesFileWithName();
 
-        public void importFromCsvFile(StringBuilder pendingOutput, Connection connection, File csvFile);
+//        public void importFromCsvFile(StringBuilder pendingOutput, Connection connection, File csvFile);
+
+    }
+
+    protected interface LineBasedCsvFileImporter extends CsvFileImporter {
+
+        public void processCsvLine(Connection connection, String[] nextLine);
 
     }
 
@@ -161,10 +241,9 @@ public class BaseCsvImporter {
             return handlesFilesWithName;
         }
 
-        public void importFromCsvFile(StringBuilder pendingOutput, Connection connection, File csvFile) {
+        public long importFromCsvFile(Connection connection, File csvFile) {
             String tableName = csvFile.getName().replaceFirst("(?i)\\.csv$", "");
-            long rows = CsvTableImporter.importFromFile(connection, tableName, csvFile);
-            pendingOutput.append(String.format("  - uploaded %d %s\n", rows, tableName.replaceAll("_", "")));
+            return CsvTableImporter.importFromFile(connection, tableName, csvFile);
         }
     }
 
