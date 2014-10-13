@@ -37,6 +37,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 public class SQLiteDataSource implements DataSource {
@@ -56,7 +57,14 @@ public class SQLiteDataSource implements DataSource {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+        Statement statement = connection.createStatement();
+        try {
+            statement.execute("PRAGMA foreign_keys = ON");
+        } finally {
+            statement.close();
+        }
+        return connection;
     }
 
     @Override public Connection getConnection(String username, String password) throws SQLException {

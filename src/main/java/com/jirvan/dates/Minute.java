@@ -30,8 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -197,6 +201,10 @@ public class Minute {
         return String.format("%04d%02d%02d-%02d%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
+    public String toFilenameSafeString2() {
+        return String.format("%04d-%02d-%02d_%02d%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
+    }
+
     public String toISO8601String() {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
@@ -205,7 +213,7 @@ public class Minute {
         if (string == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d)$").matcher(string);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)[-\\.](\\d\\d)[-\\.](\\d\\d)[ T](\\d\\d):(\\d\\d)$").matcher(string);
             if (!m.matches()) {
                 throw new MinuteTimestampFormatException(string);
             }

@@ -202,6 +202,30 @@ public class Utl {
         }
     }
 
+    public static Long toLong(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            return Long.parseLong(value);
+        }
+    }
+
+    public static Integer toInteger(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            return Integer.parseInt(value);
+        }
+    }
+
+    public static BigDecimal toBigDecimal(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            return new BigDecimal(value);
+        }
+    }
+
     public static String getStackTrace(Throwable t) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);

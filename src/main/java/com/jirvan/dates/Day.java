@@ -364,7 +364,7 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
             return null;
         } else {
 
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)$").matcher(dateString);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)[-\\.](\\d\\d)[-\\.](\\d\\d)$").matcher(dateString);
             if (m.matches()) {
                 int year = Integer.parseInt(m.group(1));
                 int month = Integer.parseInt(m.group(2));
