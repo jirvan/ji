@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.spring;
 
+import com.jirvan.lang.MessageException;
 import com.jirvan.lang.NotFoundRuntimeException;
 import com.jirvan.util.Utl;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -44,15 +45,19 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public @ResponseBody Error defaultErrorHandler(Exception exception) throws Exception {
+    public @ResponseBody Error defaultErrorHandler(Throwable throwable) throws Throwable {
 
-        // If the exception is annotated with @ResponseStatus rethrow it and let the
+        // If the throwable is annotated with @ResponseStatus rethrow it and let the
         // framework handle it, otherwise return the error object with a 500 status
-        if (AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null) {
-            throw exception;
+        if (AnnotationUtils.findAnnotation(throwable.getClass(), ResponseStatus.class) != null) {
+            throw throwable;
         } else {
-            exception.printStackTrace();
-            return new Error(exception);
+            throwable.printStackTrace();
+            if (throwable instanceof MessageException) {
+                return new Error("Error", throwable);
+            } else {
+                return new Error(throwable);
+            }
         }
 
     }
