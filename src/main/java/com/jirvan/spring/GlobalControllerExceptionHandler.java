@@ -51,6 +51,7 @@ public class GlobalControllerExceptionHandler {
         if (AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null) {
             throw exception;
         } else {
+            exception.printStackTrace();
             return new Error(exception);
         }
 
