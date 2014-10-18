@@ -59,7 +59,7 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(NotFoundRuntimeException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody Error handleError(NotFoundRuntimeException exception) {
-        return new Error(exception);
+        return new Error("Not found exception", exception);
     }
 
     public static class Error {
@@ -71,6 +71,13 @@ public class GlobalControllerExceptionHandler {
 
         public Error(Throwable throwable) {
             this.errorName = throwable.getClass().getSimpleName();
+            this.errorMessage = throwable.getMessage();
+            this.throwableClass = throwable.getClass().getName();
+            this.throwableStacktrace = Utl.getStackTrace(throwable);
+        }
+
+        public Error(String errorName, Throwable throwable) {
+            this.errorName = errorName;
             this.errorMessage = throwable.getMessage();
             this.throwableClass = throwable.getClass().getName();
             this.throwableStacktrace = Utl.getStackTrace(throwable);
