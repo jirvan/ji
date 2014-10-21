@@ -33,6 +33,7 @@ package com.jirvan.util;
 public enum DatabaseType {
 
     sqlserver("Microsoft SQL Server"),
+    sqlite("SQLite"),
     postgres("PostgreSQL");
 
     private String databaseProductName;
