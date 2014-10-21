@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.spring;
+package com.jirvan.spring.controllers;
 
 import com.jirvan.lang.MessageException;
 import com.jirvan.lang.NotFoundRuntimeException;
