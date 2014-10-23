@@ -30,6 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import com.jirvan.lang.SQLRuntimeException;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public enum DatabaseType {
 
     sqlserver("Microsoft SQL Server"),
@@ -46,16 +52,48 @@ public enum DatabaseType {
         return databaseProductName;
     }
 
+    public static DatabaseType get(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return get(connection);
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        }
+    }
+
+    public static DatabaseType get(Connection connection) {
+        try {
+            return DatabaseType.get(connection.getMetaData().getDatabaseProductName());
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        }
+    }
+
     public static DatabaseType get(String name) {
         for (DatabaseType databaseType : DatabaseType.values()) {
-            if (databaseType.databaseProductName.equals(name)) {
+            if (databaseType.databaseProductName.equals(name) || databaseType.name().equals(name)) {
                 return databaseType;
             }
         }
         try {
             return DatabaseType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedDatabaseTypeException(name,DatabaseType.values());
+            throw new UnsupportedDatabaseTypeException(name, DatabaseType.values());
+        }
+    }
+
+    public static DatabaseType getIfSupported(Connection connection) {
+        try {
+            return DatabaseType.getIfSupported(connection.getMetaData().getDatabaseProductName());
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
+        }
+    }
+
+    public static DatabaseType getIfSupported(DataSource dataSource, DatabaseType... supportedDatabaseTypes) {
+        try (Connection connection = dataSource.getConnection()) {
+            return DatabaseType.getIfSupported(connection.getMetaData().getDatabaseProductName(), supportedDatabaseTypes);
+        } catch (SQLException e) {
+            throw new SQLRuntimeException(e);
         }
     }
 

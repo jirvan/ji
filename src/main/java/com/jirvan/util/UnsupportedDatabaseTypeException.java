@@ -32,11 +32,11 @@ package com.jirvan.util;
 
 public class UnsupportedDatabaseTypeException extends RuntimeException {
 
-    public UnsupportedDatabaseTypeException(String databaseTypeName, DatabaseType[] supportedDatabaseTypes) {
+    public UnsupportedDatabaseTypeException(String databaseTypeName, DatabaseType... supportedDatabaseTypes) {
         super(buildMessage(databaseTypeName, supportedDatabaseTypes));
     }
 
-    public UnsupportedDatabaseTypeException(DatabaseType databaseType, DatabaseType[] supportedDatabaseTypes) {
+    public UnsupportedDatabaseTypeException(DatabaseType databaseType, DatabaseType... supportedDatabaseTypes) {
         super(buildMessage(databaseType.getDatabaseProductName(), supportedDatabaseTypes));
     }
 
@@ -46,9 +46,9 @@ public class UnsupportedDatabaseTypeException extends RuntimeException {
         for (int i = 0; i < supportedDatabaseTypes.length; i++) {
             DatabaseType supportedDatabaseType = supportedDatabaseTypes[i];
             if (i == 0) {
-                stringBuilder.append(String.format("\nvalid databases are : \"%s\" (or \"%s\")\n", supportedDatabaseType.name(), supportedDatabaseType.getDatabaseProductName()));
+                stringBuilder.append(String.format("\nvalid databases are : %s (%s)", supportedDatabaseType.getDatabaseProductName(), supportedDatabaseType.name()));
             } else {
-                stringBuilder.append(String.format(",\n                      \"%s\" (or \"%s\")\n", supportedDatabaseType.name(), supportedDatabaseType.getDatabaseProductName()));
+                stringBuilder.append(String.format(",\n                      %s (%s)\n", supportedDatabaseType.getDatabaseProductName(), supportedDatabaseType.name()));
             }
 
         }
