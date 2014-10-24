@@ -32,6 +32,7 @@ package com.jirvan.csv;
 
 import com.jirvan.lang.SQLRuntimeException;
 import com.jirvan.util.Jdbc;
+import org.apache.commons.lang.SystemUtils;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -122,6 +123,7 @@ public class CsvTableExporter {
                         if (i != 0) outputStream.write(',');
                         outputStream.write(rset.getMetaData().getColumnName(i + 1).getBytes());
                     }
+                    if (SystemUtils.IS_OS_WINDOWS) outputStream.write('\r');
                     outputStream.write('\n');
 
                     // Write the data lines
@@ -131,6 +133,7 @@ public class CsvTableExporter {
                             if (i != 0) outputStream.write(',');
                             outputStream.write(formatValue(rset.getObject(i + 1)).getBytes());
                         }
+                        if (SystemUtils.IS_OS_WINDOWS) outputStream.write('\r');
                         outputStream.write('\n');
                         rowsExported++;
                     }
