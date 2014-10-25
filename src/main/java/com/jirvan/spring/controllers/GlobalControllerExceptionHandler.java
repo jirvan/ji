@@ -77,14 +77,14 @@ public class GlobalControllerExceptionHandler {
 
         public Error(Throwable throwable) {
             this.errorName = throwable.getClass().getSimpleName();
-            this.errorMessage = throwable.getMessage();
+            this.errorMessage = throwable.getMessage() != null ? throwable.getMessage() : throwable.getClass().getSimpleName();
             this.throwableClass = throwable.getClass().getName();
             this.throwableStacktrace = Utl.getStackTrace(throwable);
         }
 
         public Error(String errorName, Throwable throwable) {
             this.errorName = errorName;
-            this.errorMessage = throwable.getMessage();
+            this.errorMessage = throwable.getMessage() != null ? throwable.getMessage() : throwable.getClass().getSimpleName();
             this.throwableClass = throwable.getClass().getName();
             this.throwableStacktrace = Utl.getStackTrace(throwable);
         }
