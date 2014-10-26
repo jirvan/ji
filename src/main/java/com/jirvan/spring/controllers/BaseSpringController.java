@@ -36,7 +36,7 @@ import com.jirvan.util.Io;
 public class BaseSpringController {
 
     public static String getDbSql(Class anchorClass, String scriptRelativePath) {
-        return Io.getResourceFileString(anchorClass, "sql" + DatabaseType.current.name() + "/" + scriptRelativePath);
+        return Io.getResourceFileString(anchorClass, "sql/" + DatabaseType.current.name() + "/" + scriptRelativePath);
     }
 
 }
