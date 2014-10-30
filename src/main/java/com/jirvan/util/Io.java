@@ -254,4 +254,50 @@ public class Io {
 
     }
 
+    public static void copyFileSortedAndFiltered(File inputFile, File outputFile, LineFilter... lineFilters) {
+
+        assertFileExists(inputFile);
+        assertFileDoesNotExist(outputFile);
+
+        try {
+            List<String> list = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    list.add(line);
+                }
+                Collections.sort(list);
+
+            }
+
+            try (FileWriter writer = new FileWriter(outputFile)) {
+                for (String line : list) {
+                    if (linePassesAll(line, lineFilters)) {
+                        writer.write(line);
+                        writer.write('\n');
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private static boolean linePassesAll(String line, LineFilter... lineFilters) {
+        for (LineFilter lineFilter : lineFilters) {
+            if (!lineFilter.linePasses(line)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public interface LineFilter {
+
+        public boolean linePasses(String line);
+
+    }
+
 }
