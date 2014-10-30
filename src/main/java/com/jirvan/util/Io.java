@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.lang.FileNotFoundRuntimeException;
+import com.jirvan.lang.NotFoundRuntimeException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -78,7 +79,7 @@ public class Io {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(propertiesFileRelativePath);
             if (inputStream == null) {
-                throw new RuntimeException("Couldn't find resource \"" + propertiesFileRelativePath + "\" associated with class \"" + anchorClass.getName() + "\"");
+                throw new NotFoundRuntimeException("Couldn't find resource \"" + propertiesFileRelativePath + "\" associated with class \"" + anchorClass.getName() + "\"");
             }
             try {
                 Properties properties = new Properties();
@@ -170,7 +171,7 @@ public class Io {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(filename);
             if (inputStream == null) {
-                throw new RuntimeException("Couldn't find resource \"" + filename + "\" associated with class \"" + anchorClass.getName() + "\"");
+                throw new NotFoundRuntimeException("Couldn't find resource \"" + filename + "\" associated with class \"" + anchorClass.getName() + "\"");
             }
             try {
                 return readBytes(inputStream);
@@ -186,7 +187,7 @@ public class Io {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(filename);
             if (inputStream == null) {
-                throw new RuntimeException("Couldn't find resource \"" + filename + "\" associated with class \"" + anchorClass.getName() + "\"");
+                throw new NotFoundRuntimeException("Couldn't find resource \"" + filename + "\" associated with class \"" + anchorClass.getName() + "\"");
             }
             try {
                 return readStreamIntoString(inputStream);
