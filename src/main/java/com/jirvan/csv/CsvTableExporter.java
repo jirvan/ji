@@ -160,6 +160,8 @@ public class CsvTableExporter {
         } else if (value instanceof String) {
             if (emptyStringIndicatorString != null && "".equals(value)) {
                 return emptyStringIndicatorString;
+            } else if ("".equals(value)) {
+                return "";
             } else if (((String) value).trim().length() == 0) {
                 return "\"" + value + "\"";
             } else if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1) {

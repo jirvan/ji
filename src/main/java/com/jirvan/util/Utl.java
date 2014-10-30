@@ -218,6 +218,20 @@ public class Utl {
         }
     }
 
+    public static Boolean toBoolean(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            if (Strings.isIn(value.toLowerCase(), "t", "true", "y", "yes", "1")) {
+                return true;
+            } else if (Strings.isIn(value.toLowerCase(), "f", "false", "n", "no", "0")) {
+                return true;
+            } else {
+                throw new RuntimeException(String.format("Invalid boolean string \"%s\"\nvalid values are \"t\", \"true\", \"y\", \"yes\", \"1\",\"f\", \"false\", \"n\", \"no\", \"0\"", value));
+            }
+        }
+    }
+
     public static BigDecimal toBigDecimal(String value) {
         if (value == null || value.trim().length() == 0) {
             return null;
