@@ -225,29 +225,33 @@ public class Io {
         }
     }
 
-    public static void copyFileSorted(File inputFile, File outputFile) throws Exception {
+    public static void copyFileSorted(File inputFile, File outputFile) {
 
         assertFileExists(inputFile);
         assertFileDoesNotExist(outputFile);
 
-        List<String> list = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                list.add(line);
-            }
-            Collections.sort(list);
+        try {
+            List<String> list = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    list.add(line);
+                }
+                Collections.sort(list);
 
-        }
-
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            for (String line : list) {
-                writer.write(line);
-                writer.write('\n');
             }
+
+            try (FileWriter writer = new FileWriter(outputFile)) {
+                for (String line : list) {
+                    writer.write(line);
+                    writer.write('\n');
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }
-
 
 }
