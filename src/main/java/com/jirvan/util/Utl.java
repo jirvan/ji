@@ -225,7 +225,7 @@ public class Utl {
             if (Strings.isIn(value.toLowerCase(), "t", "true", "y", "yes", "1")) {
                 return true;
             } else if (Strings.isIn(value.toLowerCase(), "f", "false", "n", "no", "0")) {
-                return true;
+                return false;
             } else {
                 throw new RuntimeException(String.format("Invalid boolean string \"%s\"\nvalid values are \"t\", \"true\", \"y\", \"yes\", \"1\",\"f\", \"false\", \"n\", \"no\", \"0\"", value));
             }
