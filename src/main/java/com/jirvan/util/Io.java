@@ -30,12 +30,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import com.jirvan.lang.*;
+import com.jirvan.lang.FileNotFoundRuntimeException;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
-import static com.jirvan.util.Assertions.assertNotNull;
+import static com.jirvan.util.Assertions.*;
 
 public class Io {
 
@@ -212,5 +224,30 @@ public class Io {
             }
         }
     }
+
+    public static void copyFileSorted(File inputFile, File outputFile) throws Exception {
+
+        assertFileExists(inputFile);
+        assertFileDoesNotExist(outputFile);
+
+        List<String> list = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                list.add(line);
+            }
+            Collections.sort(list);
+
+        }
+
+        try (FileWriter writer = new FileWriter(outputFile)) {
+            for (String line : list) {
+                writer.write(line);
+                writer.write('\n');
+            }
+        }
+
+    }
+
 
 }
