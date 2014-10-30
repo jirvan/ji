@@ -272,7 +272,16 @@ public class Io {
 
             try (FileWriter writer = new FileWriter(outputFile)) {
                 for (String line : list) {
-                    if (linePassesAll(line, lineFilters)) {
+                    boolean linePasses = true;
+                    for (LineFilter lineFilter : lineFilters) {
+                        if (lineFilter.linePasses(line)) {
+                            line = lineFilter.transformedLine(line);
+                        } else {
+                            linePasses = false;
+                            break;
+                        }
+                    }
+                    if (linePasses) {
                         writer.write(line);
                         writer.write('\n');
                     }
@@ -285,18 +294,11 @@ public class Io {
 
     }
 
-    private static boolean linePassesAll(String line, LineFilter... lineFilters) {
-        for (LineFilter lineFilter : lineFilters) {
-            if (!lineFilter.linePasses(line)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public interface LineFilter {
 
         public boolean linePasses(String line);
+
+        public String transformedLine(String line);
 
     }
 
