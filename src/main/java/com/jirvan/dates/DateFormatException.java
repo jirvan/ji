@@ -32,6 +32,6 @@ package com.jirvan.dates;
 
 public class DateFormatException extends RuntimeException {
     public DateFormatException(String invalidString) {
-        super(String.format("Invalid date string \"%s\" - must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")", invalidString));
+        super(String.format("Invalid date string \"%s\" - must be of form \"YYYY-MM-DD\" (e.g. 2012-05-01), or \"DD-Mon-YYYY\" (e.g. \"26-Jan-1992\"), or \"Mon DD, YYYY\" (e.g. \"Jan 26, 1992\")", invalidString));
     }
 }

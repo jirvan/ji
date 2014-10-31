@@ -408,6 +408,42 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
                 return new Day(year, month, day);
             }
 
+            m = Pattern.compile("^(\\d\\d?)-([a-z]{3})-(\\d{4})$").matcher(dateString.toLowerCase());
+            if (m.matches()) {
+                int year = Integer.parseInt(m.group(3));
+                int day = Integer.parseInt(m.group(1));
+                String monthString = m.group(2);
+                int month;
+                if ("jan".equals(monthString)) {
+                    month = 1;
+                } else if ("feb".equals(monthString)) {
+                    month = 2;
+                } else if ("mar".equals(monthString)) {
+                    month = 3;
+                } else if ("apr".equals(monthString)) {
+                    month = 4;
+                } else if ("may".equals(monthString)) {
+                    month = 5;
+                } else if ("jun".equals(monthString)) {
+                    month = 6;
+                } else if ("jul".equals(monthString)) {
+                    month = 7;
+                } else if ("aug".equals(monthString)) {
+                    month = 8;
+                } else if ("sep".equals(monthString)) {
+                    month = 9;
+                } else if ("oct".equals(monthString)) {
+                    month = 10;
+                } else if ("nov".equals(monthString)) {
+                    month = 11;
+                } else if ("dec".equals(monthString)) {
+                    month = 12;
+                } else {
+                    throw new DateFormatException(dateString);
+                }
+                return new Day(year, month, day);
+            }
+
             throw new DateFormatException(dateString);
 
         }
