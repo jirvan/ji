@@ -194,6 +194,31 @@ public class Utl {
         }
     }
 
+    public static String trim(String value) {
+        if (value == null) {
+            return null;
+        } else {
+            return value.trim();
+        }
+    }
+
+    public static String nullIfBlank(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            return value;
+        }
+    }
+
+    public static String trimAndNullIfBlank(String value) {
+        if (value == null || value.trim().length() == 0) {
+            return null;
+        } else {
+            return value.trim();
+        }
+    }
+
+
     public static Long toLong(Date value) {
         if (value == null) {
             return null;
