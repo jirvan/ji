@@ -30,9 +30,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.jirvan.util.Assertions.*;
 
 public class Strings {
+
+    public static String constrainLengthWithDotDotDot(String string, int maxLength) {
+        assertTrue(maxLength >= 3, "You cannot constrain length to less than 3");
+        if (string == null) {
+            return null;
+        } else if (maxLength == 3) {
+            return "...";
+        } else if (string.length() <= maxLength) {
+            return string;
+        } else {
+            return string.substring(0, maxLength - 4) + "...";
+        }
+    }
 
     public static boolean notBlank(String string) {
         return string != null && string.trim().length() > 0;
