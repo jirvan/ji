@@ -47,6 +47,7 @@ public class Jdbc {
 
     public static final String POSTGRES_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
     public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
+    public static final String ORACLE_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>/<service>";
 
     public static String parameterPlaceHolderString(Collection collection) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -168,13 +169,18 @@ public class Jdbc {
         Matcher m;
         if (connectString.toLowerCase().startsWith("postgresql:")) {
             dataSource = Jdbc.getPostgresDataSource(connectString.replaceFirst("postgresql:", ""));
+        } else if (connectString.toLowerCase().startsWith("postgres:")) {
+            dataSource = Jdbc.getPostgresDataSource(connectString.replaceFirst("postgres:", ""));
         } else if (connectString.toLowerCase().startsWith("sqlserver:")) {
             dataSource = Jdbc.getSqlServerDataSource(connectString.replaceFirst("sqlserver:", ""));
+        } else if (connectString.toLowerCase().startsWith("oracle:")) {
+            dataSource = Jdbc.getOracleDataSource(connectString.replaceFirst("oracle:", ""));
         } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
-            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"sqlserver\"", m.group(1)));
+            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"oracle\", \"sqlserver\"", m.group(1)));
         } else {
             throw new MessageException(String.format("Invalid connect string \"%s\"\n" +
                                                      "connectString must be of the form \"postgresql:" + POSTGRES_CONNECT_STRING_DEFINITION + "\"\n" +
+                                                     "                                or \"oracle:" + ORACLE_CONNECT_STRING_DEFINITION + "\"\n" +
                                                      "                                or \"sqlserver:" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"",
                                                      connectString));
         }
@@ -379,7 +385,7 @@ public class Jdbc {
                     serviceName = withPasswordMatcher.group(5);
                 }
             } else {
-                throw new RuntimeException("Invalid PostgreSQL connect string \"" + connectString + "\"");
+                throw new RuntimeException("Invalid Oracle connect string \"" + connectString + "\"");
             }
         }
         if (sid != null) {
