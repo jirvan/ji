@@ -30,16 +30,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import com.jirvan.lang.*;
-import net.sourceforge.jtds.jdbcx.*;
-import oracle.jdbc.pool.*;
-import org.postgresql.ds.*;
-import org.postgresql.ds.common.*;
+import com.jirvan.lang.MessageException;
+import com.jirvan.lang.SQLRuntimeException;
+import net.sourceforge.jtds.jdbcx.JtdsDataSource;
+import oracle.jdbc.pool.OracleDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
+import org.postgresql.ds.common.BaseDataSource;
 
-import javax.sql.*;
-import java.sql.*;
-import java.util.*;
-import java.util.regex.*;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import com.teradata.jdbc.*;
 
@@ -48,6 +56,16 @@ public class Jdbc {
     public static final String POSTGRES_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
     public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
     public static final String ORACLE_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>/<service>";
+
+    public static boolean isOrWasCausedBySqlTypeException(Throwable t) {
+        if (t instanceof SQLRuntimeException || t instanceof SQLException) {
+            return true;
+        } else if (t.getCause() == null) {
+            return false;
+        } else {
+            return isOrWasCausedBySqlTypeException(t.getCause());
+        }
+    }
 
     public static String parameterPlaceHolderString(Collection collection) {
         StringBuilder stringBuilder = new StringBuilder();
