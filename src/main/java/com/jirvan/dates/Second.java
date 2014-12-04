@@ -215,7 +215,7 @@ public class Second {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
     }
 
-    public static Second from(String string) {
+    public static Second fromString(String string) {
         if (string == null) {
             return null;
         } else {
@@ -233,7 +233,7 @@ public class Second {
         }
     }
 
-    public static Second from(Date date) {
+    public static Second fromDate(Date date) {
         if (date == null) {
             return null;
         } else {
@@ -249,7 +249,7 @@ public class Second {
         }
     }
 
-    public static Second from(GregorianCalendar calendar) {
+    public static Second fromGregorianCalendar(GregorianCalendar calendar) {
         if (calendar == null) {
             return null;
         } else {

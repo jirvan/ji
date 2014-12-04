@@ -32,10 +32,10 @@ public class Millisecond_TestCase extends TestCase {
 
     public void test_fromString() {
 
-        Millisecond millisecond = Millisecond.from((String) null);
+        Millisecond millisecond = Millisecond.fromString((String) null);
         Assert.assertNull("Expected millisecond to be null", millisecond);
 
-        millisecond = Millisecond.from("1992-01-26 23:34:56.003");
+        millisecond = Millisecond.fromString("1992-01-26 23:34:56.003");
         Assert.assertEquals("Unexpected year", 1992, millisecond.getYear());
         Assert.assertEquals("Unexpected month", 1, millisecond.getMonthInYear());
         Assert.assertEquals("Unexpected day", 26, millisecond.getDayInMonth());
@@ -44,7 +44,7 @@ public class Millisecond_TestCase extends TestCase {
         Assert.assertEquals("Unexpected second", 56, millisecond.getSecondInMinute());
         Assert.assertEquals("Unexpected millisecond", 3, millisecond.getMillisecondInSecond());
 
-        millisecond = Millisecond.from("0056-07-06 06:02:34.387");
+        millisecond = Millisecond.fromString("0056-07-06 06:02:34.387");
         Assert.assertEquals("Unexpected year", 56, millisecond.getYear());
         Assert.assertEquals("Unexpected month", 7, millisecond.getMonthInYear());
         Assert.assertEquals("Unexpected day", 6, millisecond.getDayInMonth());
@@ -54,7 +54,7 @@ public class Millisecond_TestCase extends TestCase {
         Assert.assertEquals("Unexpected millisecond", 387, millisecond.getMillisecondInSecond());
 
         try {
-            millisecond = Millisecond.from("0056-07-06 03:04:23.78");
+            millisecond = Millisecond.fromString("0056-07-06 03:04:23.78");
             fail("Expected format error");
         } catch (Exception e) {
         }

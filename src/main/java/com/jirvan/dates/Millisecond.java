@@ -30,8 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -228,7 +232,7 @@ public class Millisecond {
         return String.format("%04d%02d%02d-%02d%02d-%02d.%03d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute, millisecondInSecond);
     }
 
-    public static Millisecond from(String string) {
+    public static Millisecond fromString(String string) {
         if (string == null) {
             return null;
         } else {
@@ -247,7 +251,7 @@ public class Millisecond {
         }
     }
 
-    public static Millisecond from(Date date) {
+    public static Millisecond fromDate(Date date) {
         if (date == null) {
             return null;
         } else {
@@ -263,7 +267,7 @@ public class Millisecond {
         }
     }
 
-    public static Millisecond from(GregorianCalendar calendar) {
+    public static Millisecond fromGregorianCalendar(GregorianCalendar calendar) {
         if (calendar == null) {
             return null;
         } else {
