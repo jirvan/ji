@@ -209,7 +209,7 @@ public class Minute {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
     }
 
-    public static Minute fromString(String string) {
+    public static Minute from(String string) {
         if (string == null) {
             return null;
         } else {
@@ -226,7 +226,7 @@ public class Minute {
         }
     }
 
-    public static Minute fromDate(Date date) {
+    public static Minute from(Date date) {
         if (date == null) {
             return null;
         } else {
@@ -242,7 +242,7 @@ public class Minute {
         }
     }
 
-    public static Minute fromGregorianCalendar(GregorianCalendar calendar) {
+    public static Minute from(GregorianCalendar calendar) {
         if (calendar == null) {
             return null;
         } else {

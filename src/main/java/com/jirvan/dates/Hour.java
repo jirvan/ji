@@ -30,12 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -200,14 +196,6 @@ public class Hour {
             int day = Integer.parseInt(m.group(3));
             int hour = Integer.parseInt(m.group(4));
             return new Hour(year, month, day, hour);
-        }
-    }
-
-    public static Hour fromDate(Date date) {
-        if (date == null) {
-            return null;
-        } else {
-            return new Hour(date);
         }
     }
 

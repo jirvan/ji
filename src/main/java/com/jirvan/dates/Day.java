@@ -449,14 +449,6 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         }
     }
 
-    public static Day fromDate(Date date) {
-        if (date == null) {
-            return null;
-        } else {
-            return new Day(date);
-        }
-    }
-
     public int compareTo(Day anotherDay) {
         if (this.equals(anotherDay)) {
             return 0;

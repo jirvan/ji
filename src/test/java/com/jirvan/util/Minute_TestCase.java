@@ -30,17 +30,17 @@ public class Minute_TestCase extends TestCase {
 
     public void test_fromString() {
 
-        Minute minute = Minute.fromString((String) null);
+        Minute minute = Minute.from((String) null);
         Assert.assertNull("Expected minute to be null", minute);
 
-        minute = Minute.fromString("1992-01-26 23:34");
+        minute = Minute.from("1992-01-26 23:34");
         Assert.assertEquals("Unexpected year", 1992, minute.getYear());
         Assert.assertEquals("Unexpected month", 1, minute.getMonthInYear());
         Assert.assertEquals("Unexpected day", 26, minute.getDayInMonth());
         Assert.assertEquals("Unexpected hour", 23, minute.getHourInDay());
         Assert.assertEquals("Unexpected minute", 34, minute.getMinuteInHour());
 
-        minute = Minute.fromString("0056-07-06 06:02");
+        minute = Minute.from("0056-07-06 06:02");
         Assert.assertEquals("Unexpected year", 56, minute.getYear());
         Assert.assertEquals("Unexpected month", 7, minute.getMonthInYear());
         Assert.assertEquals("Unexpected day", 6, minute.getDayInMonth());
@@ -48,7 +48,7 @@ public class Minute_TestCase extends TestCase {
         Assert.assertEquals("Unexpected minute", 2, minute.getMinuteInHour());
 
         try {
-            minute = Minute.fromString("0056-07-06 3:04");
+            minute = Minute.from("0056-07-06 3:04");
             fail("Expected format error");
         } catch (Exception e) {
         }
@@ -57,11 +57,11 @@ public class Minute_TestCase extends TestCase {
 
     public void test_minuteInDay() {
 
-        Assert.assertEquals("Unexpected minute in day", 1174, Minute.fromString("1992-01-26 19:34").getMinuteInDay());
-        Assert.assertEquals("Unexpected minute in day", 15, Minute.fromString("1992-01-26 00:15").getMinuteInDay());
-        Assert.assertEquals("Unexpected minute in day", 0, Minute.fromString("1996-01-26 00:00").getMinuteInDay());
-        Assert.assertEquals("Unexpected minute in day", 1, Minute.fromString("1996-01-26 00:01").getMinuteInDay());
-        Assert.assertEquals("Unexpected minute in day", 1439, Minute.fromString("1992-01-26 23:59").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 1174, Minute.from("1992-01-26 19:34").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 15, Minute.from("1992-01-26 00:15").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 0, Minute.from("1996-01-26 00:00").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 1, Minute.from("1996-01-26 00:01").getMinuteInDay());
+        Assert.assertEquals("Unexpected minute in day", 1439, Minute.from("1992-01-26 23:59").getMinuteInDay());
 
     }
 

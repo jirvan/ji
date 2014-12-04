@@ -31,10 +31,10 @@ public class Second_TestCase extends TestCase {
 
     public void test_fromString() {
 
-        Second second = Second.fromString((String) null);
+        Second second = Second.from((String) null);
         Assert.assertNull("Expected second to be null", second);
 
-        second = Second.fromString("1992-01-26 23:34:56");
+        second = Second.from("1992-01-26 23:34:56");
         Assert.assertEquals("Unexpected year", 1992, second.getYear());
         Assert.assertEquals("Unexpected month", 1, second.getMonthInYear());
         Assert.assertEquals("Unexpected day", 26, second.getDayInMonth());
@@ -42,7 +42,7 @@ public class Second_TestCase extends TestCase {
         Assert.assertEquals("Unexpected minute", 34, second.getMinuteInHour());
         Assert.assertEquals("Unexpected second", 56, second.getSecondInMinute());
 
-        second = Second.fromString("0056-07-06 06:02:34");
+        second = Second.from("0056-07-06 06:02:34");
         Assert.assertEquals("Unexpected year", 56, second.getYear());
         Assert.assertEquals("Unexpected month", 7, second.getMonthInYear());
         Assert.assertEquals("Unexpected day", 6, second.getDayInMonth());
@@ -51,7 +51,7 @@ public class Second_TestCase extends TestCase {
         Assert.assertEquals("Unexpected second", 34, second.getSecondInMinute());
 
         try {
-            second = Second.fromString("0056-07-06 3:04:23");
+            second = Second.from("0056-07-06 3:04:23");
             fail("Expected format error");
         } catch (Exception e) {
         }
