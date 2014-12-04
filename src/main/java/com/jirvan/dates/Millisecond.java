@@ -228,7 +228,7 @@ public class Millisecond {
         return String.format("%04d%02d%02d-%02d%02d-%02d.%03d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute, millisecondInSecond);
     }
 
-    public static Millisecond from(String string) {
+    public static Millisecond fromString(String string) {
         if (string == null) {
             return null;
         } else {
