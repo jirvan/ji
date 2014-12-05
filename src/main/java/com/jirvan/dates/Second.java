@@ -30,8 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -262,6 +266,27 @@ public class Second {
             return null;
         } else {
             return minute.getCalendar();
+        }
+    }
+
+    public static String formatDuration(Second from, Second to) {
+        if (from == null || to == null) {
+            return "";
+        } else {
+            return formatDuration((to.getDate().getTime() - from.getDate().getTime()) / 1000);
+        }
+    }
+
+    public static String formatDuration(Long seconds) {
+        if (seconds == null) {
+            return "";
+        } else {
+            long totalSeconds = Math.abs(seconds);
+            long totalMinutes = totalSeconds / 60;
+            long hoursComponent = totalSeconds / (60 * 60);
+            long minutesComponent = totalMinutes - (hoursComponent * 60);
+            long secondsComponent = totalSeconds - (totalMinutes * 60);
+            return String.format("%s%02d:%02d:%02d", seconds < 0 ? "-" : "", hoursComponent, minutesComponent, secondsComponent);
         }
     }
 

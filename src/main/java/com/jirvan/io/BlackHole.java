@@ -42,6 +42,8 @@ public class BlackHole {
         }
     };
 
+    public static final OutputWriter outputWriter = new OutputWriter(outputStream);
+
     public static final Writer writer = new PrintWriter(outputStream);
 
     public static final PrintWriter printWriter = new PrintWriter(outputStream);

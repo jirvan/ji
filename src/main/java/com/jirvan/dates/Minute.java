@@ -258,4 +258,23 @@ public class Minute {
         }
     }
 
+    public static String formatDuration(Second from, Second to) {
+        if (from == null || to == null) {
+            return "";
+        } else {
+            return formatDuration((to.getDate().getTime() - from.getDate().getTime()) / (60 * 1000));
+        }
+    }
+
+    public static String formatDuration(Long minutes) {
+        if (minutes == null) {
+            return "";
+        } else {
+            long totalMinutes = Math.abs(minutes);
+            long hoursComponent = totalMinutes / 60;
+            long minutesComponent = totalMinutes - (hoursComponent * 60);
+            return String.format("%s%02d:%02d", minutes < 0 ? "-" : "", hoursComponent, minutesComponent);
+        }
+    }
+
 }
