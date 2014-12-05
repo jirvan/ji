@@ -110,6 +110,7 @@ public class OutputWriter {
     public OutputWriter printf(Logger additionalLoggerToPrintTo, String format, Object... args) {
         String formattedString = String.format(format, args);
         additionalLoggerToPrintTo.info(formattedString.replaceFirst("\\n$", ""));
+//        additionalLoggerToPrintTo.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
         printToAllOutputs(formattedString);
         return this;
     }
@@ -117,6 +118,7 @@ public class OutputWriter {
     public OutputWriter printf(org.apache.log4j.Logger additionalLoggerToPrintTo, String format, Object... args) {
         String formattedString = String.format(format, args);
         additionalLoggerToPrintTo.info(formattedString.replaceFirst("\\n$", ""));
+//        additionalLoggerToPrintTo.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
         printToAllOutputs(formattedString);
         return this;
     }
@@ -125,10 +127,10 @@ public class OutputWriter {
         try {
 
             for (Logger logger : loggers) {
-                logger.info(formattedString.replaceFirst("\\n$", ""));
+                logger.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
             for (org.apache.log4j.Logger logger : log4jLoggers) {
-                logger.info(formattedString.replaceFirst("\\n$", ""));
+                logger.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
             for (OutputStream outputStream : outputStreams) {
                 outputStream.write(formattedString.getBytes());
