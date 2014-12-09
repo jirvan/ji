@@ -30,11 +30,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.json;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.impl.*;
-import org.codehaus.jackson.util.DefaultPrettyPrinter;
 
-import java.io.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+
+import java.io.IOException;
 
 public class JsonPrettyPrinter extends DefaultPrettyPrinter {
 
@@ -43,12 +43,12 @@ public class JsonPrettyPrinter extends DefaultPrettyPrinter {
         _arrayIndenter = new LocalIndenter(4);
     }
 
-    @Override public void writeArrayValueSeparator(JsonGenerator jg) throws IOException, JsonGenerationException {
+    @Override public void writeArrayValueSeparator(JsonGenerator jg) throws IOException {
         jg.writeRaw(',');
         _arrayIndenter.writeIndentation(jg, _nesting);
     }
 
-    @Override public void writeEndArray(JsonGenerator jg, int nrOfValues) throws IOException, JsonGenerationException {
+    @Override public void writeEndArray(JsonGenerator jg, int nrOfValues) throws IOException {
         if (!_arrayIndenter.isInline()) {
             --_nesting;
         }
@@ -60,7 +60,7 @@ public class JsonPrettyPrinter extends DefaultPrettyPrinter {
         jg.writeRaw(']');
     }
 
-    @Override public void writeObjectFieldValueSeparator(JsonGenerator jg) throws IOException, JsonGenerationException {
+    @Override public void writeObjectFieldValueSeparator(JsonGenerator jg) throws IOException {
         if (_spacesInObjectEntries) {
             jg.writeRaw(": ");
         } else {
@@ -80,7 +80,7 @@ public class JsonPrettyPrinter extends DefaultPrettyPrinter {
         public boolean isInline() { return false; }
 
         //@Override
-        public void writeIndentation(JsonGenerator jg, int level) throws IOException, JsonGenerationException {
+        public void writeIndentation(JsonGenerator jg, int level) throws IOException {
             jg.writeRaw("\n");
             for (int i = 0; i < level * indentationSpaces; i++) {
                 jg.writeRaw(' ');

@@ -1,7 +1,7 @@
 package com.jirvan.json;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jirvan.dates.*;
-import org.codehaus.jackson.map.*;
 
 public class JsonObjectMapper extends ObjectMapper {
 

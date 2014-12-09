@@ -30,10 +30,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.module.*;
-import org.codehaus.jackson.node.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import java.io.*;
 
@@ -76,7 +84,7 @@ public class Dates {
                 ObjectCodec oc = jsonParser.getCodec();
                 JsonNode jsonNode = oc.readTree(jsonParser);
                 if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
-                return Month.fromString((jsonNode.getTextValue()));
+                return Month.fromString((jsonNode.textValue()));
             }
         });
 
@@ -90,7 +98,7 @@ public class Dates {
                 ObjectCodec oc = jsonParser.getCodec();
                 JsonNode jsonNode = oc.readTree(jsonParser);
                 if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
-                return Day.fromString((jsonNode.getTextValue()));
+                return Day.fromString((jsonNode.textValue()));
             }
         });
 
@@ -104,7 +112,7 @@ public class Dates {
                 ObjectCodec oc = jsonParser.getCodec();
                 JsonNode jsonNode = oc.readTree(jsonParser);
                 if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
-                return Hour.fromString((jsonNode.getTextValue()));
+                return Hour.fromString((jsonNode.textValue()));
             }
         });
 

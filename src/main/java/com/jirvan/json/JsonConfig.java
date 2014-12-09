@@ -30,10 +30,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.json;
 
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jirvan.lang.*;
 import com.jirvan.util.*;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.node.*;
 
 import static com.jirvan.util.Assertions.assertNotNull;
 
@@ -46,7 +47,7 @@ public abstract class JsonConfig {
             JsonConfig config;
             try {
 
-                JsonNode tree = Json.readTree(Io.getFileString(Io.getHomeDirectoryFile(filename)));
+                TreeNode tree = Json.readTree(Io.getFileString(Io.getHomeDirectoryFile(filename)));
                 if (!(tree instanceof ObjectNode)) {
                     throw new RuntimeException(String.format("Error in %s.\nFile should look something like this:\n{\n  \"type\" : \"com.acme.ThingyConfig\",\n.\n.\n.\n}\n",
                                                              filename));
@@ -131,5 +132,4 @@ public abstract class JsonConfig {
     protected String exampleJsonString() {
         return Json.toJsonString(createExample()).replaceFirst("\\{", "{\n  \"type\" : \"" + this.getClass().getName() + "\",");
     }
-
 }

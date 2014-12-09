@@ -30,13 +30,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.jirvan.dates.*;
 import com.jirvan.json.*;
 import com.jirvan.util.*;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.module.*;
-import org.codehaus.jackson.node.*;
 
 import java.io.*;
 
@@ -44,14 +56,13 @@ public class Json {
 
     private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper(false);
     private static final ObjectMapper OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES = setUpObjectMapper(true);
-    private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
-                                                                   .withPrettyPrinter(new JsonPrettyPrinter());
+    private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer(new JsonPrettyPrinter());
 
-    public static <T> T treeToValue(JsonNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
-        return OBJECT_MAPPER.readValue(n, valueType);
+    public static <T> T treeToValue(TreeNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
+        return OBJECT_MAPPER.treeToValue(n, valueType);
     }
 
-    public static JsonNode readTree(String content) throws IOException, JsonProcessingException {
+    public static TreeNode readTree(String content) throws IOException, JsonProcessingException {
         return OBJECT_MAPPER.readTree(content);
     }
 
@@ -108,7 +119,7 @@ public class Json {
         objectMapper.registerModule(Dates.getSerializerDeserializerModule());
         objectMapper.registerModule(getJsonShapeShifterSerializerModule());
         objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        if (ignoreUnknownProperties) objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (ignoreUnknownProperties) objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 

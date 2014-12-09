@@ -30,10 +30,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.json;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jirvan.dates.*;
 import com.jirvan.util.*;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
 
 import java.io.*;
 import java.util.*;
@@ -45,8 +53,8 @@ public abstract class JsonHandler {
     private final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer()
                                                             .withDefaultPrettyPrinter();
 
-    public <T> T treeToValue(JsonNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
-        return OBJECT_MAPPER.readValue(n, valueType);
+    public <T> T treeToValue(TreeNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
+        return OBJECT_MAPPER.treeToValue(n, valueType);
     }
 
     public JsonNode readTree(String content) throws IOException, JsonProcessingException {
@@ -110,7 +118,7 @@ public abstract class JsonHandler {
             objectMapper.registerModule(additionalModule);
         }
         objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        if (ignoreUnknownProperties) objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (ignoreUnknownProperties) objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 
