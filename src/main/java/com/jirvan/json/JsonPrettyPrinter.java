@@ -43,6 +43,11 @@ public class JsonPrettyPrinter extends DefaultPrettyPrinter {
         _arrayIndenter = new LocalIndenter(4);
     }
 
+    @Override
+    public JsonPrettyPrinter createInstance() {
+        return new JsonPrettyPrinter();
+    }
+
     @Override public void writeArrayValueSeparator(JsonGenerator jg) throws IOException {
         jg.writeRaw(',');
         _arrayIndenter.writeIndentation(jg, _nesting);
