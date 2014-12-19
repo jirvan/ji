@@ -123,6 +123,10 @@ public class OutputWriter {
         return this;
     }
 
+    public WriterProxy getWriterProxy() {
+        return new WriterProxy();
+    }
+
     private void printToAllOutputs(String formattedString) {
         try {
 
@@ -142,6 +146,21 @@ public class OutputWriter {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public class WriterProxy extends Writer {
+
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            printf("%s", new String(cbuf, off, len));
+        }
+
+        public void flush() throws IOException {
+            // Do nothing - flushing is automatic
+        }
+
+        public void close() throws IOException {
+            // Do nothing - dependent streams etc need to have control of closure themselves
         }
     }
 

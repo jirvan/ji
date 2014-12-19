@@ -28,15 +28,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.util;
+package com.jirvan.jobpool;
 
+import com.jirvan.io.OutputWriter;
 import com.jirvan.lang.MessageException;
+import com.jirvan.util.Utl;
 import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.WriterAppender;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,28 +50,16 @@ public class JobPool {
     private Map<Long, Job> currentJobs = new HashMap<>();
     private int mostRecentJobId = 0;
 
-    public static Job start(Logger logger, Task task) {
-        return commonJobPool.startNewJobForTask(false, logger, null, task);
+    public static Job start(OutputWriter output, Task task) {
+        return commonJobPool.startNewJobForTask(false, output, null, null, task);
     }
 
-    @Deprecated
-    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Task task) {
-        return startNewJobForTask(throwExceptions, logger, null, task);
+    public static Job start(OutputWriter output, Logger logger, Task task) {
+        return commonJobPool.startNewJobForTask(false, output, logger, null, task);
     }
 
-    @Deprecated
-    public Job startNewJobForTask(Logger logger, Task task) {
-        return startNewJobForTask(false, logger, null, task);
-    }
-
-    @Deprecated
-    public Job startNewJobForTask(Logger logger, Level level, Task task) {
-        return startNewJobForTask(false, logger, level, task);
-    }
-
-    @Deprecated
-    public Job startNewJobForTask(boolean throwExceptions, Logger logger, Level level, Task task) {
-        Job job = new Job(++mostRecentJobId, logger, level);
+    private Job startNewJobForTask(boolean throwExceptions, OutputWriter output, Logger logger, Level level, Task task) {
+        Job job = new Job(++mostRecentJobId, output, logger, level);
         Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
@@ -83,9 +72,7 @@ public class JobPool {
 
     public static abstract class Task {
 
-        protected StringWriter outputWriter;
-
-        public abstract void perform();
+        public abstract void perform(OutputWriter output);
 
     }
 
@@ -93,24 +80,26 @@ public class JobPool {
 
         private long jobId;
         private Status status;
-        private StringWriter logWriter;
+        private OutputWriter output;
 
-        public Job(long jobId, Logger logger, Level level) {
+        public Job(long jobId, OutputWriter output, Logger logger, Level level) {
             this.jobId = jobId;
+            this.output = output;
             this.status = Status.inProgress;
             assertNotNull(logger, "logger must be provided");
-            logWriter = new StringWriter();
-            WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), logWriter);
-            if (level != null) writerAppender.setThreshold(level);
-            logger.addAppender(writerAppender);
+
+            if (logger != null) {
+                WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), output.getWriterProxy());
+                if (level != null) writerAppender.setThreshold(level);
+                logger.addAppender(writerAppender);
+            }
+
         }
 
         public static enum Status {
-
             inProgress,
             finishedSuccessfully,
-            finishedWithError;
-
+            finishedWithError
         }
 
         public long getJobId() {
@@ -125,10 +114,6 @@ public class JobPool {
             this.status = status;
         }
 
-        public String getLog() {
-            return logWriter.toString();
-        }
-
     }
 
     private static class JobRunnable implements Runnable {
@@ -141,12 +126,11 @@ public class JobPool {
             this.job = job;
             this.task = task;
             this.throwExceptions = throwExceptions;
-            task.outputWriter = job.logWriter;
         }
 
         public void run() {
             try {
-                task.perform();
+                task.perform(job.output);
                 job.setStatus(Job.Status.finishedSuccessfully);
             } catch (Throwable t) {
                 job.setStatus(Job.Status.finishedWithError);
@@ -159,18 +143,12 @@ public class JobPool {
                         throw new RuntimeException(t);
                     }
                 } else {
-                    if (job.logWriter.getBuffer().length() > 0) {
-                        job.logWriter.append('\n');
-                        System.err.println("");
-                    }
                     if (t instanceof MessageException) {
                         System.err.printf("\nJob finished with ERROR: %s\n\n", t.getMessage());
-                        job.logWriter.append("\nJob finished with ERROR: ");
-                        job.logWriter.append(t.getMessage());
+                        job.output.printf("\nJob finished with ERROR: %s\n\n", t.getMessage());
                     } else {
                         System.err.printf("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t));
-                        job.logWriter.append("\nJob finished with ERROR\n\n");
-                        job.logWriter.append(Utl.getStackTrace(t));
+                        job.output.printf("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t));
                     }
                 }
             }
