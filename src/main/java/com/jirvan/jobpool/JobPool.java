@@ -38,6 +38,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.WriterAppender;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,16 +51,16 @@ public class JobPool {
     private Map<Long, Job> currentJobs = new HashMap<>();
     private int mostRecentJobId = 0;
 
-    public static Job start(OutputWriter output, Task task) {
-        return commonJobPool.startNewJobForTask(false, output, null, null, task);
+    public static Job start(Task task) {
+        return commonJobPool.startNewJobForTask(false, null, null, task);
     }
 
-    public static Job start(OutputWriter output, Logger logger, Task task) {
-        return commonJobPool.startNewJobForTask(false, output, logger, null, task);
+    public static Job start(Logger logger, Task task) {
+        return commonJobPool.startNewJobForTask(false, logger, null, task);
     }
 
-    private Job startNewJobForTask(boolean throwExceptions, OutputWriter output, Logger logger, Level level, Task task) {
-        Job job = new Job(++mostRecentJobId, output, logger, level);
+    private Job startNewJobForTask(boolean throwExceptions, Logger logger, Level level, Task task) {
+        Job job = new Job(++mostRecentJobId, logger, level);
         Runnable runnable = new JobRunnable(job, task, throwExceptions);
         new Thread(runnable).start();
         currentJobs.put(job.getJobId(), job);
@@ -80,16 +81,17 @@ public class JobPool {
 
         private long jobId;
         private Status status;
-        private OutputWriter output;
+        private StringWriter logWriter = new StringWriter();
 
-        public Job(long jobId, OutputWriter output, Logger logger, Level level) {
+        private boolean noLogger;
+
+        public Job(long jobId, Logger logger, Level level) {
             this.jobId = jobId;
-            this.output = output;
             this.status = Status.inProgress;
-            assertNotNull(logger, "logger must be provided");
+            noLogger = logger == null;
 
             if (logger != null) {
-                WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), output.getWriterProxy());
+                WriterAppender writerAppender = new WriterAppender(new EnhancedPatternLayout("%m\n"), logWriter);
                 if (level != null) writerAppender.setThreshold(level);
                 logger.addAppender(writerAppender);
             }
@@ -114,6 +116,10 @@ public class JobPool {
             this.status = status;
         }
 
+        public String getLog() {
+            return logWriter.toString();
+        }
+
     }
 
     private static class JobRunnable implements Runnable {
@@ -130,7 +136,7 @@ public class JobPool {
 
         public void run() {
             try {
-                task.perform(job.output);
+                task.perform(job.noLogger ? new OutputWriter(job.logWriter) : new OutputWriter());
                 job.setStatus(Job.Status.finishedSuccessfully);
             } catch (Throwable t) {
                 job.setStatus(Job.Status.finishedWithError);
@@ -145,10 +151,10 @@ public class JobPool {
                 } else {
                     if (t instanceof MessageException) {
                         System.err.printf("\nJob finished with ERROR: %s\n\n", t.getMessage());
-                        job.output.printf("\nJob finished with ERROR: %s\n\n", t.getMessage());
+                        job.logWriter.write(String.format("\nJob finished with ERROR: %s\n\n", t.getMessage()));
                     } else {
                         System.err.printf("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t));
-                        job.output.printf("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t));
+                        job.logWriter.write(String.format("\nJob finished with ERROR:\n\n %s\n\n", Utl.getStackTrace(t)));
                     }
                 }
             }
