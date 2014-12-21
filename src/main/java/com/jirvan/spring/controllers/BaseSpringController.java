@@ -30,13 +30,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.spring.controllers;
 
+import com.jirvan.lang.NotFoundRuntimeException;
 import com.jirvan.util.DatabaseType;
 import com.jirvan.util.Io;
 
 public class BaseSpringController {
 
     public static String getDbSql(Class anchorClass, String scriptRelativePath) {
-        return Io.getResourceFileString(anchorClass, "sql/" + DatabaseType.current.name() + "/" + scriptRelativePath);
+        try {
+            return Io.getResourceFileString(anchorClass, "sql/" + DatabaseType.current.name() + "/" + scriptRelativePath);
+        } catch (NotFoundRuntimeException e) {
+            return Io.getResourceFileString(anchorClass, "sql/" + scriptRelativePath);
+        }
     }
 
 }
