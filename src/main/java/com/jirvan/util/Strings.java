@@ -53,6 +53,10 @@ public class Strings {
         }
     }
 
+    public static String nullIfBlank(String string) {
+        return string == null || string.trim().length() == 0 ? null : string;
+    }
+
     public static boolean notBlank(String string) {
         return string != null && string.trim().length() > 0;
     }
