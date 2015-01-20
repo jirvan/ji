@@ -31,10 +31,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.dates;
 
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.*;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is primarily here to get around the standard java Date class's
@@ -197,6 +201,14 @@ public class Month {
 
     public String toFilenameSafeString() {
         return String.format("%04d%02d", year, monthInYear);
+    }
+
+    public static String format(Month month, String pattern) {
+        return format(month, pattern, null);
+    }
+
+    public static String format(Month month, String pattern, String valueIfNull) {
+        return month == null ? valueIfNull : new SimpleDateFormat(pattern).format(month.getDate());
     }
 
     public static Date toDate(Month month) {

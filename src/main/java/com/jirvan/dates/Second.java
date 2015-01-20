@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -219,6 +220,14 @@ public class Second {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
     }
 
+    public static String format(Second second, String pattern) {
+        return format(second, pattern, null);
+    }
+
+    public static String format(Second second, String pattern, String valueIfNull) {
+        return second == null ? valueIfNull : new SimpleDateFormat(pattern).format(second.getDate());
+    }
+
     public static Second fromString(String string) {
         if (string == null) {
             return null;
@@ -261,11 +270,11 @@ public class Second {
         }
     }
 
-    public static Calendar toCalendar(Second minute) {
-        if (minute == null) {
+    public static Calendar toCalendar(Second second) {
+        if (second == null) {
             return null;
         } else {
-            return minute.getCalendar();
+            return second.getCalendar();
         }
     }
 

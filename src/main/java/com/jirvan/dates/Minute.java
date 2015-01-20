@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -207,6 +208,14 @@ public class Minute {
 
     public String toISO8601String() {
         return String.format("%04d-%02d-%02dT%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour);
+    }
+
+    public static String format(Minute minute, String pattern) {
+        return format(minute, pattern, null);
+    }
+
+    public static String format(Minute minute, String pattern, String valueIfNull) {
+        return minute == null ? valueIfNull : new SimpleDateFormat(pattern).format(minute.getDate());
     }
 
     public static Minute fromString(String string) {

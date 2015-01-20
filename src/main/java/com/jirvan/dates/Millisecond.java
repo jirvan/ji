@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -281,6 +282,14 @@ public class Millisecond {
         } else {
             return millisecond.getCalendar();
         }
+    }
+
+    public static String format(Millisecond millisecond, String pattern) {
+        return format(millisecond, pattern, null);
+    }
+
+    public static String format(Millisecond millisecond, String pattern, String valueIfNull) {
+        return millisecond == null ? valueIfNull : new SimpleDateFormat(pattern).format(millisecond.getDate());
     }
 
     public static String formatDuration(Millisecond from, Millisecond to) {
