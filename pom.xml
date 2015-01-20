@@ -6,7 +6,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ji</artifactId>
-    <version>1.0.114</version>
+    <version>1.0.115-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -140,8 +140,4 @@
             <url>https://jirvan.com:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
-  <scm>
-    <tag>v1.0.114</tag>
-  </scm>
 </project>
