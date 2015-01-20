@@ -284,6 +284,10 @@ public class Millisecond {
         }
     }
 
+    public String format(String pattern) {
+        return new SimpleDateFormat(pattern).format(getDate());
+    }
+
     public static String format(Millisecond millisecond, String pattern) {
         return format(millisecond, pattern, null);
     }

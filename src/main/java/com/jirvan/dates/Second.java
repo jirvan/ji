@@ -220,6 +220,10 @@ public class Second {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d", year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute);
     }
 
+    public String format(String pattern) {
+        return new SimpleDateFormat(pattern).format(getDate());
+    }
+
     public static String format(Second second, String pattern) {
         return format(second, pattern, null);
     }

@@ -203,6 +203,10 @@ public class Month {
         return String.format("%04d%02d", year, monthInYear);
     }
 
+    public String format(String pattern) {
+        return new SimpleDateFormat(pattern).format(getDate());
+    }
+
     public static String format(Month month, String pattern) {
         return format(month, pattern, null);
     }

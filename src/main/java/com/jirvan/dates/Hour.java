@@ -188,6 +188,10 @@ public class Hour {
         return String.format("%04d-%02d-%02dT%02d", year, monthInYear, dayInMonth, hourInDay);
     }
 
+    public String format(String pattern) {
+        return new SimpleDateFormat(pattern).format(getDate());
+    }
+
     public static String format(Hour hour, String pattern) {
         return format(hour, pattern, null);
     }
