@@ -195,7 +195,7 @@ public class Jdbc {
         } else if (connectString.toLowerCase().startsWith("oracle:")) {
             dataSource = Jdbc.getOracleDataSource(connectString.replaceFirst("oracle:", ""));
         } else if (connectString.toLowerCase().startsWith("sqlite:")) {
-            dataSource = Jdbc.getSqliteDataSource(connectString.replaceFirst("oracle:", ""));
+            dataSource = Jdbc.getSqliteDataSource(connectString.replaceFirst("sqlite:", ""));
         } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
             throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"oracle\", \"sqlserver\", \"sqlite\"", m.group(1)));
         } else {
