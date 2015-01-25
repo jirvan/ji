@@ -98,4 +98,9 @@ public class SQLiteDataSource implements DataSource {
     @Override public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
     }
+
+    public File getDbFile() {
+        return dbFile;
+    }
+
 }
