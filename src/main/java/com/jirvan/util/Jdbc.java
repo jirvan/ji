@@ -466,14 +466,24 @@ public class Jdbc {
     }
 
     public static DataSource getSqliteDataSource(String connectString) {
+        return getSqliteDataSource(connectString, false);
+    }
+
+    public static DataSource getSqliteDataSource(String connectString, boolean createDbFileIfNecessary) {
         File dbFile = new File(connectString);
-        if (!dbFile.exists()) {
-            throw new RuntimeException(String.format("Specified SQLite database file \"%s\" does not exist", connectString));
+        if (dbFile.exists()) {
+            if (dbFile.isFile()) {
+                return new SQLiteDataSource(dbFile);
+            } else {
+                throw new RuntimeException(String.format("Specified SQLite database file \"%s\" exists but is not a file", connectString));
+            }
+        } else {
+            if (createDbFileIfNecessary) {
+                return new SQLiteDataSource(dbFile);
+            } else {
+                throw new RuntimeException(String.format("Specified SQLite database file \"%s\" does not exist", connectString));
+            }
         }
-        if (!dbFile.isFile()) {
-            throw new RuntimeException(String.format("Specified SQLite database file \"%s\" exists but is not a file", connectString));
-        }
-        return new SQLiteDataSource(dbFile);
     }
 
     public static DataSource getSqlServerDataSource(String user,
