@@ -38,6 +38,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.postgresql.ds.common.BaseDataSource;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -193,13 +194,16 @@ public class Jdbc {
             dataSource = Jdbc.getSqlServerDataSource(connectString.replaceFirst("sqlserver:", ""));
         } else if (connectString.toLowerCase().startsWith("oracle:")) {
             dataSource = Jdbc.getOracleDataSource(connectString.replaceFirst("oracle:", ""));
+        } else if (connectString.toLowerCase().startsWith("sqlite:")) {
+            dataSource = Jdbc.getSqliteDataSource(connectString.replaceFirst("oracle:", ""));
         } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
-            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"oracle\", \"sqlserver\"", m.group(1)));
+            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"oracle\", \"sqlserver\", \"sqlite\"", m.group(1)));
         } else {
             throw new MessageException(String.format("Invalid connect string \"%s\"\n" +
                                                      "connectString must be of the form \"postgresql:" + POSTGRES_CONNECT_STRING_DEFINITION + "\"\n" +
                                                      "                                or \"oracle:" + ORACLE_CONNECT_STRING_DEFINITION + "\"\n" +
-                                                     "                                or \"sqlserver:" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"",
+                                                     "                                or \"sqlserver:" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"\n" +
+                                                     "                                or \"sqlite:<database file>\"",
                                                      connectString));
         }
         return dataSource;
@@ -459,6 +463,17 @@ public class Jdbc {
                                       database,
                                       host,
                                       port);
+    }
+
+    public static DataSource getSqliteDataSource(String connectString) {
+        File dbFile = new File(connectString);
+        if (!dbFile.exists()) {
+            throw new RuntimeException("Specified SQLite database file \"%s\" does not exist");
+        }
+        if (!dbFile.isFile()) {
+            throw new RuntimeException("Specified SQLite database file \"%s\" exists but is not a file");
+        }
+        return new SQLiteDataSource(dbFile);
     }
 
     public static DataSource getSqlServerDataSource(String user,
