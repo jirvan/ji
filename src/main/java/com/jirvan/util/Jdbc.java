@@ -468,10 +468,10 @@ public class Jdbc {
     public static DataSource getSqliteDataSource(String connectString) {
         File dbFile = new File(connectString);
         if (!dbFile.exists()) {
-            throw new RuntimeException("Specified SQLite database file \"%s\" does not exist");
+            throw new RuntimeException(String.format("Specified SQLite database file \"%s\" does not exist", connectString));
         }
         if (!dbFile.isFile()) {
-            throw new RuntimeException("Specified SQLite database file \"%s\" exists but is not a file");
+            throw new RuntimeException(String.format("Specified SQLite database file \"%s\" exists but is not a file", connectString));
         }
         return new SQLiteDataSource(dbFile);
     }
