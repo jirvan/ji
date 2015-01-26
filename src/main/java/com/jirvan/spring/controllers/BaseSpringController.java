@@ -37,8 +37,13 @@ import com.jirvan.util.Io;
 public class BaseSpringController {
 
     public static String getDbSql(Class anchorClass, String scriptRelativePath) {
+        DatabaseType databaseType = DatabaseType.current;
+        return getDbSql(anchorClass, databaseType, scriptRelativePath);
+    }
+
+    public static String getDbSql(Class anchorClass, DatabaseType databaseType, String scriptRelativePath) {
         try {
-            return Io.getResourceFileString(anchorClass, "sql/" + DatabaseType.current.name() + "/" + scriptRelativePath);
+            return Io.getResourceFileString(anchorClass, "sql/" + databaseType.name() + "/" + scriptRelativePath);
         } catch (NotFoundRuntimeException e) {
             return Io.getResourceFileString(anchorClass, "sql/" + scriptRelativePath);
         }
