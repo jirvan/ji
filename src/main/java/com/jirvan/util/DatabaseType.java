@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
+import com.jirvan.lang.NotFoundRuntimeException;
 import com.jirvan.lang.SQLRuntimeException;
 
 import javax.sql.DataSource;
@@ -119,6 +120,14 @@ public enum DatabaseType {
 
     public boolean isNotOneOf(DatabaseType... values) {
         return !isOneOf(values);
+    }
+
+    public String getSql(Class anchorClass, String scriptRelativePath) {
+        try {
+            return Io.getResourceFileString(anchorClass, "sql/" + this.name() + "/" + scriptRelativePath);
+        } catch (NotFoundRuntimeException e) {
+            return Io.getResourceFileString(anchorClass, "sql/" + scriptRelativePath);
+        }
     }
 
 }
