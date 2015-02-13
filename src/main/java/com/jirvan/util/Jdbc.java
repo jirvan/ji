@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
 public class Jdbc {
 
     public static final String POSTGRES_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
-    public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[:port]/<database>";
+    public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[\\instance][:port]/<database>";
     public static final String ORACLE_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>/<service>";
 
     public static boolean isOrWasCausedBySqlTypeException(Throwable t) {
@@ -429,44 +429,94 @@ public class Jdbc {
         }
     }
 
-    public static DataSource getSqlServerDataSource(String connectString) {
-        String userid;
-        String password;
-        String host;
-        int port = 1433;
-        String database;
-        Matcher noPasswordMatcher = Pattern.compile("^([^/@]+)@([^/]+)/([^/]+)$").matcher(connectString);
-        if (noPasswordMatcher.matches()) {
-            userid = noPasswordMatcher.group(1);
-            password = null;
-            host = noPasswordMatcher.group(2);
-            database = noPasswordMatcher.group(3);
-        } else {
-            Matcher withPasswordMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+)/([^/]+)$").matcher(connectString);
-            if (withPasswordMatcher.matches()) {
-                userid = withPasswordMatcher.group(1);
-                password = withPasswordMatcher.group(2);
-                host = withPasswordMatcher.group(3);
-                database = withPasswordMatcher.group(4);
-            } else {
-                Matcher withPasswordAndPortMatcher = Pattern.compile("^([^/@]+)/([^/@]+)@([^/:]+):([0-9]+)/([^/]+)$").matcher(connectString);
-                if (withPasswordAndPortMatcher.matches()) {
-                    userid = withPasswordAndPortMatcher.group(1);
-                    password = withPasswordAndPortMatcher.group(2);
-                    host = withPasswordAndPortMatcher.group(3);
-                    port = Integer.parseInt(withPasswordAndPortMatcher.group(4));
-                    database = withPasswordAndPortMatcher.group(5);
-                } else {
-                    throw new RuntimeException("Invalid Sql Server connect string \"" + connectString + "\"\n" +
-                                               "(expected something of the form \"" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"");
-                }
-            }
+    public static class SqlServerDataSourceDef {
+
+        private String origConnectString;
+        private String remainingConnectString;
+        private String user;
+        private String password;
+        private String database;
+        private String server;
+        private String instance;
+        private Integer port;
+
+        public SqlServerDataSourceDef(String connectString) {
+
+            origConnectString = connectString;
+            remainingConnectString = connectString;
+
+            this.port = Utl.toInteger(takeMarkedByIfPresent(':', '/'));
+            this.instance = takeMarkedByIfPresent('\\', '/');
+            this.user = takeUpTo('/');
+            this.password = takeUpTo('@');
+            this.server = takeUpTo('/');
+            this.database = remainingConnectString;
+
         }
-        return getSqlServerDataSource(userid,
-                                      password == null ? "" : password,
-                                      database,
-                                      host,
-                                      port);
+
+        private String takeUpTo(char endMarkerChar) {
+
+            // Determine the end index
+            int endIndex = remainingConnectString.indexOf(endMarkerChar);
+            if (endIndex == -1) {
+                throw new RuntimeException("Invalid Sql Server connect string \"" + origConnectString + "\"\n" +
+                                           "(expected something of the form \"" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"");
+            }
+
+            // Extract and return
+            String extractedString = remainingConnectString.substring(0, endIndex);
+            remainingConnectString = remainingConnectString.substring(endIndex + 1);
+            return extractedString;
+
+        }
+
+        private String takeMarkedByIfPresent(char startMarkerChar, char endMarkerChar) {
+
+            // Determine the start and end indexes
+            int startIndex = remainingConnectString.indexOf(startMarkerChar);
+            if (startIndex == -1) {
+                return null;
+            }
+            int endIndex = startIndex + remainingConnectString.substring(startIndex).indexOf(endMarkerChar);
+            if (endIndex == -1) {
+                throw new RuntimeException("Invalid Sql Server connect string \"" + origConnectString + "\"\n" +
+                                           "(expected something of the form \"" + SQLSERVER_CONNECT_STRING_DEFINITION + "\"");
+            }
+
+            // Extract and return
+            String extractedString = remainingConnectString.substring(startIndex + 1, endIndex);
+            remainingConnectString = remainingConnectString.substring(0, startIndex) + remainingConnectString.substring(endIndex);
+            return extractedString;
+
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getDatabase() {
+            return database;
+        }
+
+        public String getServer() {
+            return server;
+        }
+
+        public String getInstance() {
+            return instance;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+    }
+
+    public static DataSource getSqlServerDataSource(String connectString) {
+        return getSqlServerDataSource(new SqlServerDataSourceDef(connectString));
     }
 
     public static DataSource getSqliteDataSource(String connectString) {
@@ -490,19 +540,30 @@ public class Jdbc {
         }
     }
 
+    public static DataSource getSqlServerDataSource(SqlServerDataSourceDef sqlServerDataSourceDef) {
+        return getSqlServerDataSource(sqlServerDataSourceDef.getUser(),
+                                      sqlServerDataSourceDef.getPassword(),
+                                      sqlServerDataSourceDef.getDatabase(),
+                                      sqlServerDataSourceDef.getServer(),
+                                      sqlServerDataSourceDef.getInstance(),
+                                      sqlServerDataSourceDef.getPort());
+    }
+
     public static DataSource getSqlServerDataSource(String user,
                                                     String password,
                                                     String database,
                                                     String server,
-                                                    int port) {
+                                                    String instance,
+                                                    Integer port) {
 
         // Setup the "base" data source
         final JtdsDataSource baseDataSource = new JtdsDataSource();
         baseDataSource.setUser(user);
-        baseDataSource.setPassword(password);
+        baseDataSource.setPassword(password == null ? "" : password);
         baseDataSource.setDatabaseName(database);
         baseDataSource.setServerName(server);
-        baseDataSource.setPortNumber(port);
+        if (instance != null) baseDataSource.setInstance(instance);
+        baseDataSource.setPortNumber(port == null ? 1433 : port);
         return baseDataSource;
 //        ConnectionFactory connectionFactory = new ConnectionFactory() {
 //            public Connection createConnection() throws SQLException {
