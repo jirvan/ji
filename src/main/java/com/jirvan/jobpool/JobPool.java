@@ -42,8 +42,6 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jirvan.util.Assertions.*;
-
 public class JobPool {
 
     public static final JobPool commonJobPool = new JobPool();
@@ -52,11 +50,19 @@ public class JobPool {
     private int mostRecentJobId = 0;
 
     public static Job start(Task task) {
-        return commonJobPool.startNewJobForTask(false, null, null, task);
+        return commonJobPool.startNewJobForTask(false, task);
     }
 
     public static Job start(Logger logger, Task task) {
         return commonJobPool.startNewJobForTask(false, logger, null, task);
+    }
+
+    private Job startNewJobForTask(boolean throwExceptions, Task task) {
+        Job job = new Job(++mostRecentJobId);
+        Runnable runnable = new JobRunnable(job, task, throwExceptions);
+        new Thread(runnable).start();
+        currentJobs.put(job.getJobId(), job);
+        return job;
     }
 
     private Job startNewJobForTask(boolean throwExceptions, Logger logger, Level level, Task task) {
@@ -84,6 +90,12 @@ public class JobPool {
         private StringWriter logWriter = new StringWriter();
 
         private boolean noLogger;
+
+        public Job(long jobId) {
+            this.jobId = jobId;
+            this.status = Status.inProgress;
+            noLogger = true;
+        }
 
         public Job(long jobId, Logger logger, Level level) {
             this.jobId = jobId;
