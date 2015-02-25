@@ -43,8 +43,6 @@ public enum DatabaseType {
     sqlite("SQLite"),
     postgres("PostgreSQL");
 
-    public static DatabaseType current;
-
     private String databaseProductName;
 
     private DatabaseType(String databaseProductName) {
