@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.jirvan.lang.ResourceNotFoundRuntimeException;
 import com.jirvan.lang.SQLRuntimeException;
 import com.jirvan.util.Strings;
 
@@ -176,7 +177,9 @@ public class CsvTableImporter {
                                               boolean resetAutonumberedPrimaryKey) {
         try {
             InputStream inputStream = anchorClass.getResourceAsStream(fileRelativePath);
-            assertNotNull(inputStream, String.format("Couldn't access resource \"%s\" anchored by \"%s\"", fileRelativePath, anchorClass.getName()));
+            if (inputStream == null) {
+                throw new ResourceNotFoundRuntimeException(anchorClass, fileRelativePath);
+            }
             try {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 try {

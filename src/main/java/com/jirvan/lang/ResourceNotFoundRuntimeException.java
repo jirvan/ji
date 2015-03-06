@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013,2014,2015 Jirvan Pty Ltd
+Copyright (c) 2015, Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -30,26 +30,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.lang;
 
-import java.io.File;
+public class ResourceNotFoundRuntimeException extends NotFoundRuntimeException {
 
-public class FileNotFoundRuntimeException extends NotFoundRuntimeException {
-
-    public FileNotFoundRuntimeException() {
+    public ResourceNotFoundRuntimeException() {
     }
 
-    public FileNotFoundRuntimeException(File file) {
-        super("File \"" + file.getAbsolutePath() + "\" not fouund");
-    }
-
-    public FileNotFoundRuntimeException(String message) {
+    public ResourceNotFoundRuntimeException(String message) {
         super(message);
     }
 
-    public FileNotFoundRuntimeException(String message, Throwable cause) {
+    public ResourceNotFoundRuntimeException(Class anchorClass,
+                                            String fileRelativePath) {
+        super(String.format("Couldn't find resource \"%s\" (anchored by \"%s\")", fileRelativePath, anchorClass.getName()));
+    }
+
+    public ResourceNotFoundRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public FileNotFoundRuntimeException(Throwable cause) {
+    public ResourceNotFoundRuntimeException(Throwable cause) {
         super(cause);
     }
 
