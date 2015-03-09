@@ -148,7 +148,8 @@ public class JobPool {
 
         public void run() {
             try {
-                task.perform(job.noLogger ? new OutputWriter(job.logWriter) : new OutputWriter());
+//                task.perform(job.noLogger ? new OutputWriter(job.logWriter) : new OutputWriter());
+                task.perform(new OutputWriter(job.logWriter));
                 job.setStatus(Job.Status.finishedSuccessfully);
             } catch (Throwable t) {
                 job.setStatus(Job.Status.finishedWithError);
