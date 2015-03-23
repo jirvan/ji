@@ -44,6 +44,31 @@ import static com.jirvan.util.Assertions.*;
 
 /**
  * Used to execute commands on the native command line
+ * The most common ways to use this are
+ * <ol>
+ * <li>For commands not requiring environment variable changes
+ * or specification of the working directory:
+ * <pre>
+ * CommandLine.execute(output, "somecommand", "arg1", "arg2");
+ * <pre/>
+ * </li>
+ * <li>
+ * For commands requiring environment variable changes
+ * or specification of the working directory:
+ * <pre>
+ * new CommandLine("pg_dump", "--help")
+ *               .changeEnvironment(new CommandLine.EnvironmentVariableChanger() {
+ *                   public void change(Map<String, String> environmentVariables) {
+ *                       environmentVariables.put("VAR1", "myValue");
+ *                       environmentVariables.remove("OTHERVAR");
+ *                       environmentVariables.put("VAR2", environmentVariables.get("VAR1") + "suffix");
+ *                   }
+ *               })
+ *               .setOutputWriter(output)
+ *               .execute();
+ * </pre>
+ * </li>
+ * </ol>
  *
  * @see @AbstractCommandLineProcessor
  */
@@ -74,6 +99,10 @@ public class CommandLine {
     public CommandLine setOutputWriter(OutputWriter outputWriter) {
         this.outputWriter = outputWriter;
         return this;
+    }
+
+    public static void execute(String command, String... arguments) {
+        new CommandLine(command, arguments).execute();
     }
 
     public static void execute(OutputWriter outputWriter, String command, String... arguments) {
