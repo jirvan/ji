@@ -45,6 +45,8 @@ public class OutputWriter {
     private List<org.apache.log4j.Logger> log4jLoggers = new ArrayList<>();
     private List<OutputStream> outputStreams = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
+    private boolean atStartOfLine = true;
+    private String linePrefix;
 
     public OutputWriter(OutputStream... outputStreams) {
         this.outputStreams.addAll(Arrays.asList(outputStreams));
@@ -64,6 +66,19 @@ public class OutputWriter {
 
     public OutputWriter(OutputWriter outputWriter1, OutputWriter... outputWriters2ToN) {
         add(outputWriter1, outputWriters2ToN);
+    }
+
+    public String getLinePrefix() {
+        return linePrefix;
+    }
+
+    public OutputWriter setLinePrefix(String linePrefix) {
+        this.linePrefix = linePrefix;
+        return this;
+    }
+
+    public boolean isAtStartOfLine() {
+        return atStartOfLine;
     }
 
     public OutputWriter add(OutputWriter outputWriter1, OutputWriter... outputWriters2ToN) {
@@ -129,19 +144,28 @@ public class OutputWriter {
 
     private void printToAllOutputs(String formattedString) {
         try {
-
+            String stringToPrint;
+            if (linePrefix == null) {
+                stringToPrint = formattedString;
+            } else {
+                stringToPrint = formattedString.replaceAll("\\n[^$]", "\\n" + linePrefix + "$1");
+                if (atStartOfLine) {
+                    stringToPrint = linePrefix + stringToPrint;
+                }
+            }
+            atStartOfLine = formattedString.endsWith("\n");
             for (Logger logger : loggers) {
-                logger.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
+                logger.info(stringToPrint.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
             for (org.apache.log4j.Logger logger : log4jLoggers) {
-                logger.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
+                logger.info(stringToPrint.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
             for (OutputStream outputStream : outputStreams) {
-                outputStream.write(formattedString.getBytes());
+                outputStream.write(stringToPrint.getBytes());
                 outputStream.flush();
             }
             for (Writer outputWriter : writers) {
-                outputWriter.write(formattedString);
+                outputWriter.write(stringToPrint);
                 outputWriter.flush();
             }
         } catch (IOException e) {

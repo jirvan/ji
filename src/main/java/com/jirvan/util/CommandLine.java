@@ -30,117 +30,91 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import org.apache.log4j.*;
+import com.jirvan.io.OutputWriter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.jirvan.util.Assertions.*;
 
-class LogStreamer extends Thread {
-
-    private InputStream inputStream;
-    private String logLinePrefix;
-    private Logger log;
-
-    LogStreamer(InputStream inputStream, String logLinePrefix, Logger log) {
-        this.inputStream = inputStream;
-        this.logLinePrefix = logLinePrefix;
-        this.log = log;
-    }
-
-    public void run() {
-        try {
-            InputStreamReader isr = new InputStreamReader(inputStream);
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (logLinePrefix != null) {
-                    log.info(logLinePrefix + line);
-                } else {
-                    log.info(line);
-                }
-            }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-}
-
-class StringBufferStreamer extends Thread {
-
-    private InputStream inputStream;
-    private StringBuffer stringBuffer;
-
-    StringBufferStreamer(InputStream inputStream, StringBuffer stringBuffer) {
-        this.inputStream = inputStream;
-        this.stringBuffer = stringBuffer;
-    }
-
-    public void run() {
-        try {
-            InputStreamReader isr = new InputStreamReader(inputStream);
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                stringBuffer.append(line);
-                stringBuffer.append('\n');
-            }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-}
-
 /**
  * Used to execute commands on the native command line
+ *
  * @see @AbstractCommandLineProcessor
  */
 public class CommandLine {
 
-    public static void execute(Logger log, String command) {
-        execute(null, log, command);
+    private String command;
+    private ProcessBuilder processBuilder;
+    private OutputWriter outputWriter;
+
+    public CommandLine(String command, String... arguments) {
+        assertNotNull(command, "command is null");
+        this.command = command;
+        List<String> commandAndArguments = Arrays.asList(arguments);
+        commandAndArguments.add(0, command);
+        processBuilder = new ProcessBuilder(commandAndArguments);
     }
 
-    public static void execute(String logLinePrefix, Logger log, String command) {
-        assertNotNull(command, "command is null");
-        try {
-
-            log.info(String.format("%sExecuting \"%s\"", logLinePrefix == null ? "" : logLinePrefix, command));
-            Process proc = Runtime.getRuntime().exec(command);
-            new LogStreamer(proc.getErrorStream(), logLinePrefix, log).start();
-            new LogStreamer(proc.getInputStream(), logLinePrefix, log).start();
-            if (proc.waitFor() != 0) {
-                throw new RuntimeException(String.format("Error executing \"%s\"", command));
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+    public CommandLine changeEnvironment(EnvironmentVariableChanger environmentVariableChanger) {
+        environmentVariableChanger.change(processBuilder.environment());
+        return this;
     }
 
-    public static String execute(String command) {
-        assertNotNull(command, "command is null");
+    public CommandLine setDirectory(File directory) {
+        processBuilder.directory(directory);
+        return this;
+    }
+
+    public CommandLine setOutputWriter(OutputWriter outputWriter) {
+        this.outputWriter = outputWriter;
+        return this;
+    }
+
+    public static void execute(OutputWriter outputWriter, String command, String... arguments) {
+        new CommandLine(command, arguments)
+                .setOutputWriter(outputWriter)
+                .execute();
+    }
+
+    public void execute() {
         try {
-            StringBuffer stderrStringBuffer = new StringBuffer();
-            StringBuffer stdoutStringBuffer = new StringBuffer();
-            Process proc = Runtime.getRuntime().exec(command);
-            new StringBufferStreamer(proc.getErrorStream(), stderrStringBuffer).start();
-            new StringBufferStreamer(proc.getInputStream(), stdoutStringBuffer).start();
-            if (proc.waitFor() != 0) {
-                throw new RuntimeException(String.format("Error executing \"%s\":\n%s", command, stderrStringBuffer.toString()));
+            if (outputWriter != null) {
+                processBuilder.redirectErrorStream(true);
+                processBuilder.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                Process proc = processBuilder.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    outputWriter.printf(line);
+                    outputWriter.printf("\n");
+                }
+                if (proc.waitFor() != 0) {
+                    throw new RuntimeException(String.format("Error executing \"%s\"", command));
+                }
             } else {
-                return stdoutStringBuffer.toString();
+                processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+                processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                Process proc = processBuilder.start();
+                if (proc.waitFor() != 0) {
+                    throw new RuntimeException(String.format("Error executing \"%s\"", command));
+                }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public static abstract class EnvironmentVariableChanger {
+        public abstract void change(Map<String, String> env);
     }
 
 }
