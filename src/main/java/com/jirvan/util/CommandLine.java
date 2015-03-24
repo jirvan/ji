@@ -36,7 +36,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +80,7 @@ public class CommandLine {
     public CommandLine(String command, String... arguments) {
         assertNotNull(command, "command is null");
         this.command = command;
-        List<String> commandAndArguments = Arrays.asList(arguments);
+        List<String> commandAndArguments = Lists.createArrayList(arguments);
         commandAndArguments.add(0, command);
         processBuilder = new ProcessBuilder(commandAndArguments);
     }
