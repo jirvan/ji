@@ -100,17 +100,17 @@ public class CommandLine {
         return this;
     }
 
-    public static void execute(String command, String... arguments) {
-        new CommandLine(command, arguments).execute();
+    public static int execute(String command, String... arguments) {
+        return new CommandLine(command, arguments).execute();
     }
 
-    public static void execute(OutputWriter outputWriter, String command, String... arguments) {
-        new CommandLine(command, arguments)
+    public static int execute(OutputWriter outputWriter, String command, String... arguments) {
+        return new CommandLine(command, arguments)
                 .setOutputWriter(outputWriter)
                 .execute();
     }
 
-    public void execute() {
+    public int execute() {
         try {
             if (outputWriter != null) {
                 processBuilder.redirectErrorStream(true);
@@ -122,16 +122,12 @@ public class CommandLine {
                     outputWriter.printf(line);
                     outputWriter.printf("\n");
                 }
-                if (proc.waitFor() != 0) {
-                    throw new RuntimeException(String.format("Error executing \"%s\"", command));
-                }
+                return proc.waitFor();
             } else {
                 processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
                 processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
                 Process proc = processBuilder.start();
-                if (proc.waitFor() != 0) {
-                    throw new RuntimeException(String.format("Error executing \"%s\"", command));
-                }
+                return proc.waitFor();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
