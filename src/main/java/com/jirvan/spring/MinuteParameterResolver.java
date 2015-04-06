@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013,2014,2015 Jirvan Pty Ltd
+Copyright (c) 2013, Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,23 +28,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.dates;
+package com.jirvan.spring;
 
-import java.util.Calendar;
+import com.jirvan.dates.Minute;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
-public enum DayOfWeek {
-    Monday(Calendar.MONDAY),
-    Tuesday(Calendar.TUESDAY),
-    Wednesday(Calendar.WEDNESDAY),
-    Thursday(Calendar.THURSDAY),
-    Friday(Calendar.FRIDAY),
-    Saturday(Calendar.SATURDAY),
-    Sunday(Calendar.SUNDAY);
+public class MinuteParameterResolver implements HandlerMethodArgumentResolver {
 
-    public final int calendarConstant;
+    public boolean supportsParameter(MethodParameter parameter) {
+        return Minute.class.equals(parameter.getParameterType());
+    }
 
-    private DayOfWeek(int calendarConstant) {
-        this.calendarConstant = calendarConstant;
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        String stringValue = webRequest.getParameter(parameter.getParameterName());
+        if (stringValue == null) {
+            throw new RuntimeException(String.format("Required Day parameter '%s' is not present", parameter.getParameterName()));
+        }
+        return Minute.fromString(stringValue);
     }
 
 }

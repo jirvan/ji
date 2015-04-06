@@ -148,7 +148,7 @@ public class OutputWriter {
             if (linePrefix == null) {
                 stringToPrint = formattedString;
             } else {
-                stringToPrint = formattedString.replaceAll("\\n([^$])", "\\n" + linePrefix + "$1");
+                stringToPrint = formattedString.replaceAll("\\n([^$])", "\n" + linePrefix + "$1");
                 if (atStartOfLine) {
                     stringToPrint = linePrefix + stringToPrint;
                 }

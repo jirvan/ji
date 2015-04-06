@@ -200,6 +200,46 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         return advanced(1);
     }
 
+    public static Day firstSunday() {
+        return new Day().first(DayOfWeek.Sunday);
+    }
+
+    public static Day firstMonday() {
+        return new Day().first(DayOfWeek.Monday);
+    }
+
+    public static Day firstTuesday() {
+        return new Day().first(DayOfWeek.Tuesday);
+    }
+
+    public static Day firstWednesday() {
+        return new Day().first(DayOfWeek.Wednesday);
+    }
+
+    public static Day firstThursday() {
+        return new Day().first(DayOfWeek.Thursday);
+    }
+
+    public static Day firstFriday() {
+        return new Day().first(DayOfWeek.Friday);
+    }
+
+    public static Day firstSaturday() {
+        return new Day().first(DayOfWeek.Saturday);
+    }
+
+    public Day first(DayOfWeek dayOfWeek) {
+        int thisDayOfWeek = this.getDayOfWeek().calendarConstant;
+        int referenceDayOfWeek = dayOfWeek.calendarConstant;
+        if (referenceDayOfWeek < thisDayOfWeek) {
+            return this.advanced(7 - (thisDayOfWeek - referenceDayOfWeek));
+        } else if (referenceDayOfWeek == thisDayOfWeek) {
+            return this.clone();
+        } else {  // referenceDayOfWeek > thisDayOfWeek
+            return advanced(referenceDayOfWeek - thisDayOfWeek);
+        }
+    }
+
     public Day previous() {
         return advanced(-1);
     }
