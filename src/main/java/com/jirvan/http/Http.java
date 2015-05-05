@@ -28,16 +28,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.jirvan.spring;
+package com.jirvan.http;
 
-import javax.servlet.http.HttpServletRequest;
-
-public class JiSpringUtils {
-
-    public static void assertUserInRole(HttpServletRequest request, String role) {
-        if (!request.isUserInRole(role)) {
-            throw new RuntimeException(String.format("Current user (%s) does not have the \"%s\" role", request.getRemoteUser(), role));
-        }
-    }
+/** Just a convenience extension of JiHttpUtils so that
+ * you an write a Http.get(blah) (instead of JiHttpUtils.get(blah) in the your code if you aren't concerned with
+ * namespace collisions for such a generic name.  If you have another Http class
+ * that may collide then use the full name (JiHttpUtils).
+ */
+public class Http extends JiHttpUtils {
 
 }
