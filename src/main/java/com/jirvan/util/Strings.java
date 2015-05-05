@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import static com.jirvan.util.Assertions.*;
 
@@ -199,16 +200,16 @@ public class Strings {
         return false;
     }
 
-    public static String commaList(String[] strings) {
-        return join(strings, ',');
+    public static String commaList(Object[] objects) {
+        return join(objects, ',');
     }
 
-    public static String commaEllipsesList(String[] strings, int maxItems) {
-        if (strings.length <= maxItems) {
-            return join(strings, ',');
+    public static String commaEllipsesList(Object[] objects, int maxItems) {
+        if (objects.length <= maxItems) {
+            return join(objects, ',');
         } else {
-            List<String> list = new ArrayList<String>();
-            Iterator<String> iterator = Arrays.asList(strings).iterator();
+            List list = new ArrayList<String>();
+            Iterator iterator = Arrays.asList(objects).iterator();
             int count = 0;
             while (iterator.hasNext() && count < maxItems) {
                 count++;
@@ -219,52 +220,52 @@ public class Strings {
         }
     }
 
-    public static String commaEllipsesListToString(String[] strings, int maxItems) {
+    public static String commaEllipsesListToString(Objects[] objects, int maxItems) {
         List<String> list = new ArrayList<String>();
-        Iterator iterator = Arrays.asList(strings).iterator();
+        Iterator iterator = Arrays.asList(objects).iterator();
         int count = 0;
         while (iterator.hasNext() && count < maxItems) {
             count++;
             list.add(iterator.next().toString());
         }
-        if (strings.length > maxItems) {
+        if (objects.length > maxItems) {
             list.add("...");
         }
         return join(list, ',');
     }
 
-    public static String commaSpaceList(String[] strings) {
-        return join(strings, ", ");
+    public static String commaSpaceList(Object[] objects) {
+        return join(objects, ", ");
     }
 
-    public static String join(String[] strings, String joinString) {
+    public static String join(Object[] objects, String joinString) {
         StringBuffer buf = new StringBuffer();
-        for (String string : strings) {
+        for (Object object : objects) {
             if (buf.length() != 0) buf.append(joinString);
-            buf.append(string);
+            buf.append(object);
         }
         return buf.toString();
     }
 
-    public static String join(String[] strings, char joinChar) {
+    public static String join(Object[] objects, char joinChar) {
         StringBuffer buf = new StringBuffer();
-        for (String string : strings) {
+        for (Object object : objects) {
             if (buf.length() != 0) buf.append(joinChar);
-            buf.append(string);
+            buf.append(object);
         }
         return buf.toString();
     }
 
-    public static String commaList(Collection<String> strings) {
-        return join(strings, ',');
+    public static String commaList(Collection objects) {
+        return join(objects, ',');
     }
 
-    public static String commaEllipsesList(Collection<String> strings, int maxItems) {
-        if (strings.size() <= maxItems) {
-            return join(strings, ',');
+    public static String commaEllipsesList(Collection objects, int maxItems) {
+        if (objects.size() <= maxItems) {
+            return join(objects, ',');
         } else {
             List<String> list = new ArrayList<String>();
-            Iterator<String> iterator = strings.iterator();
+            Iterator<String> iterator = objects.iterator();
             int count = 0;
             while (iterator.hasNext() && count < maxItems) {
                 count++;
@@ -275,38 +276,38 @@ public class Strings {
         }
     }
 
-    public static String commaEllipsesListToString(Collection strings, int maxItems) {
+    public static String commaEllipsesListToString(Collection objects, int maxItems) {
         List<String> list = new ArrayList<String>();
-        Iterator iterator = strings.iterator();
+        Iterator iterator = objects.iterator();
         int count = 0;
         while (iterator.hasNext() && count < maxItems) {
             count++;
             list.add(iterator.next().toString());
         }
-        if (strings.size() > maxItems) {
+        if (objects.size() > maxItems) {
             list.add("...");
         }
         return join(list, ',');
     }
 
-    public static String commaSpaceList(Collection<String> strings) {
-        return join(strings, ", ");
+    public static String commaSpaceList(Collection objects) {
+        return join(objects, ", ");
     }
 
-    public static String join(Collection<String> strings, String joinString) {
+    public static String join(Collection objects, String joinString) {
         StringBuffer buf = new StringBuffer();
-        for (String string : strings) {
+        for (Object object : objects) {
             if (buf.length() != 0) buf.append(joinString);
-            buf.append(string);
+            buf.append(object);
         }
         return buf.toString();
     }
 
-    public static String join(Collection<String> strings, char joinChar) {
+    public static String join(Collection objects, char joinChar) {
         StringBuffer buf = new StringBuffer();
-        for (String string : strings) {
+        for (Object object : objects) {
             if (buf.length() != 0) buf.append(joinChar);
-            buf.append(string);
+            buf.append(object);
         }
         return buf.toString();
     }
