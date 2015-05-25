@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.io;
 
+import com.jirvan.util.Strings;
+import com.jirvan.util.Utl;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class OutputWriter {
@@ -46,6 +49,7 @@ public class OutputWriter {
     private List<OutputStream> outputStreams = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
     private boolean atStartOfLine = true;
+    private List<String> linePrefixSections = new ArrayList<>();
     private String linePrefix;
 
     public OutputWriter(OutputStream... outputStreams) {
@@ -72,8 +76,15 @@ public class OutputWriter {
         return linePrefix;
     }
 
-    public OutputWriter setLinePrefix(String linePrefix) {
-        this.linePrefix = linePrefix;
+    public OutputWriter pushLinePrefix(String linePrefix) {
+        linePrefixSections.add(Utl.coalesce(linePrefix, ""));
+        this.linePrefix = Strings.join(linePrefixSections, "");
+        return this;
+    }
+
+    public OutputWriter popLinePrefix() {
+        if (linePrefixSections.size() > 0) linePrefixSections.remove(linePrefixSections.size() - 1);
+        this.linePrefix = Strings.join(linePrefixSections, "");
         return this;
     }
 
