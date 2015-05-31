@@ -76,16 +76,47 @@ public class OutputWriter {
         return linePrefix;
     }
 
-    public OutputWriter pushLinePrefix(String linePrefix) {
-        linePrefixSections.add(Utl.coalesce(linePrefix, ""));
+    /**
+     * Resets the line prefix (normally from a saved list of sections returned by
+     * an earlier pushLinePrefix.
+     *
+     * @param linePrefixSections
+     * @return The original line prefix sections
+     */
+    public List<String> resetLinePrefix(List<String> linePrefixSections) {
+        List<String> originalLinePrefixSections = this.linePrefixSections;
+        this.linePrefixSections = linePrefixSections;
         this.linePrefix = Strings.join(linePrefixSections, "");
-        return this;
+        return originalLinePrefixSections;
     }
 
-    public OutputWriter popLinePrefix() {
-        if (linePrefixSections.size() > 0) linePrefixSections.remove(linePrefixSections.size() - 1);
+    /**
+     * Pushes a section onto the end of the line prefix
+     *
+     * @param linePrefix
+     * @return The original line prefix sections
+     */
+    public List<String> pushLinePrefix(String linePrefix) {
+        List<String> originalLinePrefixSections = this.linePrefixSections;
+        linePrefixSections.add(Utl.coalesce(linePrefix, ""));
+        this.linePrefix = Strings.join(this.linePrefixSections, "");
+        return originalLinePrefixSections;
+    }
+
+    /**
+     * Pops the most recently added section of the line prefix
+     *
+     * @return the "popped" section
+     */
+    public String popLinePrefix() {
+        String poppedSection;
+        if (linePrefixSections.size() > 0) {
+            poppedSection = linePrefixSections.remove(linePrefixSections.size() - 1);
+        } else {
+            poppedSection = "";
+        }
         this.linePrefix = Strings.join(linePrefixSections, "");
-        return this;
+        return poppedSection;
     }
 
     public boolean isAtStartOfLine() {
