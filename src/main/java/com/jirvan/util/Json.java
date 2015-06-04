@@ -38,6 +38,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,12 +52,18 @@ import com.jirvan.json.*;
 import com.jirvan.util.*;
 
 import java.io.*;
+import java.util.Collection;
 
 public class Json {
 
     private static final ObjectMapper OBJECT_MAPPER = setUpObjectMapper(false);
     private static final ObjectMapper OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES = setUpObjectMapper(true);
     private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer(new JsonPrettyPrinter());
+
+    public static JavaType constructCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
+        return OBJECT_MAPPER.getTypeFactory().
+                constructCollectionType(collectionClass, elementClass);
+    }
 
     public static <T> T treeToValue(TreeNode n, Class<T> valueType) throws IOException, JsonParseException, JsonMappingException {
         return OBJECT_MAPPER.treeToValue(n, valueType);
@@ -78,6 +85,10 @@ public class Json {
         return fromJsonString(jsonString, valueType, false);
     }
 
+    public static <T> T fromJsonString(String jsonString, JavaType valueType) {
+        return fromJsonString(jsonString, valueType, false);
+    }
+
     public static <T> T fromJsonString(String jsonString, Class<T> valueType, boolean ignoreUnknownProperties) {
         try {
 
@@ -90,7 +101,23 @@ public class Json {
         }
     }
 
+    public static <T> T fromJsonString(String jsonString, JavaType valueType, boolean ignoreUnknownProperties) {
+        try {
+
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(jsonString, valueType)
+                   : OBJECT_MAPPER.<T>readValue(jsonString, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T> T fromJsonResourceFile(Object anchorObject, String filename, Class<T> valueType) {
+        return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, false);
+    }
+
+    public static <T> T fromJsonResourceFile(Object anchorObject, String filename, JavaType valueType) {
         return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, false);
     }
 
@@ -98,7 +125,15 @@ public class Json {
         return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, ignoreUnknownProperties);
     }
 
+    public static <T> T fromJsonResourceFile(Object anchorObject, String filename, JavaType valueType, boolean ignoreUnknownProperties) {
+        return fromJsonResourceFile((Class) anchorObject.getClass(), filename, valueType, ignoreUnknownProperties);
+    }
+
     public static <T> T fromJsonResourceFile(Class anchorClass, String filename, Class<T> valueType) {
+        return fromJsonResourceFile(anchorClass, filename, valueType, false);
+    }
+
+    public static <T> T fromJsonResourceFile(Class anchorClass, String filename, JavaType valueType) {
         return fromJsonResourceFile(anchorClass, filename, valueType, false);
     }
 
@@ -106,11 +141,23 @@ public class Json {
         return fromJsonString(Io.getResourceFileString(anchorClass, filename), valueType, ignoreUnknownProperties);
     }
 
+    public static <T> T fromJsonResourceFile(Class anchorClass, String filename, JavaType valueType, boolean ignoreUnknownProperties) {
+        return fromJsonString(Io.getResourceFileString(anchorClass, filename), valueType, ignoreUnknownProperties);
+    }
+
     public static <T> T fromJsonFile(File file, Class<T> valueType) {
         return fromJsonString(Io.getFileString(file), valueType, false);
     }
 
+    public static <T> T fromJsonFile(File file, JavaType valueType) {
+        return fromJsonString(Io.getFileString(file), valueType, false);
+    }
+
     public static <T> T fromJsonFile(File file, Class<T> valueType, boolean ignoreUnknownProperties) {
+        return fromJsonString(Io.getFileString(file), valueType, ignoreUnknownProperties);
+    }
+
+    public static <T> T fromJsonFile(File file, JavaType valueType, boolean ignoreUnknownProperties) {
         return fromJsonString(Io.getFileString(file), valueType, ignoreUnknownProperties);
     }
 
