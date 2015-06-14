@@ -35,7 +35,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -47,11 +46,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.jirvan.dates.*;
-import com.jirvan.json.*;
-import com.jirvan.util.*;
+import com.jirvan.dates.Dates;
+import com.jirvan.json.JsonPrettyPrinter;
+import com.jirvan.json.JsonShapeShifter;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.Collection;
 
 public class Json {
@@ -107,6 +109,70 @@ public class Json {
             return ignoreUnknownProperties
                    ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(jsonString, valueType)
                    : OBJECT_MAPPER.<T>readValue(jsonString, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonInputStream(InputStream inputStream, Class<T> valueType) {
+        return fromJsonInputStream(inputStream, valueType, false);
+    }
+
+    public static <T> T fromJsonInputStream(InputStream inputStream, Class<T> valueType, boolean ignoreUnknownProperties) {
+        try {
+
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(inputStream, valueType)
+                   : OBJECT_MAPPER.readValue(inputStream, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonInputStream(InputStream inputStream, JavaType valueType) {
+        return fromJsonInputStream(inputStream, valueType, false);
+    }
+
+    public static <T> T fromJsonInputStream(InputStream inputStream, JavaType valueType, boolean ignoreUnknownProperties) {
+        try {
+
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(inputStream, valueType)
+                   : OBJECT_MAPPER.<T>readValue(inputStream, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonReader(Reader reader, Class<T> valueType) {
+        return fromJsonReader(reader, valueType, false);
+    }
+
+    public static <T> T fromJsonReader(Reader reader, Class<T> valueType, boolean ignoreUnknownProperties) {
+        try {
+
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(reader, valueType)
+                   : OBJECT_MAPPER.readValue(reader, valueType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonReader(Reader reader, JavaType valueType) {
+        return fromJsonReader(reader, valueType, false);
+    }
+
+    public static <T> T fromJsonReader(Reader reader, JavaType valueType, boolean ignoreUnknownProperties) {
+        try {
+
+            return ignoreUnknownProperties
+                   ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(reader, valueType)
+                   : OBJECT_MAPPER.<T>readValue(reader, valueType);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
