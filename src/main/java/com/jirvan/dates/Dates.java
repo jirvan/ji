@@ -42,8 +42,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.jirvan.dates.jackson.DayToJavascriptStringJsonSerializer;
 
-import java.io.*;
+import java.io.IOException;
 
 public class Dates {
 
@@ -88,11 +89,7 @@ public class Dates {
             }
         });
 
-        module.addSerializer(Day.class, new JsonSerializer<Day>() {
-            public void serialize(Day value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-                jgen.writeString(value.toJavascriptString());
-            }
-        });
+        module.addSerializer(Day.class, new DayToJavascriptStringJsonSerializer());
         module.addDeserializer(Day.class, new JsonDeserializer<Day>() {
             public Day deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
                 ObjectCodec oc = jsonParser.getCodec();
