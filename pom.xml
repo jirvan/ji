@@ -9,7 +9,7 @@
 
     <groupId>com.jirvan</groupId>
     <artifactId>ji-utils</artifactId>
-    <version>1.0.145-SNAPSHOT</version>
+    <version>1.0.145</version>
 
     <name>com.jirvan:ji-utils</name>
     <description>
