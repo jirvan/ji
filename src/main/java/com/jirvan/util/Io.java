@@ -32,6 +32,7 @@ package com.jirvan.util;
 
 import com.jirvan.lang.FileNotFoundRuntimeException;
 import com.jirvan.lang.NotFoundRuntimeException;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,26 +98,13 @@ public class Io {
         try {
             InputStream inputStream = new FileInputStream(file);
             try {
-                return readBytes(inputStream);
+                return IOUtils.toByteArray(inputStream);
             } finally {
                 inputStream.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static byte[] readBytes(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[1024 * 1024];
-        int bytesRead = inputStream.read(buffer);
-        if (bytesRead == buffer.length) {
-            throw new RuntimeException("Buffer size exceeded");
-        }
-        byte[] returnBytes = new byte[bytesRead];
-        for (int i = 0; i < returnBytes.length; i++) {
-            returnBytes[i] = buffer[i];
-        }
-        return returnBytes;
     }
 
     public static String readStreamIntoString(InputStream inputStream) {
@@ -174,7 +162,7 @@ public class Io {
                 throw new NotFoundRuntimeException("Couldn't find resource \"" + filename + "\" associated with class \"" + anchorClass.getName() + "\"");
             }
             try {
-                return readBytes(inputStream);
+                return IOUtils.toByteArray(inputStream);
             } finally {
                 inputStream.close();
             }
