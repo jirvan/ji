@@ -66,6 +66,44 @@ public class CommandLineProcessor {
         return false;
     }
 
+    protected File extractFileOption(String... optionVariations) throws UsageException {
+        String stringValue = extractStringOption(optionVariations);
+        return stringValue == null ? null : new File(stringValue);
+    }
+
+    protected Integer extractIntegerOption(String... optionVariations) throws UsageException {
+        String stringValue = extractStringOption(optionVariations);
+        return stringValue == null ? null : Integer.parseInt(stringValue);
+    }
+
+    protected Float extractFloatOption(String... optionVariations) throws UsageException {
+        String stringValue = extractStringOption(optionVariations);
+        return stringValue == null ? null : Float.parseFloat(stringValue);
+    }
+
+    protected BigDecimal extractBigDecimalOption(String... optionVariations) throws UsageException {
+        String stringValue = extractStringOption(optionVariations);
+        return stringValue == null ? null : new BigDecimal(stringValue);
+    }
+
+    protected String extractStringOption(String... optionVariations) throws UsageException {
+        for (int i = 0; i < unprocessedArgs.size(); i++) {
+            String unprocessedArg = unprocessedArgs.get(i);
+            for (String optionVariation : optionVariations) {
+                if (optionVariation.equals(unprocessedArg)) {
+                    if (i + 1 > unprocessedArgs.size() - 1) {
+                        throw new UsageException();
+                    } else {
+                        String value = unprocessedArgs.remove(i + 1);
+                        unprocessedArgs.remove(i);
+                        return value;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     protected int numberOfRemainingArgs() {
         return unprocessedArgs.size();
     }
