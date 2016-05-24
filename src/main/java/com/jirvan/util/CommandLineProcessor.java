@@ -46,8 +46,8 @@ import java.util.regex.*;
  */
 public class CommandLineProcessor {
 
-    private ArrayList<String> unprocessedArgs;
-    private String usage;
+    protected ArrayList<String> unprocessedArgs;
+    protected String usage;
 
     public CommandLineProcessor(String[] args, String usage) {
         this.unprocessedArgs = Lists.createArrayList(args);
