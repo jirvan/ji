@@ -118,6 +118,42 @@ public class Dates {
                 jgen.writeString(value.toString());
             }
         });
+        module.addDeserializer(Minute.class, new JsonDeserializer<Minute>() {
+            public Minute deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Minute.fromString((jsonNode.textValue()));
+            }
+        });
+
+        module.addSerializer(Second.class, new JsonSerializer<Second>() {
+            public void serialize(Second value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addDeserializer(Second.class, new JsonDeserializer<Second>() {
+            public Second deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Second.fromString((jsonNode.textValue()));
+            }
+        });
+
+        module.addSerializer(Millisecond.class, new JsonSerializer<Millisecond>() {
+            public void serialize(Millisecond value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+                jgen.writeString(value.toString());
+            }
+        });
+        module.addDeserializer(Millisecond.class, new JsonDeserializer<Millisecond>() {
+            public Millisecond deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                ObjectCodec oc = jsonParser.getCodec();
+                JsonNode jsonNode = oc.readTree(jsonParser);
+                if (!(jsonNode instanceof TextNode)) throw new RuntimeException("Expected a text node");
+                return Millisecond.fromString((jsonNode.textValue()));
+            }
+        });
 
         return module;
     }
