@@ -144,29 +144,29 @@ public class JiHttpUtils {
         }
     }
 
-    public static <T> T getJsonObject(Class<T> valueType,
+    public static <T> T getJsonObject(Class valueType,
                                       String url,
                                       String username,
                                       String password) {
-        return Json.<T>fromJsonString(get(url, username, password),
-                                      valueType);
+        return (T) Json.<T>fromJsonString(get(url, username, password),
+                                          valueType);
     }
 
-    public static <T> T postReturningJsonObject(Class<T> valueType,
+    public static <T> T postReturningJsonObject(Class valueType,
                                                 String url,
                                                 String username,
                                                 String password) {
-        return Json.<T>fromJsonString(post(url, username, password),
-                                      valueType);
+        return (T) Json.<T>fromJsonString(post(url, username, password),
+                                          valueType);
     }
 
-    public static <T> T postReturningJsonObject(Class<T> valueType,
+    public static <T> T postReturningJsonObject(Class valueType,
                                                 String url,
                                                 String username,
                                                 String password,
                                                 Object object) {
-        return Json.<T>fromJsonString(post(url, username, password, object),
-                                      valueType);
+        return (T) Json.<T>fromJsonString(post(url, username, password, object),
+                                          valueType);
     }
 
     public static class HttpErrorContentObject {
