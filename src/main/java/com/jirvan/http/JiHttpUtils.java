@@ -48,6 +48,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class JiHttpUtils {
 
@@ -127,7 +128,7 @@ public class JiHttpUtils {
                                                            null);
                 }
                 throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
-                                                       Utl.coalesce(error.errorMessage, error.errorName, statusLine.getReasonPhrase()),
+                                                       Utl.coalesce(error.errorMessage, error.description, error.errorName, statusLine.getReasonPhrase()),
                                                        statusLine.getReasonPhrase(),
                                                        error.errorName,
                                                        error.errorInfo);
@@ -170,9 +171,22 @@ public class JiHttpUtils {
     }
 
     public static class HttpErrorContentObject {
+
         public String errorName;
         public String errorMessage;
         public String errorInfo;
+        public String message;
+        public String description;
+        public List<FieldError> fieldErrors;
+
+        public static class FieldError {
+
+            public String objectName;
+            public String field;
+            public String message;
+
+        }
+
     }
 
 }
