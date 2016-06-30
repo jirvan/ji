@@ -39,7 +39,7 @@ public class HttpResponseRuntimeException extends RuntimeException {
     private String errorInfo;
 
     public HttpResponseRuntimeException(int statusCode, String simpleErrorMessage, String reasonPhrase, String errorName, String errorInfo) {
-        super("HTTP " + statusCode + ": " + simpleErrorMessage);
+        super(simpleErrorMessage);
         this.statusCode = statusCode;
         this.simpleErrorMessage = simpleErrorMessage;
         this.reasonPhrase = reasonPhrase;

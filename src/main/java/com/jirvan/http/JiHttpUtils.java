@@ -128,7 +128,7 @@ public class JiHttpUtils {
                                                            null);
                 }
                 throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
-                                                       Utl.coalesce(error.errorMessage, error.description, error.errorName, statusLine.getReasonPhrase()),
+                                                       Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase()),
                                                        statusLine.getReasonPhrase(),
                                                        error.errorName,
                                                        error.errorInfo);
