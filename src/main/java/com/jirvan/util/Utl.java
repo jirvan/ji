@@ -37,18 +37,68 @@ import com.jirvan.dates.Minute;
 import com.jirvan.dates.Month;
 import com.jirvan.dates.Second;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static com.jirvan.util.Assertions.*;
 
 public class Utl {
 
+    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+    public static <T> void validate(T object) {
+        validate(null, object);
+    }
+
+    public static <T> void validate(String objectName, T object) {
+
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(object);
+
+        if (constraintViolations.size() > 0) {
+
+            // Sort the violations by property path
+            SortedSet<ConstraintViolation<T>> sortedConstraintViolations = new TreeSet<ConstraintViolation<T>>(new Comparator<ConstraintViolation<T>>() {
+                @Override public int compare(ConstraintViolation<T> o1, ConstraintViolation<T> o2) {
+                    if (o1 == null || o1.getPropertyPath() == null || o2 == null || o2.getPropertyPath() == null) {
+                        return 0;
+                    } else {
+                        return o1.getPropertyPath().toString().compareTo(o2.getPropertyPath().toString());
+                    }
+                }
+            });
+            sortedConstraintViolations.addAll(constraintViolations);
+
+            // Construct message and throw exception
+            String messagePrefix = objectName == null ? "Validation failure: " : "Invalid " + objectName + ": ";
+            String indent = messagePrefix.replaceAll(".", " ");
+
+            String message = "";
+            for (ConstraintViolation<T> constraintViolation : sortedConstraintViolations) {
+                if (message.equals("")) {
+                    message += messagePrefix + constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage();
+                } else {
+                    message += "\n" + indent + constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage();
+                }
+            }
+            throw new ConstraintViolationException(message, constraintViolations);
+
+        }
+
+    }
 
     public static <T> ArrayList<T> newArrayList(T... items) {
         ArrayList<T> list = new ArrayList<T>();
