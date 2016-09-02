@@ -153,6 +153,16 @@ public class JiHttpUtils {
                                           valueType);
     }
 
+    public static <T> T getJsonObject(Class valueType,
+                                      boolean ignoreUnknownProperties,
+                                      String url,
+                                      String username,
+                                      String password) {
+        return (T) Json.<T>fromJsonString(get(url, username, password),
+                                          valueType,
+                                          ignoreUnknownProperties);
+    }
+
     public static <T> T postReturningJsonObject(Class valueType,
                                                 String url,
                                                 String username,
@@ -162,12 +172,33 @@ public class JiHttpUtils {
     }
 
     public static <T> T postReturningJsonObject(Class valueType,
+                                                boolean ignoreUnknownProperties,
+                                                String url,
+                                                String username,
+                                                String password) {
+        return (T) Json.<T>fromJsonString(post(url, username, password),
+                                          valueType,
+                                          ignoreUnknownProperties);
+    }
+
+    public static <T> T postReturningJsonObject(Class valueType,
                                                 String url,
                                                 String username,
                                                 String password,
                                                 Object object) {
         return (T) Json.<T>fromJsonString(post(url, username, password, object),
                                           valueType);
+    }
+
+    public static <T> T postReturningJsonObject(Class valueType,
+                                                boolean ignoreUnknownProperties,
+                                                String url,
+                                                String username,
+                                                String password,
+                                                Object object) {
+        return (T) Json.<T>fromJsonString(post(url, username, password, object),
+                                          valueType,
+                                          ignoreUnknownProperties);
     }
 
     public static class HttpErrorContentObject {
