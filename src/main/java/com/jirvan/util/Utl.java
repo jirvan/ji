@@ -66,7 +66,7 @@ public class Utl {
 
     public static <T> void validate(String objectName, T object) {
 
-        Set<ConstraintViolation<T>> constraintViolations = validator.validate(object);
+        Set<ConstraintViolation<T>> constraintViolations = getConstraintViolations(object);
 
         if (constraintViolations.size() > 0) {
 
@@ -98,6 +98,14 @@ public class Utl {
 
         }
 
+    }
+
+    public static <T> boolean isValid(T object) {
+        return getConstraintViolations(object).size() == 0;
+    }
+
+    public static <T> Set<ConstraintViolation<T>> getConstraintViolations(T object) {
+        return validator.validate(object);
     }
 
     public static <T> ArrayList<T> newArrayList(T... items) {
