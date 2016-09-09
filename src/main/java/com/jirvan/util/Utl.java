@@ -133,6 +133,17 @@ public class Utl {
         return mergedArray;
     }
 
+    public static boolean exactlyOneNotNull(Object... objects) {
+        boolean nullFound = false;
+        for (Object object : objects) {
+            if (object != null) {
+                if (nullFound) return false;
+                nullFound = true;
+            }
+        }
+        return nullFound;
+    }
+
     public static <T> T coalesce(T... objects) {
         for (T object : objects) {
             if (object != null) return object;
