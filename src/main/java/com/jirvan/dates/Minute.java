@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import javax.validation.constraints.Min;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -181,6 +182,80 @@ public class Minute {
         calendar.set(GregorianCalendar.MILLISECOND, 0);
         calendar.add(GregorianCalendar.MINUTE, minutes);
         return new Minute(calendar);
+    }
+
+    public boolean after(Minute anotherMinute) {
+        if (anotherMinute == null) {
+            throw new NullPointerException("anotherMinute cannot be null");
+        } else {
+            if (year > anotherMinute.getYear()) {
+                return true;
+            } else if (year < anotherMinute.getYear()) {
+                return false;
+            } else {
+                if (monthInYear > anotherMinute.getMonthInYear()) {
+                    return true;
+                } else if (monthInYear < anotherMinute.getMonthInYear()) {
+                    return false;
+                } else {
+                    if (dayInMonth > anotherMinute.getDayInMonth()) {
+                        return true;
+                    } else if (dayInMonth < anotherMinute.getDayInMonth()) {
+                        return false;
+                    } else {
+                        if (hourInDay > anotherMinute.getHourInDay()) {
+                            return true;
+                        } else if (hourInDay < anotherMinute.getHourInDay()) {
+                            return false;
+                        } else {
+                            return minuteInHour > anotherMinute.getMinuteInHour();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean before(Minute anotherMinute) {
+        if (anotherMinute == null) {
+            throw new NullPointerException("anotherDay cannot be null");
+        } else {
+            if (year < anotherMinute.getYear()) {
+                return true;
+            } else if (year > anotherMinute.getYear()) {
+                return false;
+            } else {
+                if (monthInYear < anotherMinute.getMonthInYear()) {
+                    return true;
+                } else if (monthInYear > anotherMinute.getMonthInYear()) {
+                    return false;
+                } else {
+                    if (dayInMonth < anotherMinute.getDayInMonth()) {
+                        return true;
+                    } else if (dayInMonth > anotherMinute.getDayInMonth()) {
+                        return false;
+                    } else {
+                        if (hourInDay < anotherMinute.getHourInDay()) {
+                            return true;
+                        } else if (hourInDay > anotherMinute.getHourInDay()) {
+                            return false;
+                        } else {
+                            return minuteInHour < anotherMinute.getMinuteInHour();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public int compareTo(Minute anotherMinute) {
+        if (this.equals(anotherMinute)) {
+            return 0;
+        } else if (this.before(anotherMinute)) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 
     @Override
