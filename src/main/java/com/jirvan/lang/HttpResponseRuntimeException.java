@@ -30,6 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.lang;
 
+import com.jirvan.http.JiHttpUtils;
+import com.jirvan.util.Utl;
+import org.apache.http.StatusLine;
+
+import java.util.List;
+
 public class HttpResponseRuntimeException extends RuntimeException {
 
     private int statusCode;
@@ -37,14 +43,32 @@ public class HttpResponseRuntimeException extends RuntimeException {
     private String reasonPhrase;
     private String errorName;
     private String errorInfo;
+    private List<JiHttpUtils.HttpErrorContentObject.FieldError> fieldErrors;
+    private Long timestamp;
+    private Integer status;
+    private String error;
+    private String exception;
+    private String path;
 
-    public HttpResponseRuntimeException(int statusCode, String simpleErrorMessage, String reasonPhrase, String errorName, String errorInfo) {
+    public HttpResponseRuntimeException(int statusCode, String simpleErrorMessage, String reasonPhrase) {
         super(simpleErrorMessage);
         this.statusCode = statusCode;
         this.simpleErrorMessage = simpleErrorMessage;
         this.reasonPhrase = reasonPhrase;
-        this.errorName = errorName;
-        this.errorInfo = errorInfo;
+    }
+
+    public HttpResponseRuntimeException(StatusLine statusLine, JiHttpUtils.HttpErrorContentObject error) {
+        super(Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase()));
+        this.statusCode = statusLine.getStatusCode();
+        this.simpleErrorMessage = Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase());
+        this.reasonPhrase = statusLine.getReasonPhrase();
+        this.errorName = error.errorName;
+        this.errorInfo = error.errorInfo;
+        this.timestamp = error.timestamp;
+        this.status = error.status;
+        this.error = error.error;
+        this.exception = error.exception;
+        this.path = error.path;
     }
 
     public int getStatusCode() {
@@ -65,6 +89,30 @@ public class HttpResponseRuntimeException extends RuntimeException {
 
     public String getErrorInfo() {
         return errorInfo;
+    }
+
+    public List<JiHttpUtils.HttpErrorContentObject.FieldError> getFieldErrors() {
+        return fieldErrors;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public String getPath() {
+        return path;
     }
 
 }

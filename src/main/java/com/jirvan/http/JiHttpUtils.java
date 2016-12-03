@@ -32,7 +32,6 @@ package com.jirvan.http;
 
 import com.jirvan.lang.HttpResponseRuntimeException;
 import com.jirvan.util.Json;
-import com.jirvan.util.Utl;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -123,15 +122,9 @@ public class JiHttpUtils {
                 } catch (Throwable t) {
                     throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
                                                            statusLine.getReasonPhrase(),
-                                                           statusLine.getReasonPhrase(),
-                                                           null,
-                                                           null);
+                                                           statusLine.getReasonPhrase());
                 }
-                throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
-                                                       Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase()),
-                                                       statusLine.getReasonPhrase(),
-                                                       error.errorName,
-                                                       error.errorInfo);
+                throw new HttpResponseRuntimeException(statusLine, error);
             } else {
                 if (entity == null) {
                     return "";
@@ -209,6 +202,11 @@ public class JiHttpUtils {
         public String message;
         public String description;
         public List<FieldError> fieldErrors;
+        public Long timestamp;
+        public Integer status;
+        public String error;
+        public String exception;
+        public String path;
 
         public static class FieldError {
 
