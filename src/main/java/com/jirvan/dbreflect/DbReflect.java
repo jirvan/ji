@@ -1,3 +1,33 @@
+/*
+
+Copyright (c) 2017 Jirvan Pty Ltd
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+    * Neither the name of Jirvan Pty Ltd nor the names of its contributors
+      may be used to endorse or promote products derived from this software
+      without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
 package com.jirvan.dbreflect;
 
 import com.jirvan.lang.SQLRuntimeException;
@@ -15,6 +45,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.jirvan.util.Assertions.*;
@@ -29,6 +61,32 @@ public class DbReflect {
         List<Table> tables = getTables(Jdbc.getPostgresDataSource("cmsbdev/x@localhost/cmsbdev"));
 //        List<Table> tables = getTables(Jdbc.getPostgresDataSource("jitimedev/x@localhost/jitimedev"));
         System.out.printf("\n%s\n", Json.toJsonString(tables));
+    }
+
+    public static String underscoreSeperatedToCamelHumpName(String name, boolean leadingCharacterUppercase) {
+        if (name.matches(".*[a-z].*") && name.matches(".*[A-Z].*")) {
+            return name;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            char[] chars = name.toLowerCase().toCharArray();
+            boolean firstWordLetter = leadingCharacterUppercase;
+            for (int i = 0; i < chars.length; i++) {
+                char c = chars[i];
+                if (c == '_') {
+                    firstWordLetter = true;
+                } else if (firstWordLetter) {
+                    if ('a' <= c && c <= 'z') {
+                        stringBuilder.append((char) (c + ('A' - 'a')));
+                    } else {
+                        stringBuilder.append(c);
+                    }
+                    firstWordLetter = false;
+                } else {
+                    stringBuilder.append(c);
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
 
     public static List<Table> getTables(DataSource dataSource) {
@@ -74,6 +132,11 @@ public class DbReflect {
 
                     }
                     addForeignKeysForAllTables(list);
+                    Collections.sort(list, new Comparator<Table>() {
+                        @Override public int compare(Table o1, Table o2) {
+                            return o1.tableName.compareTo(o2.tableName);
+                        }
+                    });
                     return list;
 
                 } finally {
@@ -210,6 +273,11 @@ public class DbReflect {
         } catch (SQLException e) {
             throw new SQLRuntimeException(e);
         }
+//        Collections.sort(list, new Comparator<Column>() {
+//            @Override public int compare(Column o1, Column o2) {
+//                return o1.columnName.compareTo(o2.columnName);
+//            }
+//        });
         return list;
     }
 
@@ -244,6 +312,11 @@ public class DbReflect {
             }
             // End current key if any and return list
             if (foreignKey != null) endKey(list, catalogName, schemaName, lastExportedKeyRow, foreignKey);
+            Collections.sort(list, new Comparator<Table.ReferencingForeignKey>() {
+                @Override public int compare(Table.ReferencingForeignKey o1, Table.ReferencingForeignKey o2) {
+                    return o1.referencingTableName.compareTo(o2.referencingTableName);
+                }
+            });
             return list;
 
         }
@@ -270,6 +343,12 @@ public class DbReflect {
                     }
                 }
             }
+            Collections.sort(table.foreignKeys, new Comparator<Table.ForeignKey>() {
+                @Override public int compare(Table.ForeignKey o1, Table.ForeignKey o2) {
+                    return o1.referencedTableName.compareTo(o2.referencedTableName);
+                }
+            });
+
         }
     }
 
