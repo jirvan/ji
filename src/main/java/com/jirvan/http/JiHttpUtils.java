@@ -57,10 +57,10 @@ public class JiHttpUtils {
         try {
 
             URI uri = new URIBuilder(url).build();
-            return post(URIUtils.extractHost(uri),
-                        Request.Get(uri),
-                        username,
-                        password);
+            return makeRequest(URIUtils.extractHost(uri),
+                               Request.Get(uri),
+                               username,
+                               password);
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -73,10 +73,10 @@ public class JiHttpUtils {
         try {
 
             URI uri = new URIBuilder(url).build();
-            return post(URIUtils.extractHost(uri),
-                        Request.Post(uri),
-                        username,
-                        password);
+            return makeRequest(URIUtils.extractHost(uri),
+                               Request.Post(uri),
+                               username,
+                               password);
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -90,19 +90,54 @@ public class JiHttpUtils {
         try {
 
             URI uri = new URIBuilder(url).build();
-            return post(URIUtils.extractHost(uri),
-                        Request.Post(uri)
-                               .addHeader("Content-Type", "application/json")
-                               .bodyString(Json.toJsonString(object), ContentType.APPLICATION_JSON),
-                        username,
-                        password);
+            return makeRequest(URIUtils.extractHost(uri),
+                               Request.Post(uri)
+                                      .addHeader("Content-Type", "application/json")
+                                      .bodyString(Json.toJsonString(object), ContentType.APPLICATION_JSON),
+                               username,
+                               password);
 
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static String post(HttpHost httpHost, Request request, String username, String password) {
+    public static String put(String url,
+                             String username,
+                             String password) {
+        try {
+
+            URI uri = new URIBuilder(url).build();
+            return makeRequest(URIUtils.extractHost(uri),
+                               Request.Put(uri),
+                               username,
+                               password);
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String put(String url,
+                             String username,
+                             String password,
+                             Object object) {
+        try {
+
+            URI uri = new URIBuilder(url).build();
+            return makeRequest(URIUtils.extractHost(uri),
+                               Request.Put(uri)
+                                      .addHeader("Content-Type", "application/json")
+                                      .bodyString(Json.toJsonString(object), ContentType.APPLICATION_JSON),
+                               username,
+                               password);
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String makeRequest(HttpHost httpHost, Request request, String username, String password) {
         try {
 
             // Execute the request and get the HTTP response
