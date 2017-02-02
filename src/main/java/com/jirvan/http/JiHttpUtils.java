@@ -137,42 +137,6 @@ public class JiHttpUtils {
         }
     }
 
-    private static String makeRequest(HttpHost httpHost, Request request, String username, String password) {
-        try {
-
-            // Execute the request and get the HTTP response
-            Executor executor = Executor.newInstance()
-                                        .auth(httpHost, username, password)
-                                        .authPreemptive(httpHost);
-            HttpResponse httpResponse = executor.execute(request).returnResponse();
-
-            // Process the response as an error or a successful response
-            StatusLine statusLine = httpResponse.getStatusLine();
-            HttpEntity entity = httpResponse.getEntity();
-            if (statusLine.getStatusCode() >= 300) {
-                String contentString = new Content(EntityUtils.toByteArray(entity), ContentType.getOrDefault(entity)).asString();
-                HttpErrorContentObject error;
-                try {
-                    error = Json.fromJsonString(contentString, HttpErrorContentObject.class, true);
-                } catch (Throwable t) {
-                    throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
-                                                           statusLine.getReasonPhrase(),
-                                                           statusLine.getReasonPhrase());
-                }
-                throw new HttpResponseRuntimeException(statusLine, error);
-            } else {
-                if (entity == null) {
-                    return "";
-                } else {
-                    return new Content(EntityUtils.toByteArray(entity), ContentType.getOrDefault(entity)).asString();
-                }
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static <T> T getJsonObject(Class valueType,
                                       String url,
                                       String username,
@@ -229,6 +193,44 @@ public class JiHttpUtils {
                                           ignoreUnknownProperties);
     }
 
+    public static <T> T putReturningJsonObject(Class valueType,
+                                               String url,
+                                               String username,
+                                               String password) {
+        return (T) Json.<T>fromJsonString(put(url, username, password),
+                                          valueType);
+    }
+
+    public static <T> T putReturningJsonObject(Class valueType,
+                                               boolean ignoreUnknownProperties,
+                                               String url,
+                                               String username,
+                                               String password) {
+        return (T) Json.<T>fromJsonString(put(url, username, password),
+                                          valueType,
+                                          ignoreUnknownProperties);
+    }
+
+    public static <T> T putReturningJsonObject(Class valueType,
+                                               String url,
+                                               String username,
+                                               String password,
+                                               Object object) {
+        return (T) Json.<T>fromJsonString(put(url, username, password, object),
+                                          valueType);
+    }
+
+    public static <T> T putReturningJsonObject(Class valueType,
+                                               boolean ignoreUnknownProperties,
+                                               String url,
+                                               String username,
+                                               String password,
+                                               Object object) {
+        return (T) Json.<T>fromJsonString(put(url, username, password, object),
+                                          valueType,
+                                          ignoreUnknownProperties);
+    }
+
     public static class HttpErrorContentObject {
 
         public String errorName;
@@ -251,6 +253,42 @@ public class JiHttpUtils {
 
         }
 
+    }
+
+    private static String makeRequest(HttpHost httpHost, Request request, String username, String password) {
+        try {
+
+            // Execute the request and get the HTTP response
+            Executor executor = Executor.newInstance()
+                                        .auth(httpHost, username, password)
+                                        .authPreemptive(httpHost);
+            HttpResponse httpResponse = executor.execute(request).returnResponse();
+
+            // Process the response as an error or a successful response
+            StatusLine statusLine = httpResponse.getStatusLine();
+            HttpEntity entity = httpResponse.getEntity();
+            if (statusLine.getStatusCode() >= 300) {
+                String contentString = new Content(EntityUtils.toByteArray(entity), ContentType.getOrDefault(entity)).asString();
+                HttpErrorContentObject error;
+                try {
+                    error = Json.fromJsonString(contentString, HttpErrorContentObject.class, true);
+                } catch (Throwable t) {
+                    throw new HttpResponseRuntimeException(statusLine.getStatusCode(),
+                                                           statusLine.getReasonPhrase(),
+                                                           statusLine.getReasonPhrase());
+                }
+                throw new HttpResponseRuntimeException(statusLine, error);
+            } else {
+                if (entity == null) {
+                    return "";
+                } else {
+                    return new Content(EntityUtils.toByteArray(entity), ContentType.getOrDefault(entity)).asString();
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
