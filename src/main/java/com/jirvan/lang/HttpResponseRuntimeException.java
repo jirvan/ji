@@ -51,16 +51,16 @@ public class HttpResponseRuntimeException extends RuntimeException {
     private String path;
 
     public HttpResponseRuntimeException(int statusCode, String simpleErrorMessage, String reasonPhrase) {
-        super("http " + statusCode + ":" + simpleErrorMessage);
+        super("HTTP " + statusCode + ": " + simpleErrorMessage);
         this.statusCode = statusCode;
-        this.simpleErrorMessage = "http " + statusCode + ":" + simpleErrorMessage;
+        this.simpleErrorMessage = "HTTP " + statusCode + ": " + simpleErrorMessage;
         this.reasonPhrase = reasonPhrase;
     }
 
     public HttpResponseRuntimeException(StatusLine statusLine, JiHttpUtils.HttpErrorContentObject error) {
-        super("http " + statusLine.getStatusCode() + ":" + Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase()));
+        super("HTTP " + statusLine.getStatusCode() + ": " + Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase()));
         this.statusCode = statusLine.getStatusCode();
-        this.simpleErrorMessage = "http " + statusCode + ":" + Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase());
+        this.simpleErrorMessage = "HTTP " + statusCode + ": " + Utl.coalesce(error.errorMessage, error.description, error.message, error.errorName, statusLine.getReasonPhrase());
         this.reasonPhrase = statusLine.getReasonPhrase();
         this.errorName = error.errorName;
         this.errorInfo = error.errorInfo;
