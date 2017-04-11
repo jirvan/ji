@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013, Jirvan Pty Ltd
+Copyright (c) 2013,2014,2015,2016,2017 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -41,7 +41,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -60,11 +59,11 @@ public class Utl {
 
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public static <T> void validate(T object) {
-        validate(null, object);
+    public static <T> T validate(T object) {
+        return validate(null, object);
     }
 
-    public static <T> void validate(String objectName, T object) {
+    public static <T> T validate(String objectName, T object) {
 
         Set<ConstraintViolation<T>> constraintViolations = getConstraintViolations(object);
 
@@ -97,6 +96,8 @@ public class Utl {
             throw new ConstraintViolationException(message, constraintViolations);
 
         }
+
+        return object;
 
     }
 
@@ -149,6 +150,14 @@ public class Utl {
             if (object != null) return object;
         }
         return null;
+    }
+
+    public static <T> boolean areEqual(T value1, T value2) {
+        if (value1 == null) {
+            return value2 == null;
+        } else {
+            return value1.equals(value2);
+        }
     }
 
     public static boolean areEqual(Integer value1, Integer value2) {
