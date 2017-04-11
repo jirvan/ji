@@ -126,6 +126,10 @@ public class CommandLineProcessor {
         }
     }
 
+    protected String nextArg() throws UsageException {
+        return nextArg(false, null);
+    }
+
     protected String nextArg(String usageMessageIfNecessary) throws UsageException {
         return nextArg(false, usageMessageIfNecessary);
     }
@@ -266,6 +270,10 @@ public class CommandLineProcessor {
 
     protected void verifyNoMoreArgs() throws UsageException {
         if (unprocessedArgs.size() > 0) throw new UsageException(usage);
+    }
+
+    protected void verifyNoMoreArgs(String usageMessageIfNecessary) throws UsageException {
+        if (unprocessedArgs.size() > 0) throw new UsageException(Utl.coalesce(usageMessageIfNecessary, usage));
     }
 
     public class UsageException extends Exception {
