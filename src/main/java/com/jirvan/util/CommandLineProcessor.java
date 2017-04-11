@@ -30,14 +30,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.util;
 
-import com.jirvan.dates.*;
-import com.jirvan.lang.*;
+import com.jirvan.dates.Day;
+import com.jirvan.lang.MessageException;
 
-import javax.sql.*;
-import java.io.*;
-import java.math.*;
-import java.util.*;
-import java.util.regex.*;
+import javax.sql.DataSource;
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base class for implementing command line processing
@@ -108,75 +109,137 @@ public class CommandLineProcessor {
         return unprocessedArgs.size();
     }
 
-    private String nextArg(boolean optional) throws UsageException {
+    private String nextArg(boolean optional, String usageMessageIfNecessary) throws UsageException {
         if (unprocessedArgs.isEmpty()) {
             if (optional) {
                 return null;
             } else {
-                throw new UsageException();
+                throw usageMessageIfNecessary == null ? new UsageException() : new UsageException(usageMessageIfNecessary);
             }
         } else {
             String nextArg = unprocessedArgs.remove(0);
             if (nextArg.startsWith("-")) {
-                throw new UsageException();
+                throw usageMessageIfNecessary == null ? new UsageException() : new UsageException(usageMessageIfNecessary);
             } else {
                 return nextArg;
             }
         }
     }
 
-    protected String nextArg() throws UsageException {
-        return nextArg(false);
+    protected String nextArg(String usageMessageIfNecessary) throws UsageException {
+        return nextArg(false, usageMessageIfNecessary);
     }
 
     protected String nextArgOptional() throws UsageException {
-        return nextArg(true);
+        return nextArg(true, null);
+    }
+
+    protected String nextArgOptional(String usageMessageIfNecessary) throws UsageException {
+        return nextArg(true, usageMessageIfNecessary);
     }
 
     protected Long nextArg_Long() throws UsageException {
-        return Long.parseLong(nextArg());
+        return Long.parseLong(nextArg(null));
+    }
+
+    protected Long nextArg_Long(String usageMessageIfNecessary) throws UsageException {
+        return Long.parseLong(nextArg(usageMessageIfNecessary));
     }
 
     protected Long nextArgOptional_Long() throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : Long.parseLong(stringValue);
+    }
+
+    protected Long nextArgOptional_Long(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : Long.parseLong(stringValue);
     }
 
     protected Integer nextArgOptional_Integer() throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : Integer.parseInt(stringValue);
+    }
+
+    protected Integer nextArgOptional_Integer(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : Integer.parseInt(stringValue);
     }
 
     protected Integer nextArgOptional_Integer(int defaultValue) throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? defaultValue : Integer.parseInt(stringValue);
+    }
+
+    protected Integer nextArgOptional_Integer(int defaultValue, String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? defaultValue : Integer.parseInt(stringValue);
     }
 
     protected BigDecimal nextArg_BigDecimal() throws UsageException {
-        return new BigDecimal(nextArg());
+        return new BigDecimal(nextArg(null));
+    }
+
+    protected BigDecimal nextArg_BigDecimal(String usageMessageIfNecessary) throws UsageException {
+        return new BigDecimal(nextArg(usageMessageIfNecessary));
     }
 
     protected BigDecimal nextArgOptional_BigDecimal() throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : new BigDecimal(stringValue);
+    }
+
+    protected BigDecimal nextArgOptional_BigDecimal(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : new BigDecimal(stringValue);
     }
 
     protected File nextArg_File() throws UsageException {
-        return new File(nextArg());
+        return new File(nextArg(null));
+    }
+
+    protected File nextArg_File(String usageMessageIfNecessary) throws UsageException {
+        return new File(nextArg(usageMessageIfNecessary));
     }
 
     protected File nextArgOptional_File() throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : new File(stringValue);
+    }
+
+    protected File nextArgOptional_File(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : new File(stringValue);
     }
 
     protected Day nextArg_Day() throws UsageException {
-        return Day.fromString(nextArg());
+        return Day.fromString(nextArg(null));
+    }
+
+    protected Day nextArg_Day(String usageMessageIfNecessary) throws UsageException {
+        return Day.fromString(nextArg(usageMessageIfNecessary));
     }
 
     protected DataSource nextArg_DataSource() throws UsageException {
         DataSource dataSource;
-        String connectString = nextArg();
+        String connectString = nextArg(null);
+        Pattern databaseTypePattern = Pattern.compile("^([^:]+):.*$");
+        Matcher m;
+        if (connectString.toLowerCase().startsWith("postgresql:")) {
+            dataSource = Jdbc.getPostgresDataSource(connectString.replaceFirst("postgresql:", ""));
+        } else if (connectString.toLowerCase().startsWith("sqlserver:")) {
+            dataSource = Jdbc.getSqlServerDataSource(connectString.replaceFirst("sqlserver:", ""));
+        } else if ((m = databaseTypePattern.matcher(connectString)).matches()) {
+            throw new MessageException(String.format("Unsupported database type \"%s\" (supported types are \"postgresql\", \"sqlserver\"", m.group(1)));
+        } else {
+            throw new MessageException(String.format("Invalid connect string \"%s\"", connectString));
+        }
+        return dataSource;
+    }
+
+    protected DataSource nextArg_DataSource(String usageMessageIfNecessary) throws UsageException {
+        DataSource dataSource;
+        String connectString = nextArg(usageMessageIfNecessary);
         Pattern databaseTypePattern = Pattern.compile("^([^:]+):.*$");
         Matcher m;
         if (connectString.toLowerCase().startsWith("postgresql:")) {
@@ -192,7 +255,12 @@ public class CommandLineProcessor {
     }
 
     protected Day nextArgOptional_Day() throws UsageException {
-        String stringValue = nextArgOptional();
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : Day.fromString(stringValue);
+    }
+
+    protected Day nextArgOptional_Day(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : Day.fromString(stringValue);
     }
 
