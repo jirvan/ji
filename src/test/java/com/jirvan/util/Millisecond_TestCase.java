@@ -54,7 +54,7 @@ public class Millisecond_TestCase extends TestCase {
         Assert.assertEquals("Unexpected millisecond", 387, millisecond.getMillisecondInSecond());
 
         try {
-            millisecond = Millisecond.fromString("0056-07-06 03:04:23.78");
+            millisecond = Millisecond.fromString("0056-07-06 03:04:23.");
             fail("Expected format error");
         } catch (Exception e) {
         }
