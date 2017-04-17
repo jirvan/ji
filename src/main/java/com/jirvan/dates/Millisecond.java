@@ -237,7 +237,7 @@ public class Millisecond {
         if (string == null) {
             return null;
         } else {
-            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)$").matcher(string);
+            Matcher m = Pattern.compile("^(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[ T](\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d?\\d?)$").matcher(string);
             if (!m.matches()) {
                 throw new MillisecondTimestampFormatException(string);
             }
