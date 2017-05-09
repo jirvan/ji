@@ -52,10 +52,13 @@ import com.jirvan.json.JsonPrettyPrinter;
 import com.jirvan.json.JsonShapeShifter;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collection;
+
+import static com.jirvan.util.Assertions.*;
 
 public class Json {
 
@@ -80,6 +83,31 @@ public class Json {
         try {
             return OBJECT_WRITER.writeValueAsString(object).replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void toJsonFile(Object object, String outputPathname) {
+        toJsonFile(object, outputPathname, false);
+    }
+
+    public static void toJsonFile(Object object, String outputPathname, boolean overwriteExistingFileIfAny) {
+        toJsonFile(object, new File(outputPathname), overwriteExistingFileIfAny);
+    }
+
+    public static void toJsonFile(Object object, File file) {
+        toJsonFile(object, file, false);
+    }
+
+    public static void toJsonFile(Object object, File file, boolean overwriteExistingFileIfAny) {
+        String jsonString = toJsonString(object);
+        assertIsDirectory(file.getParentFile());
+        if (!overwriteExistingFileIfAny) {
+            assertFileDoesNotExist(file);
+        }
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(jsonString);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
