@@ -58,6 +58,19 @@ public class Jdbc {
     public static final String SQLSERVER_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>[\\instance][:port]/<database>";
     public static final String ORACLE_CONNECT_STRING_DEFINITION = "<user>/<password>@<server>/<service>";
 
+    public static void printColumnsAndTheirType(ResultSet rs, String resultSetDisplayName) throws SQLException {
+        System.out.printf("\n%s\n", extractColumnsAndTheirTypeDisplayString(rs, resultSetDisplayName));
+    }
+
+    public static String extractColumnsAndTheirTypeDisplayString(ResultSet rs, String resultSetDisplayName) throws SQLException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("    %s:\n", resultSetDisplayName));
+        for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+            stringBuilder.append(String.format("        %s (%s)\n", rs.getMetaData().getColumnName(i), rs.getMetaData().getColumnTypeName(i)));
+        }
+        return stringBuilder.toString();
+    }
+
     public static boolean isOrWasCausedBySqlTypeException(Throwable t) {
         if (t instanceof SQLRuntimeException || t instanceof SQLException) {
             return true;
