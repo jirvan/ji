@@ -200,6 +200,38 @@ public class Io {
         }
     }
 
+    public static String getHomeDirectoryFileString(String filename) {
+        return getFileString(getHomeDirectoryFile(filename));
+    }
+
+    public static void toHomeDirectoryFile(String string, String filename) {
+        toFile(string, getHomeDirectoryFile(filename), false);
+    }
+
+    public static void toHomeDirectoryFile(String string, String filename, boolean overwriteExistingFileIfAny) {
+        toFile(string, getHomeDirectoryFile(filename), overwriteExistingFileIfAny);
+    }
+
+    public static void toFile(String string, String pathname) {
+        toFile(string, new File(pathname), false);
+    }
+
+    public static void toFile(String string, File file) {
+        toFile(string, file, false);
+    }
+
+    public static void toFile(String string, File file, boolean overwriteExistingFileIfAny) {
+        assertIsDirectory(file.getParentFile());
+        if (!overwriteExistingFileIfAny) {
+            assertFileDoesNotExist(file);
+        }
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(string);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void deleteFiles(File tablesDir, final String filenameRegexpPattern) {
         File[] files = tablesDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
