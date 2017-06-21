@@ -205,11 +205,11 @@ public class Io {
     }
 
     public static void toHomeDirectoryFile(String string, String filename) {
-        toFile(string, getHomeDirectoryFile(filename), false);
+        toFile(string, new File(getHomeDirectory(), filename), false);
     }
 
     public static void toHomeDirectoryFile(String string, String filename, boolean overwriteExistingFileIfAny) {
-        toFile(string, getHomeDirectoryFile(filename), overwriteExistingFileIfAny);
+        toFile(string, new File(getHomeDirectory(), filename), overwriteExistingFileIfAny);
     }
 
     public static void toFile(String string, String pathname) {
