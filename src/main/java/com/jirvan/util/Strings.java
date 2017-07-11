@@ -276,19 +276,19 @@ public class Strings {
         return join(objects, ',');
     }
 
-    public static String doubleQuotesCommaList(Collection<Object> objects) {
+    public static String doubleQuotesCommaList(Collection objects) {
         return "\"" + join(objects, "\",\"") + "\"";
     }
 
-    public static String singleQuotesCommaList(Collection<Object> objects) {
+    public static String singleQuotesCommaList(Collection objects) {
         return "'" + join(objects, "','") + "'";
     }
 
-    public static String doubleQuotesCommaSpaceList(Collection<Object> objects) {
+    public static String doubleQuotesCommaSpaceList(Collection objects) {
         return "\"" + join(objects, "\", \"") + "\"";
     }
 
-    public static String singleQuotesCommaSpaceList(Collection<Object> objects) {
+    public static String singleQuotesCommaSpaceList(Collection objects) {
         return "'" + join(objects, "', '") + "'";
     }
 
