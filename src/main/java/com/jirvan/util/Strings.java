@@ -204,6 +204,22 @@ public class Strings {
         return join(objects, ',');
     }
 
+    public static String doubleQuotesCommaList(Object[] objects) {
+        return "\"" + join(objects, "\",\"") + "\"";
+    }
+
+    public static String singleQuotesCommaList(Object[] objects) {
+        return "'" + join(objects, "','") + "'";
+    }
+
+    public static String doubleQuotesCommaSpaceList(Object[] objects) {
+        return "\"" + join(objects, "\", \"") + "\"";
+    }
+
+    public static String singleQuotesCommaSpaceList(Object[] objects) {
+        return "'" + join(objects, "', '") + "'";
+    }
+
     public static String commaEllipsesList(Object[] objects, int maxItems) {
         if (objects.length <= maxItems) {
             return join(objects, ',');
