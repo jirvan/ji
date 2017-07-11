@@ -47,14 +47,14 @@ import static com.jirvan.util.Assertions.*;
  * <ol>
  * <li>For commands not requiring environment variable changes
  * or specification of the working directory:
- * <pre>
+ * {@code
  * CommandLine.execute(output, "somecommand", "arg1", "arg2");
- * <pre/>
+ * }
  * </li>
  * <li>
  * For commands requiring environment variable changes
  * or specification of the working directory:
- * <pre>
+ * {@code
  * new CommandLine("pg_dump", "--help")
  *               .changeEnvironment(new CommandLine.EnvironmentVariableChanger() {
  *                   public void change(Map<String, String> environmentVariables) {
@@ -65,11 +65,10 @@ import static com.jirvan.util.Assertions.*;
  *               })
  *               .setOutputWriter(output)
  *               .execute();
- * </pre>
+ * }
  * </li>
  * </ol>
  *
- * @see @AbstractCommandLineProcessor
  */
 public class CommandLine {
 

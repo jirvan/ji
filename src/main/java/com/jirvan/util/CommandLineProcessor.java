@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 /**
  * Base class for implementing command line processing
  *
- * @see @CommandLine
+ * @see com.jirvan.util.CommandLine
  */
 public class CommandLineProcessor {
 

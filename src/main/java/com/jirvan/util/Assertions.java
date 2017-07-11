@@ -40,7 +40,7 @@ public class Assertions {
      *
      * @param file the file to be checked
      * @throws AssertionError with a default message
-     * @see {@link #assertFileDoesNotExist(File, String);}
+     * @see #assertFileDoesNotExist(File, String)
      */
     public static void assertFileDoesNotExist(File file) {
         if (file.exists()) {
@@ -56,7 +56,7 @@ public class Assertions {
      * @param file    the file to be checked
      * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertFileDoesNotExist(File);}
+     * @see #assertFileDoesNotExist(File)
      */
     public static void assertFileDoesNotExist(File file, String message) {
         if (file.exists()) {
@@ -73,7 +73,7 @@ public class Assertions {
      *
      * @param file the file to be checked
      * @throws AssertionError with a default message
-     * @see {@link #assertFileDoesNotExist(File);}
+     * @see #assertFileDoesNotExist(File)
      */
     public static void assertFileExists(File file) {
         assertFileExists(file, null);
@@ -87,7 +87,7 @@ public class Assertions {
      * @param file    the file to be checked
      * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertFileDoesNotExist(File);}
+     * @see #assertFileDoesNotExist(File)
      */
     public static void assertFileExists(File file, String message) {
         if (!file.exists()) {
@@ -104,7 +104,7 @@ public class Assertions {
      *
      * @param file the file to be checked
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertIsDirectory(File);}
+     * @see #assertIsDirectory(File)
      */
     public static void assertIsFile(File file) {
         assertIsFile(file, null);
@@ -119,7 +119,7 @@ public class Assertions {
      * @param file    the file to be checked
      * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertIsDirectory(File, String);}
+     * @see #assertIsDirectory(File, String)
      */
     public static void assertIsFile(File file, String message) {
         if (!file.isFile()) {
@@ -136,7 +136,7 @@ public class Assertions {
      *
      * @param file the file to be checked
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertIsFile(File, String);}
+     * @see #assertIsFile(File, String)
      */
     public static void assertIsDirectory(File file) {
         assertIsDirectory(file, null);
@@ -151,7 +151,7 @@ public class Assertions {
      * @param file    the file to be checked
      * @param message the message associated with failure
      * @throws AssertionError with the provided message if the assertion fails (or a default message if provided message is null)
-     * @see {@link #assertIsFile(File, String);}
+     * @see #assertIsFile(File, String)
      */
     public static void assertIsDirectory(File file, String message) {
         if (!file.isDirectory()) {

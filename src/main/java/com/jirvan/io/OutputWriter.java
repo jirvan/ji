@@ -80,7 +80,7 @@ public class OutputWriter {
      * Resets the line prefix (normally from a saved list of sections returned by
      * an earlier pushLinePrefix.
      *
-     * @param linePrefixSections
+     * @param linePrefixSections The new line prefix sections
      * @return The original line prefix sections
      */
     public List<String> resetLinePrefix(List<String> linePrefixSections) {
@@ -93,7 +93,7 @@ public class OutputWriter {
     /**
      * Pushes a section onto the end of the line prefix
      *
-     * @param linePrefix
+     * @param linePrefix The line prefix sections to add
      * @return The original line prefix sections
      */
     public List<String> pushLinePrefix(String linePrefix) {
