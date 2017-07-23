@@ -41,7 +41,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -196,6 +195,14 @@ public class Utl {
             return value2 == null;
         } else {
             return value1.equals(value2);
+        }
+    }
+
+    public static boolean areEqualIgnoringScale(BigDecimal value1, BigDecimal value2) {
+        if (value1 == null) {
+            return value2 == null;
+        } else {
+            return value1.compareTo(value2) == 0;
         }
     }
 
