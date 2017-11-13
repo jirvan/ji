@@ -141,8 +141,9 @@ public class JiHttpUtils {
                                       String url,
                                       String username,
                                       String password) {
-        return (T) Json.<T>fromJsonString(get(url, username, password),
-                                          valueType);
+        String jsonString = get(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType);
     }
 
     public static <T> T getJsonObject(Class valueType,
@@ -150,17 +151,19 @@ public class JiHttpUtils {
                                       String url,
                                       String username,
                                       String password) {
-        return (T) Json.<T>fromJsonString(get(url, username, password),
-                                          valueType,
-                                          ignoreUnknownProperties);
+        String jsonString = get(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType,
+                                                                         ignoreUnknownProperties);
     }
 
     public static <T> T postReturningJsonObject(Class valueType,
                                                 String url,
                                                 String username,
                                                 String password) {
-        return (T) Json.<T>fromJsonString(post(url, username, password),
-                                          valueType);
+        String jsonString = post(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType);
     }
 
     public static <T> T postReturningJsonObject(Class valueType,
@@ -168,9 +171,10 @@ public class JiHttpUtils {
                                                 String url,
                                                 String username,
                                                 String password) {
-        return (T) Json.<T>fromJsonString(post(url, username, password),
-                                          valueType,
-                                          ignoreUnknownProperties);
+        String jsonString = post(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType,
+                                                                         ignoreUnknownProperties);
     }
 
     public static <T> T postReturningJsonObject(Class valueType,
@@ -178,8 +182,9 @@ public class JiHttpUtils {
                                                 String username,
                                                 String password,
                                                 Object object) {
-        return (T) Json.<T>fromJsonString(post(url, username, password, object),
-                                          valueType);
+        String jsonString = post(url, username, password, object);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType);
     }
 
     public static <T> T postReturningJsonObject(Class valueType,
@@ -188,17 +193,19 @@ public class JiHttpUtils {
                                                 String username,
                                                 String password,
                                                 Object object) {
-        return (T) Json.<T>fromJsonString(post(url, username, password, object),
-                                          valueType,
-                                          ignoreUnknownProperties);
+        String jsonString = post(url, username, password, object);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType,
+                                                                         ignoreUnknownProperties);
     }
 
     public static <T> T putReturningJsonObject(Class valueType,
                                                String url,
                                                String username,
                                                String password) {
-        return (T) Json.<T>fromJsonString(put(url, username, password),
-                                          valueType);
+        String jsonString = put(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType);
     }
 
     public static <T> T putReturningJsonObject(Class valueType,
@@ -206,9 +213,10 @@ public class JiHttpUtils {
                                                String url,
                                                String username,
                                                String password) {
-        return (T) Json.<T>fromJsonString(put(url, username, password),
-                                          valueType,
-                                          ignoreUnknownProperties);
+        String jsonString = put(url, username, password);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType,
+                                                                         ignoreUnknownProperties);
     }
 
     public static <T> T putReturningJsonObject(Class valueType,
@@ -216,8 +224,9 @@ public class JiHttpUtils {
                                                String username,
                                                String password,
                                                Object object) {
-        return (T) Json.<T>fromJsonString(put(url, username, password, object),
-                                          valueType);
+        String jsonString = put(url, username, password, object);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType);
     }
 
     public static <T> T putReturningJsonObject(Class valueType,
@@ -226,9 +235,10 @@ public class JiHttpUtils {
                                                String username,
                                                String password,
                                                Object object) {
-        return (T) Json.<T>fromJsonString(put(url, username, password, object),
-                                          valueType,
-                                          ignoreUnknownProperties);
+        String jsonString = put(url, username, password, object);
+        return "".equals(jsonString) ? null : (T) Json.<T>fromJsonString(jsonString,
+                                                                         valueType,
+                                                                         ignoreUnknownProperties);
     }
 
     public static class HttpErrorContentObject {
