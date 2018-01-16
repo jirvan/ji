@@ -248,6 +248,7 @@ public class JiHttpUtils {
         public String errorInfo;
         public String message;
         public String description; // This was for ObPay which is now using title (can be removed???)
+        public String detail;
         public String title;
         public List<FieldError> fieldErrors;
         public Long timestamp;

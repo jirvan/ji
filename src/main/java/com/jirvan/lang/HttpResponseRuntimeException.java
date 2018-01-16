@@ -58,9 +58,9 @@ public class HttpResponseRuntimeException extends RuntimeException {
     }
 
     public HttpResponseRuntimeException(StatusLine statusLine, JiHttpUtils.HttpErrorContentObject error) {
-        super("HTTP " + statusLine.getStatusCode() + ": " + Utl.coalesce(error.errorMessage, error.description, error.title, error.message, error.errorName, statusLine.getReasonPhrase()));
+        super("HTTP " + statusLine.getStatusCode() + ": " + Utl.coalesce(error.errorMessage, error.description, error.detail, error.title, error.message, error.errorName, statusLine.getReasonPhrase()));
         this.statusCode = statusLine.getStatusCode();
-        this.simpleErrorMessage = "HTTP " + statusCode + ": " + Utl.coalesce(error.errorMessage, error.description, error.title, error.message, error.errorName, statusLine.getReasonPhrase());
+        this.simpleErrorMessage = "HTTP " + statusCode + ": " + Utl.coalesce(error.errorMessage, error.description, error.detail, error.title, error.message, error.errorName, statusLine.getReasonPhrase());
         this.reasonPhrase = statusLine.getReasonPhrase();
         this.errorName = error.errorName;
         this.errorInfo = error.errorInfo;
