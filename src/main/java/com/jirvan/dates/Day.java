@@ -256,6 +256,18 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         return advanced(-days);
     }
 
+    public Day advancedYears(int years) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.set(year, monthInYear - 1, dayInMonth, 0, 0, 0);
+        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        calendar.add(GregorianCalendar.YEAR, years);
+        return new Day(calendar);
+    }
+
+    public Day recededYears(int years) {
+        return advancedYears(-years);
+    }
+
     public Day advancedMonths(int months) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(year, monthInYear - 1, dayInMonth, 0, 0, 0);
