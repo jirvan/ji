@@ -35,6 +35,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -42,6 +45,35 @@ public abstract class AbstractPdfGenerator {
 
     public void toOutputStream(OutputStream outputStream) throws IOException {
         HtmlToPdf.toOutputStream(outputStream, generateHtml());
+    }
+
+    public byte[] toPdf() {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            toOutputStream(outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void toPdfFile(String pathname) {
+        toPdfFile(new File(pathname));
+    }
+
+    public void toHtmlFile(String pathname) {
+        toHtmlFile(new File(pathname));
+    }
+
+    public void toPdfFile(File file) {
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            toOutputStream(outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void toHtmlFile(File file) {
+        Io.toFile(generateHtml(), file);
     }
 
     public String generateHtml() {
