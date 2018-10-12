@@ -73,7 +73,7 @@ public abstract class AbstractPdfGenerator {
     }
 
     public void toHtmlFile(File file) {
-        Io.toFile(generateHtml(), file);
+        Io.toFile(generateHtml(), file, true);
     }
 
     public String generateHtml() {
