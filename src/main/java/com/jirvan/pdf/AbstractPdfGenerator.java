@@ -30,10 +30,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.pdf;
 
+import com.itextpdf.text.DocumentException;
 import com.jirvan.util.Io;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
+import org.xhtmlrenderer.pdf.ITextOutputDevice;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.pdf.ITextUserAgent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,8 +48,20 @@ import java.io.OutputStream;
 public abstract class AbstractPdfGenerator {
 
     public void toOutputStream(OutputStream outputStream) throws IOException {
-        HtmlToPdf.toOutputStream(outputStream, generateHtml());
+        try {
+            ITextRenderer renderer = new ITextRenderer();
+            ITextUserAgent callback = getUserAgent(renderer.getOutputDevice());
+            callback.setSharedContext(renderer.getSharedContext());
+            renderer.getSharedContext().setUserAgentCallback(callback);
+            renderer.setDocumentFromString(generateHtml());
+            renderer.layout();
+            renderer.createPDF(outputStream);
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    protected abstract ITextUserAgent getUserAgent(ITextOutputDevice outputDevice);
 
     public byte[] toPdf() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
