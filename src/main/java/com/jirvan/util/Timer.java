@@ -112,6 +112,20 @@ public class Timer {
     }
 
     /**
+     * End the timer (and print finished message if appropriate) and "restart" it
+     * for re-use.  This is only used if the timer was originally started with
+     * {@link #startNew(String)} of {@link #startNew(String, boolean)}
+     * and an "active periods" type timer is not being used (one created
+     * with {@link #newTimer(String)} or {@link #newTimer(String, boolean)}).
+     */
+    public void endAndStartNew(String title) {
+        this.endTimer();
+        this.title = title;
+        this.totalElapsedTime = 0;
+        this.startTimer();
+    }
+
+    /**
      * End the timer (and print finished message if appropriate).  This is only
      * used if the timer was started with {@link #startNew(String)} of
      * {@link #startNew(String, boolean)} and an "active periods" type timer
