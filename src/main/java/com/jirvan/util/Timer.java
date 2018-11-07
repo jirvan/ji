@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.dates.Millisecond;
+import com.jirvan.io.OutputWriter;
 
 import java.io.PrintStream;
 import java.util.Date;
@@ -70,6 +71,24 @@ public class Timer {
     }
 
     /**
+     * Creates a new timer which you can later start with {@link #startPeriod()}.
+     * You could also create an immediately started timer if you didn't need
+     * multiple "active" periods with {@link #startNew(String, boolean)}.
+     * <p>
+     * If you want a "snapshot blocked" timer that will prevent releases being built with the timer code,
+     * then use SnapshotMarker.newTimer(String, boolean) instead of this method.
+     *
+     * @param output                     an OutputWriter to write to
+     * @param timerTitle                 the title for the timer
+     * @param printStartAndFinishMessage whether to print a start and finish message
+     * @return the timer
+     * @see OutputWriter
+     */
+    public static Timer newTimer(OutputWriter output, String timerTitle, boolean printStartAndFinishMessage) {
+        return new Timer(output, timerTitle, printStartAndFinishMessage);
+    }
+
+    /**
      * Creates and starts a new timer.  If you need a timer that can handle
      * multiple "active" periods then use {@link #newTimer(String)}.
      * <p>
@@ -82,6 +101,26 @@ public class Timer {
      */
     public static Timer startNew(String timerTitle) {
         return startNew(timerTitle, true);
+    }
+
+    /**
+     * Creates and starts a new timer.  If you need a timer that can handle
+     * multiple "active" periods then use {@link #newTimer(String, boolean)}.
+     * <p>
+     * If you want a "snapshot blocked" timer that will prevent releases being built with the timer code,
+     * then use SnapshotMarker.startNew(String, boolean) instead of this method.
+     *
+     * @param output                     an OutputWriter to write to
+     * @param timerTitle                 the title for the timer
+     * @param printStartAndFinishMessage whether to print a start and finish message
+     * @return the started timer
+     * @see #newTimer(String, boolean)
+     * @see OutputWriter
+     */
+    public static Timer startNew(OutputWriter output, String timerTitle, boolean printStartAndFinishMessage) {
+        Timer timer = new Timer(output, timerTitle, printStartAndFinishMessage);
+        timer.startTimer();
+        return timer;
     }
 
     /**
@@ -135,10 +174,10 @@ public class Timer {
     public void endTimer() {
         Date endDate = new Date();
         if (printStartAndFinishMessage) {
-            System.out.printf("%s: Finished %s (%s)\n",
-                              Millisecond.from(endDate).toString(),
-                              title,
-                              Millisecond.formatDuration(endDate.getTime() - start));
+            output.printf("%s: Finished %s (%s)\n",
+                          Millisecond.from(endDate).toString(),
+                          title,
+                          Millisecond.formatDuration(endDate.getTime() - start));
         }
     }
 
@@ -195,6 +234,32 @@ public class Timer {
         }
     }
 
+    /**
+     * Print the total elapsed time (formatted in an appropriate output line)
+     * to the supplied OutputWriter.
+     *
+     * @param outputWriter the OutputWriter to print to
+     * @see OutputWriter
+     */
+    public void printTotalElapsedTimeString(OutputWriter outputWriter) {
+        if (periodStart != null) {
+            throw new RuntimeException("Cannot get total elapsed time for %s (a period has been started but not finished");
+        } else {
+            outputWriter.printf("Total time spent on \"%s\": %s\n",
+                                title,
+                                Millisecond.formatDuration(totalElapsedTime));
+        }
+    }
+
+    /**
+     * Print the total elapsed time (formatted in an appropriate output line).
+     *
+     * @see OutputWriter
+     */
+    public void printTotalElapsedTimeString() {
+        printTotalElapsedTimeString(this.output);
+    }
+
 
     //======================== Everything below here is private ========================//
 
@@ -203,11 +268,17 @@ public class Timer {
     private long totalElapsedTime;
     private long start;
     private Long periodStart;
+    private OutputWriter output;
 
     private Timer(String title, boolean printStartAndFinishMessage) {
+        this(new OutputWriter(System.out), title, printStartAndFinishMessage);
+    }
+
+    private Timer(OutputWriter output, String title, boolean printStartAndFinishMessage) {
         this.title = title;
         this.totalElapsedTime = 0;
         this.printStartAndFinishMessage = printStartAndFinishMessage;
+        this.output = output;
     }
 
     private void startTimer() {
@@ -215,7 +286,7 @@ public class Timer {
         this.start = startDate.getTime();
         this.periodStart = this.start;
         if (printStartAndFinishMessage) {
-            System.out.printf("%s: Started %s\n", Millisecond.from(startDate).toString(), this.title);
+            output.printf("%s: Started %s\n", Millisecond.from(startDate).toString(), this.title);
         }
     }
 
