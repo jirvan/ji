@@ -39,7 +39,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class OutputWriter {
@@ -48,6 +47,7 @@ public class OutputWriter {
     private List<org.apache.log4j.Logger> log4jLoggers = new ArrayList<>();
     private List<OutputStream> outputStreams = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
+    private boolean waitingForLineEnd = true;
     private boolean atStartOfLine = true;
     private List<String> linePrefixSections = new ArrayList<>();
     private String linePrefix;
@@ -160,7 +160,17 @@ public class OutputWriter {
     }
 
     public OutputWriter printf(String format, Object... args) {
-        printToAllOutputs(String.format(format, args));
+        printToAllOutputs(String.format(format, args), false, false);
+        return this;
+    }
+
+    public OutputWriter printfAndEndLine(String format, Object... args) {
+        printToAllOutputs(String.format(format, args), true, false);
+        return this;
+    }
+
+    public OutputWriter printfAndWaitForLineEnd(String format, Object... args) {
+        printToAllOutputs(String.format(format, args), false, true);
         return this;
     }
 
@@ -168,7 +178,7 @@ public class OutputWriter {
         String formattedString = String.format(format, args);
         additionalLoggerToPrintTo.info(formattedString.replaceFirst("\\n$", ""));
 //        additionalLoggerToPrintTo.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
-        printToAllOutputs(formattedString);
+        printToAllOutputs(formattedString, false, false);
         return this;
     }
 
@@ -176,7 +186,7 @@ public class OutputWriter {
         String formattedString = String.format(format, args);
         additionalLoggerToPrintTo.info(formattedString.replaceFirst("\\n$", ""));
 //        additionalLoggerToPrintTo.info(formattedString.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
-        printToAllOutputs(formattedString);
+        printToAllOutputs(formattedString, false, false);
         return this;
     }
 
@@ -184,7 +194,7 @@ public class OutputWriter {
         return new WriterProxy();
     }
 
-    private void printToAllOutputs(String formattedString) {
+    private void printToAllOutputs(String formattedString, boolean endLine, boolean thenWaitForEndLine) {
         try {
             String stringToPrint;
             if (linePrefix == null) {
@@ -203,13 +213,22 @@ public class OutputWriter {
                 logger.info(stringToPrint.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
             for (OutputStream outputStream : outputStreams) {
+                if (waitingForLineEnd & !endLine) {
+                    outputStream.write('\n');
+                    if (linePrefix != null) outputStream.write(linePrefix.getBytes());
+                }
                 outputStream.write(stringToPrint.getBytes());
                 outputStream.flush();
             }
             for (Writer outputWriter : writers) {
+                if (waitingForLineEnd & !endLine) {
+                    outputWriter.write('\n');
+                    if (linePrefix != null) outputWriter.write(linePrefix);
+                }
                 outputWriter.write(stringToPrint);
                 outputWriter.flush();
             }
+            waitingForLineEnd = thenWaitForEndLine;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

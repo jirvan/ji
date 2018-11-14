@@ -39,7 +39,7 @@ import java.util.Date;
 
 public class Timer {
 
-    public static TimeStampDisplayPrecision timeStampDisplayPrecision = TimeStampDisplayPrecision.second;
+    public static TimeStampDisplayPrecision timeStampDisplayPrecision = TimeStampDisplayPrecision.minute;
     public static DurationDisplayPrecision durationDisplayPrecision = DurationDisplayPrecision.second;
 
     /**
@@ -196,12 +196,12 @@ public class Timer {
         Date endDate = new Date();
         if (printStartAndFinishMessage) {
             if (output.isAtStartOfLine()) {
-                output.printf("%s: Finished %s (%s)\n",
+                output.printf("%s: Finished %s  (%s)\n",
                               formatTimeStamp(endDate),
                               title,
                               formatDuration(endDate.getTime() - start));
             } else {
-                output.printf(" (%s)\n", formatDuration(endDate.getTime() - start));
+                output.printfAndEndLine("  (%s)\n", formatDuration(endDate.getTime() - start));
             }
         }
     }
@@ -322,15 +322,9 @@ public class Timer {
         this.start = startDate.getTime();
         this.periodStart = this.start;
         if (printStartAndFinishMessage) {
-            if (output.isAtStartOfLine()) {
-                output.printf("%s: Started %s",
+                output.printfAndWaitForLineEnd("%s:  %s",
                               formatTimeStamp(startDate),
                               this.title);
-            } else {
-                output.printf("\n%s: Started %s",
-                              formatTimeStamp(startDate),
-                              this.title);
-            }
         }
     }
 
