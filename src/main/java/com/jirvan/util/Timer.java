@@ -30,12 +30,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jirvan.util;
 
 import com.jirvan.dates.Millisecond;
+import com.jirvan.dates.Minute;
+import com.jirvan.dates.Second;
 import com.jirvan.io.OutputWriter;
 
 import java.io.PrintStream;
 import java.util.Date;
 
 public class Timer {
+
+    public static TimeStampDisplayPrecision timeStampDisplayPrecision = TimeStampDisplayPrecision.second;
+    public static DurationDisplayPrecision durationDisplayPrecision = DurationDisplayPrecision.second;
 
     /**
      * Creates a new timer which you can later start with {@link #startPeriod()}.
@@ -101,6 +106,22 @@ public class Timer {
      */
     public static Timer startNew(String timerTitle) {
         return startNew(timerTitle, true);
+    }
+
+    /**
+     * Creates and starts a new timer.  If you need a timer that can handle
+     * multiple "active" periods then use {@link #newTimer(String)}.
+     * <p>
+     * If you want a "snapshot blocked" timer that will prevent releases being built with the timer code,
+     * then use SnapshotMarker.startNew(String) instead of this method.
+     *
+     * @param output     an OutputWriter to write to
+     * @param timerTitle the title for the timer
+     * @return the started timer
+     * @see #newTimer(String)
+     */
+    public static Timer startNew(OutputWriter output, String timerTitle) {
+        return startNew(output, timerTitle, true);
     }
 
     /**
@@ -174,10 +195,14 @@ public class Timer {
     public void endTimer() {
         Date endDate = new Date();
         if (printStartAndFinishMessage) {
-            output.printf("%s: Finished %s (%s)\n",
-                          Millisecond.from(endDate).toString(),
-                          title,
-                          Millisecond.formatDuration(endDate.getTime() - start));
+            if (output.isAtStartOfLine()) {
+                output.printf("%s: Finished %s (%s)\n",
+                              formatTimeStamp(endDate),
+                              title,
+                              formatDuration(endDate.getTime() - start));
+            } else {
+                output.printf(" (%s)\n", formatDuration(endDate.getTime() - start));
+            }
         }
     }
 
@@ -230,7 +255,7 @@ public class Timer {
         } else {
             printStream.printf("Total time spent on \"%s\": %s\n",
                                title,
-                               Millisecond.formatDuration(totalElapsedTime));
+                               formatDuration(totalElapsedTime));
         }
     }
 
@@ -247,7 +272,7 @@ public class Timer {
         } else {
             outputWriter.printf("Total time spent on \"%s\": %s\n",
                                 title,
-                                Millisecond.formatDuration(totalElapsedTime));
+                                formatDuration(totalElapsedTime));
         }
     }
 
@@ -260,6 +285,17 @@ public class Timer {
         printTotalElapsedTimeString(this.output);
     }
 
+    public static enum TimeStampDisplayPrecision {
+        millisecond,
+        second,
+        minute
+    }
+
+    public static enum DurationDisplayPrecision {
+        millisecond,
+        second,
+        minute
+    }
 
     //======================== Everything below here is private ========================//
 
@@ -286,7 +322,39 @@ public class Timer {
         this.start = startDate.getTime();
         this.periodStart = this.start;
         if (printStartAndFinishMessage) {
-            output.printf("%s: Started %s\n", Millisecond.from(startDate).toString(), this.title);
+            if (output.isAtStartOfLine()) {
+                output.printf("%s: Started %s",
+                              formatTimeStamp(startDate),
+                              this.title);
+            } else {
+                output.printf("\n%s: Started %s",
+                              formatTimeStamp(startDate),
+                              this.title);
+            }
+        }
+    }
+
+    private String formatDuration(long totalElapsedTime) {
+        if (durationDisplayPrecision == DurationDisplayPrecision.millisecond) {
+            return Millisecond.formatDuration(totalElapsedTime);
+        } else if (durationDisplayPrecision == DurationDisplayPrecision.second) {
+            return Second.formatDuration(totalElapsedTime);
+        } else if (durationDisplayPrecision == DurationDisplayPrecision.minute) {
+            return Minute.formatDuration(totalElapsedTime);
+        } else {
+            throw new RuntimeException(String.format("Unexpected TimeStampDisplayPrecision \"%s\"", timeStampDisplayPrecision.name()));
+        }
+    }
+
+    private String formatTimeStamp(Date startDate) {
+        if (timeStampDisplayPrecision == TimeStampDisplayPrecision.millisecond) {
+            return Millisecond.from(startDate).toString();
+        } else if (timeStampDisplayPrecision == TimeStampDisplayPrecision.second) {
+            return Second.from(startDate).toString();
+        } else if (timeStampDisplayPrecision == TimeStampDisplayPrecision.minute) {
+            return Minute.from(startDate).toString();
+        } else {
+            throw new RuntimeException(String.format("Unexpected TimeStampDisplayPrecision \"%s\"", timeStampDisplayPrecision.name()));
         }
     }
 
