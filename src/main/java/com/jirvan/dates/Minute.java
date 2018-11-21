@@ -105,32 +105,36 @@ public class Minute {
         return year;
     }
 
-    public void setYear(int year) {
+    public Minute setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Minute setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public int getDayInMonth() {
         return dayInMonth;
     }
 
-    public void setDayInMonth(int dayInMonth) {
+    public Minute setDayInMonth(int dayInMonth) {
         this.dayInMonth = dayInMonth;
+        return this;
     }
 
     public int getHourInDay() {
         return hourInDay;
     }
 
-    public void setHourInDay(int hourInDay) {
+    public Minute setHourInDay(int hourInDay) {
         this.hourInDay = hourInDay;
+        return this;
     }
 
     public int getMinuteInHour() {
@@ -141,8 +145,9 @@ public class Minute {
         return (hourInDay * 60) + minuteInHour;
     }
 
-    public void setMinuteInHour(int minuteInHour) {
+    public Minute setMinuteInHour(int minuteInHour) {
         this.minuteInHour = minuteInHour;
+        return this;
     }
 
     public Date getDate() {

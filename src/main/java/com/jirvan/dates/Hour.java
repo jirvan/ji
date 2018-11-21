@@ -99,32 +99,36 @@ public class Hour {
         return year;
     }
 
-    public void setYear(int year) {
+    public Hour setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Hour setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public int getDayInMonth() {
         return dayInMonth;
     }
 
-    public void setDayInMonth(int dayInMonth) {
+    public Hour setDayInMonth(int dayInMonth) {
         this.dayInMonth = dayInMonth;
+        return this;
     }
 
     public int getHourInDay() {
         return hourInDay;
     }
 
-    public void setHourInDay(int hourInDay) {
+    public Hour setHourInDay(int hourInDay) {
         this.hourInDay = hourInDay;
+        return this;
     }
 
     public Date getDate() {

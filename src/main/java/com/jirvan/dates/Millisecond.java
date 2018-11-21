@@ -113,56 +113,63 @@ public class Millisecond {
         return year;
     }
 
-    public void setYear(int year) {
+    public Millisecond setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Millisecond setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public int getDayInMonth() {
         return dayInMonth;
     }
 
-    public void setDayInMonth(int dayInMonth) {
+    public Millisecond setDayInMonth(int dayInMonth) {
         this.dayInMonth = dayInMonth;
+        return this;
     }
 
     public int getHourInDay() {
         return hourInDay;
     }
 
-    public void setHourInDay(int hourInDay) {
+    public Millisecond setHourInDay(int hourInDay) {
         this.hourInDay = hourInDay;
+        return this;
     }
 
     public int getMinuteInHour() {
         return minuteInHour;
     }
 
-    public void setMinuteInHour(int minuteInHour) {
+    public Millisecond setMinuteInHour(int minuteInHour) {
         this.minuteInHour = minuteInHour;
+        return this;
     }
 
     public int getSecondInMinute() {
         return secondInMinute;
     }
 
-    public void setSecondInMinute(int secondInMinute) {
+    public Millisecond setSecondInMinute(int secondInMinute) {
         this.secondInMinute = secondInMinute;
+        return this;
     }
 
     public int getMillisecondInSecond() {
         return millisecondInSecond;
     }
 
-    public void setMillisecondInSecond(int millisecondInSecond) {
+    public Millisecond setMillisecondInSecond(int millisecondInSecond) {
         this.millisecondInSecond = millisecondInSecond;
+        return this;
     }
 
     public Date getDate() {

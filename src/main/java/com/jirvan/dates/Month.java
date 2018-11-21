@@ -107,16 +107,18 @@ public class Month {
         return year;
     }
 
-    public void setYear(int year) {
+    public Month setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Month setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public Date getDate() {

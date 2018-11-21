@@ -109,48 +109,54 @@ public class Second {
         return year;
     }
 
-    public void setYear(int year) {
+    public Second setYear(int year) {
         this.year = year;
+        return this;
     }
 
     public int getMonthInYear() {
         return monthInYear;
     }
 
-    public void setMonthInYear(int monthInYear) {
+    public Second setMonthInYear(int monthInYear) {
         this.monthInYear = monthInYear;
+        return this;
     }
 
     public int getDayInMonth() {
         return dayInMonth;
     }
 
-    public void setDayInMonth(int dayInMonth) {
+    public Second setDayInMonth(int dayInMonth) {
         this.dayInMonth = dayInMonth;
+        return this;
     }
 
     public int getHourInDay() {
         return hourInDay;
     }
 
-    public void setHourInDay(int hourInDay) {
+    public Second setHourInDay(int hourInDay) {
         this.hourInDay = hourInDay;
+        return this;
     }
 
     public int getMinuteInHour() {
         return minuteInHour;
     }
 
-    public void setMinuteInHour(int minuteInHour) {
+    public Second setMinuteInHour(int minuteInHour) {
         this.minuteInHour = minuteInHour;
+        return this;
     }
 
     public int getSecondInMinute() {
         return secondInMinute;
     }
 
-    public void setSecondInMinute(int secondInMinute) {
+    public Second setSecondInMinute(int secondInMinute) {
         this.secondInMinute = secondInMinute;
+        return this;
     }
 
     public Date getDate() {
