@@ -239,4 +239,24 @@ public class Month {
         }
     }
 
+    public Day getFirstDay() {
+        return new Day(year, monthInYear, 1);
+    }
+
+    public Hour getFirstHour() {
+        return new Hour(year, monthInYear, 1, 0);
+    }
+
+    public Minute getFirstMinute() {
+        return new Minute(year, monthInYear, 1, 0, 0);
+    }
+
+    public Second getFirstSecond() {
+        return new Second(year, monthInYear, 1, 0, 0, 0);
+    }
+
+    public Millisecond getFirstMillisecond() {
+        return new Millisecond(year, monthInYear, 1, 0, 0, 0, 0);
+    }
+
 }

@@ -511,4 +511,20 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         }
     }
 
+    public Hour getFirstHour() {
+        return new Hour(year, monthInYear, dayInMonth, 0);
+    }
+
+    public Minute getFirstMinute() {
+        return new Minute(year, monthInYear, dayInMonth, 0, 0);
+    }
+
+    public Second getFirstSecond() {
+        return new Second(year, monthInYear, dayInMonth, 0, 0, 0);
+    }
+
+    public Millisecond getFirstMillisecond() {
+        return new Millisecond(year, monthInYear, dayInMonth, 0, 0, 0, 0);
+    }
+
 }

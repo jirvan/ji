@@ -365,4 +365,12 @@ public class Minute {
         }
     }
 
+    public Second getFirstSecond() {
+        return new Second(year, monthInYear, dayInMonth, hourInDay, minuteInHour, 0);
+    }
+
+    public Millisecond getFirstMillisecond() {
+        return new Millisecond(year, monthInYear, dayInMonth, hourInDay, minuteInHour, 0, 0);
+    }
+
 }

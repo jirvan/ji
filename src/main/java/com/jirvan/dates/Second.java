@@ -303,4 +303,8 @@ public class Second {
         }
     }
 
+    public Millisecond getFirstMillisecond() {
+        return new Millisecond(year, monthInYear, dayInMonth, hourInDay, minuteInHour, secondInMinute, 0);
+    }
+
 }
