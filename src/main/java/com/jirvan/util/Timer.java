@@ -332,9 +332,9 @@ public class Timer {
         if (durationDisplayPrecision == DurationDisplayPrecision.millisecond) {
             return Millisecond.formatDuration(totalElapsedTime);
         } else if (durationDisplayPrecision == DurationDisplayPrecision.second) {
-            return Second.formatDuration(totalElapsedTime);
+            return Second.formatDuration(totalElapsedTime / 1000);
         } else if (durationDisplayPrecision == DurationDisplayPrecision.minute) {
-            return Minute.formatDuration(totalElapsedTime);
+            return Minute.formatDuration(totalElapsedTime / (60 * 1000));
         } else {
             throw new RuntimeException(String.format("Unexpected TimeStampDisplayPrecision \"%s\"", timeStampDisplayPrecision.name()));
         }
