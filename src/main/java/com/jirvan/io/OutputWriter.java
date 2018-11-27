@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2014, Jirvan Pty Ltd
+Copyright (c) 2014,2015,2016,2017,2018 Jirvan Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +47,7 @@ public class OutputWriter {
     private List<org.apache.log4j.Logger> log4jLoggers = new ArrayList<>();
     private List<OutputStream> outputStreams = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
+    private List<OutputWriter> outputWriters = new ArrayList<>();
     private boolean waitingForLineEnd = true;
     private boolean atStartOfLine = true;
     private List<String> linePrefixSections = new ArrayList<>();
@@ -124,14 +125,8 @@ public class OutputWriter {
     }
 
     public OutputWriter add(OutputWriter outputWriter1, OutputWriter... outputWriters2ToN) {
-        this.outputStreams.addAll(outputWriter1.outputStreams);
-        for (OutputWriter outputWriter : outputWriters2ToN) {
-            this.outputStreams.addAll(outputWriter.outputStreams);
-        }
-        this.writers.addAll(outputWriter1.writers);
-        for (OutputWriter outputWriter : outputWriters2ToN) {
-            this.writers.addAll(outputWriter.writers);
-        }
+        this.outputWriters.add(outputWriter1);
+        this.outputWriters.addAll(Arrays.asList(outputWriters2ToN));
         return this;
     }
 
@@ -153,9 +148,9 @@ public class OutputWriter {
         return this;
     }
 
-    public OutputWriter add(Writer outputWriter1, Writer... outputWriters2ToN) {
-        this.writers.add(outputWriter1);
-        this.writers.addAll(Arrays.asList(outputWriters2ToN));
+    public OutputWriter add(Writer writer1, Writer... writers2ToN) {
+        this.writers.add(writer1);
+        this.writers.addAll(Arrays.asList(writers2ToN));
         return this;
     }
 
@@ -220,13 +215,20 @@ public class OutputWriter {
                 outputStream.write(stringToPrint.getBytes());
                 outputStream.flush();
             }
-            for (Writer outputWriter : writers) {
+            for (Writer writer : writers) {
                 if (waitingForLineEnd & !endLine) {
-                    outputWriter.write('\n');
-                    if (linePrefix != null) outputWriter.write(linePrefix);
+                    writer.write('\n');
+                    if (linePrefix != null) writer.write(linePrefix);
                 }
-                outputWriter.write(stringToPrint);
-                outputWriter.flush();
+                writer.write(stringToPrint);
+                writer.flush();
+            }
+            for (OutputWriter outputWriter : outputWriters) {
+                if (waitingForLineEnd & !endLine) {
+                    outputWriter.printf("\n");
+                    if (linePrefix != null) outputWriter.printf(linePrefix);
+                }
+                outputWriter.printf(stringToPrint);
             }
             waitingForLineEnd = thenWaitForEndLine;
         } catch (IOException e) {
