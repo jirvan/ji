@@ -48,7 +48,7 @@ public class OutputWriter {
     private List<OutputStream> outputStreams = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
     private List<OutputWriter> outputWriters = new ArrayList<>();
-    private boolean waitingForLineEnd = true;
+    private boolean waitingForLineEnd = false;
     private boolean atStartOfLine = true;
     private List<String> linePrefixSections = new ArrayList<>();
     private String linePrefix;
