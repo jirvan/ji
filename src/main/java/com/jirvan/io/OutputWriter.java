@@ -200,7 +200,6 @@ public class OutputWriter {
                     stringToPrint = linePrefix + stringToPrint;
                 }
             }
-            atStartOfLine = formattedString.endsWith("\n");
             for (Logger logger : loggers) {
                 logger.info(stringToPrint.replaceFirst("^\\n", "").replaceFirst("\\n$", ""));
             }
@@ -230,6 +229,7 @@ public class OutputWriter {
                 }
                 outputWriter.printf(stringToPrint);
             }
+            atStartOfLine = formattedString.endsWith("\n");
             waitingForLineEnd = thenWaitForEndLine;
         } catch (IOException e) {
             throw new RuntimeException(e);
