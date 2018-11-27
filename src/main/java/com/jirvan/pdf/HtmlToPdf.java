@@ -123,7 +123,7 @@ public class HtmlToPdf {
         }
 
         public static Image getResource(String path) throws IOException, BadElementException {
-            InputStream is = ClassLoader.getSystemResourceAsStream(path);
+            InputStream is = HtmlToPdf.class.getClassLoader().getResourceAsStream(path);
             if (is == null) {
                 throw new NotFoundRuntimeException("Couldn't find resource \"" + path + "\"");
             }
