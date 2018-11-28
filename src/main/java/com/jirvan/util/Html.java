@@ -35,7 +35,9 @@ import java.io.IOException;
 
 public class Html {
 
-    public static void writeErrorPageHtmlToResponse(HttpServletResponse response, String errorMessagePrefix, Throwable t) {
+    public static void writeErrorPageHtmlToResponse(HttpServletResponse response,
+                                                    String errorMessagePrefix,
+                                                    Throwable t) {
         response.setContentType("text/html");
         response.setHeader("Content-Disposition", "inline");
         try {
