@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.Min;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -370,10 +372,12 @@ public class Minute {
         }
     }
 
+    @JsonIgnore
     public Second getFirstSecond() {
         return new Second(year, monthInYear, dayInMonth, hourInDay, minuteInHour, 0);
     }
 
+    @JsonIgnore
     public Millisecond getFirstMillisecond() {
         return new Millisecond(year, monthInYear, dayInMonth, hourInDay, minuteInHour, 0, 0);
     }

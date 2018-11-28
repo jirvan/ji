@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.dates;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -511,18 +513,22 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         }
     }
 
+    @JsonIgnore
     public Hour getFirstHour() {
         return new Hour(year, monthInYear, dayInMonth, 0);
     }
 
+    @JsonIgnore
     public Minute getFirstMinute() {
         return new Minute(year, monthInYear, dayInMonth, 0, 0);
     }
 
+    @JsonIgnore
     public Second getFirstSecond() {
         return new Second(year, monthInYear, dayInMonth, 0, 0, 0);
     }
 
+    @JsonIgnore
     public Millisecond getFirstMillisecond() {
         return new Millisecond(year, monthInYear, dayInMonth, 0, 0, 0, 0);
     }
