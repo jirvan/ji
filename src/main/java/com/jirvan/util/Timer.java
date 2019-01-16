@@ -196,7 +196,7 @@ public class Timer {
         Date endDate = new Date();
         if (printStartAndFinishMessage) {
             if (output.isAtStartOfLine()) {
-                output.printf("%s: Finished %s  (%s)\n",
+                output.printf("%s  Finished %s  (%s)\n",
                               formatTimeStamp(endDate),
                               title,
                               formatDuration(endDate.getTime() - start));
@@ -322,7 +322,7 @@ public class Timer {
         this.start = startDate.getTime();
         this.periodStart = this.start;
         if (printStartAndFinishMessage) {
-                output.printfAndWaitForLineEnd("%s:  %s",
+                output.printfAndWaitForLineEnd("%s  %s",
                               formatTimeStamp(startDate),
                               this.title);
         }
