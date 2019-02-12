@@ -164,7 +164,7 @@ public class CsvTableExporter {
                 return "";
             } else if (((String) value).trim().length() == 0) {
                 return "\"" + value + "\"";
-            } else if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1) {
+            } else if (((String) value).indexOf('"') == -1 && ((String) value).indexOf(',') == -1 && ((String) value).indexOf('\n') == -1 && ((String) value).indexOf('\r') == -1) {
                 return ((String) value).replaceAll("\"", "\"\"");
             } else {
                 return "\"" + ((String) value).replaceAll("\"", "\"\"") + "\"";
