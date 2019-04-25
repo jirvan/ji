@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -52,6 +53,7 @@ import java.util.regex.Pattern;
  * what timezone they were born in or where they are now.  At the moment a
  * Gregorian calendar is assumed.
  */
+@Deprecated // Now that LocalDate is available you really should use that
 public class Day implements Cloneable, Serializable, Comparable<Day> {
 
     private static final DateFormat JAVASCRIPT_DAY_FORMAT = new SimpleDateFormat("MMM d, yyyy");
@@ -72,6 +74,12 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
 
     @Override public Day clone() {
         return new Day(year, monthInYear, dayInMonth);
+    }
+
+    private Day(LocalDate localDate) {
+        this.year = localDate.getYear();
+        this.monthInYear = localDate.getMonthValue();
+        this.dayInMonth = localDate.getDayOfMonth();
     }
 
     private Day(GregorianCalendar calendar) {
@@ -96,6 +104,10 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
         this.dayInMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
     }
 
+
+    public static Day from(LocalDate localDate) {
+        return localDate == null ? null : new Day(localDate);
+    }
 
     public static Day from(GregorianCalendar calendar) {
         return calendar == null ? null : new Day(calendar);
