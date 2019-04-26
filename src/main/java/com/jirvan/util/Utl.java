@@ -46,6 +46,8 @@ import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -231,6 +233,22 @@ public class Utl {
     }
 
     public static boolean areEqual(Day value1, Day value2) {
+        if (value1 == null) {
+            return value2 == null;
+        } else {
+            return value1.equals(value2);
+        }
+    }
+
+    public static boolean areEqual(LocalDate value1, LocalDate value2) {
+        if (value1 == null) {
+            return value2 == null;
+        } else {
+            return value1.equals(value2);
+        }
+    }
+
+    public static boolean areEqual(LocalDateTime value1, LocalDateTime value2) {
         if (value1 == null) {
             return value2 == null;
         } else {

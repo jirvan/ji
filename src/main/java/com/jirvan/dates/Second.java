@@ -33,6 +33,7 @@ package com.jirvan.dates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -70,6 +71,15 @@ public class Second {
         this.hourInDay = hourInDay;
         this.minuteInHour = minuteInHour;
         this.secondInMinute = secondInMinute;
+    }
+
+    private Second(LocalDateTime localDateTime) {
+        this.year = localDateTime.getYear();
+        this.monthInYear = localDateTime.getMonthValue();
+        this.dayInMonth = localDateTime.getDayOfMonth();
+        this.hourInDay = localDateTime.getHour();
+        this.minuteInHour = localDateTime.getMinute();
+        this.secondInMinute = localDateTime.getSecond();
     }
 
     private Second(GregorianCalendar calendar) {
@@ -282,11 +292,31 @@ public class Second {
         }
     }
 
+    public static Second from(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        } else {
+            return new Second(localDateTime);
+        }
+    }
+
     public static Calendar toCalendar(Second second) {
         if (second == null) {
             return null;
         } else {
             return second.getCalendar();
+        }
+    }
+
+    public LocalDateTime toLocalDateTime() {
+        return LocalDateTime.of(this.year, this.monthInYear, this.dayInMonth, this.hourInDay, this.minuteInHour, this.secondInMinute);
+    }
+
+    public static LocalDateTime toLocalDateTime(Second second) {
+        if (second == null) {
+            return null;
+        } else {
+            return second.toLocalDateTime();
         }
     }
 

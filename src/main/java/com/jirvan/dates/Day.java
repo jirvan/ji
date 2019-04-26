@@ -389,6 +389,18 @@ public class Day implements Cloneable, Serializable, Comparable<Day> {
 
     }
 
+    public LocalDate toLocalDate() {
+        return LocalDate.of(this.year, this.monthInYear, this.dayInMonth);
+    }
+
+    public static LocalDate toLocalDate(Day day) {
+        if (day == null) {
+            return null;
+        } else {
+            return day.toLocalDate();
+        }
+    }
+
     public static Date toDate(Day day) {
         return day == null ? null : day.getDate();
     }
