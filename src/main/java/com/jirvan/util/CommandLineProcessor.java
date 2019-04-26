@@ -36,6 +36,7 @@ import com.jirvan.lang.MessageException;
 import javax.sql.DataSource;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -220,8 +221,16 @@ public class CommandLineProcessor {
         return Day.fromString(nextArg(null));
     }
 
+    protected LocalDate nextArg_LocalDate() throws UsageException {
+        return LocalDate.parse(nextArg(null));
+    }
+
     protected Day nextArg_Day(String usageMessageIfNecessary) throws UsageException {
         return Day.fromString(nextArg(usageMessageIfNecessary));
+    }
+
+    protected LocalDate nextArg_LocalDate(String usageMessageIfNecessary) throws UsageException {
+        return LocalDate.parse(nextArg(usageMessageIfNecessary));
     }
 
     protected DataSource nextArg_DataSource() throws UsageException {
@@ -263,9 +272,19 @@ public class CommandLineProcessor {
         return stringValue == null ? null : Day.fromString(stringValue);
     }
 
+    protected LocalDate nextArgOptional_LocalDate() throws UsageException {
+        String stringValue = nextArgOptional(null);
+        return stringValue == null ? null : LocalDate.parse(stringValue);
+    }
+
     protected Day nextArgOptional_Day(String usageMessageIfNecessary) throws UsageException {
         String stringValue = nextArgOptional(usageMessageIfNecessary);
         return stringValue == null ? null : Day.fromString(stringValue);
+    }
+
+    protected LocalDate nextArgOptional_LocalDate(String usageMessageIfNecessary) throws UsageException {
+        String stringValue = nextArgOptional(usageMessageIfNecessary);
+        return stringValue == null ? null : LocalDate.parse(stringValue);
     }
 
     protected void verifyNoMoreArgs() throws UsageException {
