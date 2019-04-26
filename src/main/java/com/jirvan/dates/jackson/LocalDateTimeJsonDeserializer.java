@@ -37,9 +37,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
+public class LocalDateTimeJsonDeserializer extends StdDeserializer<LocalDateTime> {
 
-    protected LocalDateTimeDeserializer() {
+    public LocalDateTimeJsonDeserializer() {
         super(LocalDateTime.class);
     }
 
