@@ -57,8 +57,12 @@ public class CsvIterable<T> implements Iterable<T> {
     private Class<T> rowClass;
 
     public CsvIterable(Class rowClass, InputStream inputStream) {
+        this(rowClass, inputStream, true, true);
+    }
+
+    public CsvIterable(Class rowClass, InputStream inputStream, boolean interpretEmptyStringsAsNulls, boolean validateRows) {
         this.rowClass = rowClass;
-        this.iterator = new InternalIterator(inputStream);
+        this.iterator = new InternalIterator(inputStream, interpretEmptyStringsAsNulls, validateRows);
     }
 
     public Iterator<T> iterator() {
@@ -83,8 +87,12 @@ public class CsvIterable<T> implements Iterable<T> {
     private class InternalIterator implements Iterator {
 
         private CSVParser csvParser;
+        private boolean interpretEmptyStringsAsNulls;
+        private boolean validateRows;
 
-        public InternalIterator(InputStream inputStream) {
+        public InternalIterator(InputStream inputStream, boolean interpretEmptyStringsAsNulls, boolean validateRows) {
+            this.interpretEmptyStringsAsNulls = interpretEmptyStringsAsNulls;
+            this.validateRows = validateRows;
             try {
                 csvParser = CSVFormat.EXCEL.withIgnoreEmptyLines()
                                            .parse(new InputStreamReader(inputStream));
@@ -110,9 +118,16 @@ public class CsvIterable<T> implements Iterable<T> {
                     }
                     String value = csvRecord.get(index++);
                     try {
-                        setFieldValue(row, field, value);
+                        setFieldValue(row, field, value, interpretEmptyStringsAsNulls);
                     } catch (Throwable t) {
                         throw new RuntimeException(String.format("Row %d, column \"%s\": %s", csvRecord.getRecordNumber(), field.getName(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
+                    }
+                }
+                if (validateRows) {
+                    try {
+                        Utl.validate(row);
+                    } catch (Throwable t) {
+                        throw new RuntimeException(String.format("Row %d: %s", csvRecord.getRecordNumber(),  Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
                     }
                 }
                 return row;
@@ -123,9 +138,13 @@ public class CsvIterable<T> implements Iterable<T> {
 
     }
 
-    private void setFieldValue(T row, Field field, String stringValue) throws IllegalAccessException {
+    private void setFieldValue(T row, Field field, String stringValue, boolean interpretEmptyStringsAsNulls) throws IllegalAccessException {
         if (field.getType() == String.class) {
-            field.set(row, stringValue);
+            if (interpretEmptyStringsAsNulls) {
+                field.set(row, stringValue == null || stringValue.trim().length() == 0 ? null : stringValue);
+            } else {
+                field.set(row, stringValue);
+            }
         } else if (field.getType() == Integer.class) {
             field.set(row, stringValue == null || stringValue.trim().length() == 0 ? null : Integer.parseInt(stringValue.trim()));
         } else if (field.getType() == Long.class) {
