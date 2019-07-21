@@ -38,7 +38,6 @@ import com.jirvan.dates.Month;
 import com.jirvan.dates.Second;
 import com.jirvan.util.Utl;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
@@ -86,7 +85,7 @@ public class CsvIterable<T> implements Iterable<T> {
 
     private class InternalIterator implements Iterator {
 
-        private CSVParser csvParser;
+        private Iterator<CSVRecord> csvParserIterator;
         private boolean interpretEmptyStringsAsNulls;
         private boolean validateRows;
 
@@ -94,22 +93,22 @@ public class CsvIterable<T> implements Iterable<T> {
             this.interpretEmptyStringsAsNulls = interpretEmptyStringsAsNulls;
             this.validateRows = validateRows;
             try {
-                csvParser = CSVFormat.EXCEL.withIgnoreEmptyLines()
-                                           .parse(new InputStreamReader(inputStream));
+                csvParserIterator = CSVFormat.EXCEL.withIgnoreEmptyLines()
+                                                   .parse(new InputStreamReader(inputStream)).iterator();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            CSVRecord header = csvParser.iterator().next();
+            CSVRecord header = csvParserIterator.next();
             validateHeader(header);
         }
 
         public boolean hasNext() {
-            return csvParser.iterator().hasNext();
+            return csvParserIterator.hasNext();
         }
 
         public T next() {
             try {
-                CSVRecord csvRecord = csvParser.iterator().next();
+                CSVRecord csvRecord = csvParserIterator.next();
                 T row = rowClass.newInstance();
                 int index = 0;
                 for (Field field : rowClass.getDeclaredFields()) {
@@ -127,7 +126,7 @@ public class CsvIterable<T> implements Iterable<T> {
                     try {
                         Utl.validate(row);
                     } catch (Throwable t) {
-                        throw new RuntimeException(String.format("Row %d: %s", csvRecord.getRecordNumber(),  Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
+                        throw new RuntimeException(String.format("Row %d: %s", csvRecord.getRecordNumber(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
                     }
                 }
                 return row;
