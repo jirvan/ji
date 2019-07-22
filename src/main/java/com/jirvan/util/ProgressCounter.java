@@ -46,7 +46,7 @@ public class ProgressCounter {
             }
             lineCounter = 1;
         }
-        if (total != null && progress < total) {
+        if (total == null || progress < total) {
             output.printf("%c", displayChar);
         }
     }
