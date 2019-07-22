@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jirvan.csv;
 
+import com.google.common.collect.PeekingIterator;
 import com.jirvan.dates.Day;
 import com.jirvan.dates.Hour;
 import com.jirvan.dates.Millisecond;
@@ -49,10 +50,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class CsvIterable<T> implements Iterable<T> {
 
-    private Iterator iterator;
+    private PeekingIterator iterator;
     private Class<T> rowClass;
 
     public CsvIterable(Class rowClass, InputStream inputStream) {
@@ -64,7 +66,7 @@ public class CsvIterable<T> implements Iterable<T> {
         this.iterator = new InternalIterator(inputStream, interpretEmptyStringsAsNulls, validateRows);
     }
 
-    public Iterator<T> iterator() {
+    public PeekingIterator<T> iterator() {
         return this.iterator;
     }
 
@@ -83,11 +85,12 @@ public class CsvIterable<T> implements Iterable<T> {
 
     }
 
-    private class InternalIterator implements Iterator {
+    private class InternalIterator implements PeekingIterator {
 
         private Iterator<CSVRecord> csvParserIterator;
         private boolean interpretEmptyStringsAsNulls;
         private boolean validateRows;
+        private T nextRow;
 
         public InternalIterator(InputStream inputStream, boolean interpretEmptyStringsAsNulls, boolean validateRows) {
             this.interpretEmptyStringsAsNulls = interpretEmptyStringsAsNulls;
@@ -98,40 +101,67 @@ public class CsvIterable<T> implements Iterable<T> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            CSVRecord header = csvParserIterator.next();
-            validateHeader(header);
+            if (csvParserIterator.hasNext()) {
+                CSVRecord header = csvParserIterator.next();
+                validateHeader(header);
+                nextRow = getNextRowFromCsvParser();
+            } else {
+                this.nextRow = null;
+            }
         }
 
         public boolean hasNext() {
-            return csvParserIterator.hasNext();
+            return this.nextRow != null;
+        }
+
+        public T peek() {
+            return nextRow;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
 
         public T next() {
-            try {
-                CSVRecord csvRecord = csvParserIterator.next();
-                T row = rowClass.newInstance();
-                int index = 0;
-                for (Field field : rowClass.getDeclaredFields()) {
-                    if (csvRecord.size() < index + 1) {
-                        throw new RuntimeException(String.format("Row %d: value for column \"%s\" is missing", csvRecord.getRecordNumber(), field.getName()));
-                    }
-                    String value = csvRecord.get(index++);
-                    try {
-                        setFieldValue(row, field, value, interpretEmptyStringsAsNulls);
-                    } catch (Throwable t) {
-                        throw new RuntimeException(String.format("Row %d, column \"%s\": %s", csvRecord.getRecordNumber(), field.getName(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
-                    }
-                }
-                if (validateRows) {
-                    try {
-                        Utl.validate(row);
-                    } catch (Throwable t) {
-                        throw new RuntimeException(String.format("Row %d: %s", csvRecord.getRecordNumber(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
-                    }
-                }
+            if (this.nextRow == null) {
+                throw new NoSuchElementException();
+            } else {
+                T row = this.nextRow;
+                nextRow = getNextRowFromCsvParser();
                 return row;
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+            }
+        }
+
+        private T getNextRowFromCsvParser() {
+            if (csvParserIterator.hasNext()) {
+                try {
+                    CSVRecord csvRecord = csvParserIterator.next();
+                    T row = rowClass.newInstance();
+                    int index = 0;
+                    for (Field field : rowClass.getDeclaredFields()) {
+                        if (csvRecord.size() < index + 1) {
+                            throw new RuntimeException(String.format("Row %d: value for column \"%s\" is missing", csvRecord.getRecordNumber(), field.getName()));
+                        }
+                        String value = csvRecord.get(index++);
+                        try {
+                            setFieldValue(row, field, value, interpretEmptyStringsAsNulls);
+                        } catch (Throwable t) {
+                            throw new RuntimeException(String.format("Row %d, column \"%s\": %s", csvRecord.getRecordNumber(), field.getName(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
+                        }
+                    }
+                    if (validateRows) {
+                        try {
+                            Utl.validate(row);
+                        } catch (Throwable t) {
+                            throw new RuntimeException(String.format("Row %d: %s", csvRecord.getRecordNumber(), Utl.coalesce(t.getMessage(), t.getClass().getSimpleName())), t);
+                        }
+                    }
+                    return row;
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                return null;
             }
         }
 
