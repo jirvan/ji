@@ -61,11 +61,11 @@ public class Utl {
 
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public static <T> void validate(T object) {
-        validate(null, object);
+    public static <T> T validate(T object) {
+        return validate(null, object);
     }
 
-    public static <T> void validate(String objectName, T object) {
+    public static <T> T validate(String objectName, T object) {
 
         Set<ConstraintViolation<T>> constraintViolations = getConstraintViolations(object);
 
@@ -98,6 +98,8 @@ public class Utl {
             throw new ConstraintViolationException(message, constraintViolations);
 
         }
+
+        return object;
 
     }
 
