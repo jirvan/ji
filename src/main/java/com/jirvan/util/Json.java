@@ -66,6 +66,16 @@ public class Json {
     private static final ObjectMapper OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES = setUpObjectMapper(true);
     private static final ObjectWriter OBJECT_WRITER = OBJECT_MAPPER.writer(new JsonPrettyPrinter());
 
+    public static String toPrettyJsonString(String rawJson) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = mapper.readTree(rawJson);
+            return jsonNode == null ? null : Json.toJsonString(jsonNode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static JavaType constructCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
         return OBJECT_MAPPER.getTypeFactory().
                 constructCollectionType(collectionClass, elementClass);
