@@ -126,16 +126,36 @@ public class Json {
         return fromJsonString(jsonString, valueType, false);
     }
 
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, Class<T> valueType) {
+        return fromJsonString(jsonString, returnNullForNullsNullStringsAndEmptyStrings, valueType, false);
+    }
+
     public static <T> T fromJsonString(String jsonString, JavaType valueType) {
         return fromJsonString(jsonString, valueType, false);
+    }
+
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, JavaType valueType) {
+        return fromJsonString(jsonString, returnNullForNullsNullStringsAndEmptyStrings, valueType, false);
     }
 
     public static <T> T fromJsonString(String jsonString, TypeReference typeReference) {
         return fromJsonString(jsonString, typeReference, false);
     }
 
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, TypeReference typeReference) {
+        return fromJsonString(jsonString, returnNullForNullsNullStringsAndEmptyStrings, typeReference, false);
+    }
+
     public static <T> T fromJsonString(String jsonString, Class<T> valueType, boolean ignoreUnknownProperties) {
+        return fromJsonString(jsonString, false, valueType, ignoreUnknownProperties);
+    }
+
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, Class<T> valueType, boolean ignoreUnknownProperties) {
         try {
+
+            if (returnNullForNullsNullStringsAndEmptyStrings && (jsonString == null || "\"null\"".equals(jsonString) || "".equals(jsonString.trim()))) {
+                return null;
+            }
 
             return ignoreUnknownProperties
                    ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.readValue(jsonString, valueType)
@@ -147,7 +167,15 @@ public class Json {
     }
 
     public static <T> T fromJsonString(String jsonString, JavaType valueType, boolean ignoreUnknownProperties) {
+        return fromJsonString( jsonString,  false,  valueType,  ignoreUnknownProperties);
+    }
+
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, JavaType valueType, boolean ignoreUnknownProperties) {
         try {
+
+            if (returnNullForNullsNullStringsAndEmptyStrings && (jsonString == null || "\"null\"".equals(jsonString) || "".equals(jsonString.trim()))) {
+                return null;
+            }
 
             return ignoreUnknownProperties
                    ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(jsonString, valueType)
@@ -159,7 +187,15 @@ public class Json {
     }
 
     public static <T> T fromJsonString(String jsonString, TypeReference typeReference, boolean ignoreUnknownProperties) {
+        return fromJsonString( jsonString,  false,  typeReference,  ignoreUnknownProperties);
+    }
+
+    public static <T> T fromJsonString(String jsonString, boolean returnNullForNullsNullStringsAndEmptyStrings, TypeReference typeReference, boolean ignoreUnknownProperties) {
         try {
+
+            if (returnNullForNullsNullStringsAndEmptyStrings && (jsonString == null || "\"null\"".equals(jsonString) || "".equals(jsonString.trim()))) {
+                return null;
+            }
 
             return ignoreUnknownProperties
                    ? OBJECT_MAPPER_ALLOW_UNKNOWN_PROPERTIES.<T>readValue(jsonString, typeReference)
